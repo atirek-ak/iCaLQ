@@ -10,83 +10,14 @@ from sympy import sympify
 import math
 from copy import deepcopy
 import random
-from functools import cmp_to_key
 import scipy.optimize as optimize
 import argparse
 
 # import readline
 
 from utilities.branching_fraction import branching_fraction
-
-
-# Use this function as the comparator function while sorting lambdas
-def compare_lambda(item1, item2):
-    a1 = list(item1[0])
-    a2 = list(item2[0])
-    if a1[3] != a2[3]:
-        return ord(a1[3]) - ord(a2[3])
-    else:
-        if a1[4] != a2[4]:
-            if a1[4] == "L":
-                return -1
-            return 1
-        else:
-            return ord(a1[2]) - ord(a2[2])
-    return 0
-
-
-# parsing string input to their appropriate format. Outputs to be used by home function.
-def parse(mass_f, lambdas_f, ignore_f, margin_f, lam_values_f):
-    mass = float(mass_f)
-    margin = float(margin_f)
-    original_lambdastring = lambdas_f.replace(",", " ").strip().split()
-    ignorePairSingle = False
-    original_lam_vals = []
-    temp_lam_vals = []
-    lambdastring = []
-    if ignore_f.strip().lower() == "yes" or ignore_f.strip().lower() == "y":
-        ignorePairSingle = True
-    for val in lam_values_f:
-        val = val.replace(",", " ")
-        try:
-            if len(val.strip().split()) != len(original_lambdastring):
-                raise ValueError()
-            for x in val.strip().split():
-                float(x)
-        except ValueError:
-            print(original_lambdastring)
-            sys.exit(
-                f"[Query Error]: Query values for lambdas are either not {len(original_lambdastring)} (number of lambdas) in count or not convertible to float."
-            )
-        original_lam_vals.append(val.strip().split())
-    for lam_val in original_lam_vals:
-        combined_lambda = zip(original_lambdastring, lam_val)
-        combined_lambda = sorted(combined_lambda, key=cmp_to_key(compare_lambda))
-        combined_lambda = list(zip(*combined_lambda))
-        lambdastring = list(combined_lambda[0])
-        temp_lam_vals.append(list(combined_lambda[1]))
-    lam_vals = temp_lam_vals
-    return (
-        mass,
-        lambdastring,
-        original_lambdastring,
-        ignorePairSingle,
-        lam_vals,
-        original_lam_vals,
-        margin,
-    )
-
-
-# parsing queries while in interactive mode
-def parse_lam(original_lambdastring, lam_val_f):
-    temp_lam_vals = []
-    lam_val_f = lam_val_f.replace(",", " ")
-    original_lam_vals = [lam_val_f.strip().split()]
-    combined_lambda = zip(original_lambdastring, original_lam_vals[0])
-    combined_lambda = sorted(combined_lambda, key=cmp_to_key(compare_lambda))
-    combined_lambda = list(zip(*combined_lambda))
-    temp_lam_vals.append(list(combined_lambda[1]))
-    return temp_lam_vals, original_lam_vals
+from utilities.welcome import welcome_message
+from utilities.initiate import initiate_with_files
 
 
 interpolation_type = "slinear"
@@ -107,46 +38,7 @@ def interpolate_cs_ct_func(df):
     ]
 
 
-# Declaring variables which need not be reloaded every run
-chi_sq_limits_1 = [
-    1.00,
-    2.295748928898636,
-    3.5267403802617303,
-    4.719474460025883,
-    5.887595445915204,
-    7.038400923736641,
-    8.176236497856527,
-    9.30391276903717,
-    10.423363154355838,
-    11.535981713319316,
-    12.64281133339149,
-    13.744655587189282,
-    14.842148802786893,
-    15.935801892195538,
-    17.026033423371082,
-    18.11319133873574,
-    19.197568537049687,
-]
-chi_sq_limits_2 = [
-    4.00,
-    6.180074306244173,
-    8.024881760266252,
-    9.715627154871333,
-    11.313855908361862,
-    12.848834791793395,
-    14.337110231671799,
-    15.789092974617745,
-    17.21182898078949,
-    18.610346565823498,
-    19.988381717650192,
-    21.348799569984315,
-    22.693854280452445,
-    24.025357063756637,
-    25.344789151124267,
-    26.653380234523553,
-    27.952164463248984,
-]
-chi_sq_limits = chi_sq_limits_2
+# chi_sq_limits = chi_sq_limits_2
 data_mass_list = [1000, 1500, 2000, 2500, 3000]
 luminosity_tau = 139 * 1000
 luminosity_e_mu = 140 * 1000
@@ -1038,102 +930,6 @@ def get_delta_chisq(lam_vals, lam_vals_original, chisq_min, numpy_chisq, num_lam
     return delta_chisq, validity_list
 
 
-# print red/cyan
-def prCyan(skk):
-    print("\033[96m{}\033[00m".format(skk), end="")
-
-
-def prRed(skk):
-    print("\033[91m{}\033[00m".format(skk), end="")
-
-
-# Initiate procedure if non-interactive
-def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
-    try:
-        with open(card) as c:
-            c_lines = c.readlines()
-    except OSError:
-        sys.exit(f"Card file {card} does not exist. Exiting.")
-    try:
-        with open(vals) as v:
-            v_lines = v.readlines()
-    except OSError:
-        sys.exit(f"Values file {vals} does not exist. Exiting.")
-    if len(c_lines) < 5:
-        sys.exit(f"Number of lines in file: {len(c_lines)}, expected 5. Exiting.")
-    mass_f = c_lines[0].split("#")[0].strip()
-    lambdas_f = c_lines[1].split("#")[0].strip()
-    ignore_f = c_lines[2].split("#")[0].strip()
-    sigma_f = c_lines[3].split("#")[0].strip()
-    margin_f = c_lines[4].split("#")[0].strip()
-    global chi_sq_limits
-    if sigma_f == "1":
-        chi_sq_limits = chi_sq_limits_1
-    elif sigma_f == "2":
-        chi_sq_limits = chi_sq_limits_2
-    else:
-        sys.exit(
-            "[Sigma Error]: Line 4 of input card must contain either 1 or 2 as the sigma value. Exiting."
-        )
-    if not (ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f)):
-        sys.exit("[Input Error]: Syntax Error encountered in input card. Exiting.")
-    home(
-        *parse(mass_f, lambdas_f, ignore_f, margin_f, v_lines),
-        False,
-        output_yes,
-        output_no,
-    )
-
-
-# Checking if the inputs are in the correct format
-def ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f):
-    try:
-        mass = int(mass_f)
-        if mass < 1000 or mass > 3000:
-            prRed(
-                "[Mass Error]: Acceptable mass values in GeV: integers between 1000 and 3000.\n"
-            )
-            return False
-    except ValueError:
-        prRed(
-            "[Mass Error]: Mass value should be an integer (between 1000 and 3000).\n"
-        )
-        return False
-    try:
-        margin = float(margin_f)
-        if margin < 0 or margin > 1:
-            prRed(
-                "[Systematic-Error Error]: Acceptable systematic error values: float values between 0 and 1.\n"
-            )
-            return False
-    except ValueError:
-        prRed(
-            "[Systematic-Error Error]: Systematic error value should be a float (between 0 and 1).\n"
-        )
-        return False
-    l = lambdas_f.split()
-    if len(l) == 0:
-        return False
-    for i in range(len(l)):
-        if l[i][:2] != "LM":
-            return False
-        if not (l[i][2] == "1" or l[i][2] == "2" or l[i][2] == "3"):
-            return False
-        if not (l[i][3] == "1" or l[i][3] == "2" or l[i][3] == "3"):
-            return False
-        if l[i][4] != "L" and l[i][4] != "R":
-            return False
-    if not (
-        ignore_f.lower() == "yes"
-        or ignore_f.lower() == "no"
-        or ignore_f.lower() == "n"
-        or ignore_f.lower() == "y"
-    ):
-        prRed("ignore_single_pair takes input either 'yes'/'y' or 'no'/'n'\n")
-        return False
-    return True
-
-
 # Check if queries are in correct form
 def lam_val_ok(lam_val_f, num_lam):
     lam_vals = lam_val_f.replace(",", " ").split()
@@ -1336,19 +1132,6 @@ def home(
             print(delta_chisq[i])
             print(delta_chisq[i], file=f)
     print(f"Output files {output_yes} and {output_no} written")
-
-
-def welcome_message():
-    try:
-        with open("banner.txt") as f:
-            contents = f.read()
-            print("\n")
-            print(contents)
-            # print("LHC Dilepton Limits Calculator")
-    except OSError:
-        print(
-            "\niCaLQ: Indirect LHC-Limits Calculator for Leptoquark models\nAlpha version\n"
-        )
 
 
 # Starting function, accepts command line argument and passes control to further functions accordingly.
