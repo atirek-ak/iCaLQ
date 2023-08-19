@@ -1,10 +1,12 @@
 import sys
 
-from utilities.constants import CHI_SQ_LIMITS_1, CHI_SQ_LIMITS_2
+from utilities.constants import chi_sq_limits_1, chi_sq_limits_2
 from utilities.validate import ready_to_initiate
 from utilities.parse import parse
+from utilities.colour import prCyan, prRed
+from calculate import home
 
-chi_sq_limits: list
+chi_sq_limits = chi_sq_limits_2
 
 
 def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
@@ -16,6 +18,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     :param output_yes: File path of the output file (allowed values)
     :param output_no: File path of the output file (disallowed values)
     """
+    global chi_sq_limits
     try:
         with open(card) as c:
             c_lines = c.readlines()
@@ -38,9 +41,9 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
 
     # validate data
     if sigma_f == "1":
-        chi_sq_limits = CHI_SQ_LIMITS_1
+        chi_sq_limits = chi_sq_limits_1
     elif sigma_f == "2":
-        chi_sq_limits = CHI_SQ_LIMITS_2
+        chi_sq_limits = chi_sq_limits_2
     else:
         sys.exit(
             "[Sigma Error]: Line 4 of input card must contain either 1 or 2 as the sigma value. Exiting."
@@ -48,12 +51,95 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     if not (ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f)):
         sys.exit("[Input Error]: Syntax Error encountered in input card. Exiting.")
 
-    # home(
-    #     *parse(mass_f, lambdas_f, ignore_f, margin_f, v_lines),
-    #     False,
-    #     output_yes,
-    #     output_no,
-    # )
+    home(
+        *parse(mass_f, lambdas_f, ignore_f, margin_f, v_lines),
+        False,
+        chi_sq_limits,
+        output_yes,
+        output_no,
+    )
 
-    _, _, _, _, _, _, _ = parse(mass_f, lambdas_f, ignore_f, margin_f, v_lines)
-    return
+
+def initiate_interactive():
+    """
+    Initiate procedure if interactive
+    """
+    global chi_sq_limits
+    mass_f = ""
+    lambdas_f = ""
+    ignore_f = "yes"
+    sigma_limit = 2
+    margin_f = "0.1"
+    lam_values_f = []
+    print("Commands available: ", end="")
+    prCyan(
+        "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n"
+    )
+    print("Default Model loaded: U1")
+    print(
+        "Couplings available: LM11L, LM12L, LM13L, LM21L, LM22L, LM23L, LM31L, LM32L, LM33L, LM11R, LM12R, LM13R, LM21R, LM22R, LM23R, LM31R, LM32R, LM33R"
+    )
+    while True:
+        prCyan("icalq > ")
+        s = input().split("=")
+        slen = len(s)
+        if s[0].strip() == "mass" and slen == 2:
+            mass_f = s[1].strip()
+        elif s[0].strip() == "":
+            continue
+        elif s[0].strip() == "couplings" and slen > 1:
+            lambdas_f = s[1].strip()
+        elif s[0].strip() == "ignore_single_pair" and slen == 2:
+            ignore_f = s[1].strip()
+        elif s[0].strip() == "systematic-error" and slen == 2:
+            margin_f = s[1].strip()
+        elif s[0].strip() == "import_model" and slen == 2:
+            print("Currently only U1 model is available.")
+        elif s[0].strip() == "significance" and slen == 2:
+            if s[1].strip() == "1":
+                sigma_limit = 1
+                chi_sq_limits = chi_sq_limits_1
+            elif s[1].strip() == "2":
+                sigma_limit = 2
+                chi_sq_limits = chi_sq_limits_2
+            else:
+                prRed("Allowed values of 'significance': 1 or 2\n")
+        elif s[0].strip() == "status":
+            print(
+                f"\nMass: {mass_f}\nCouplings: {lambdas_f}\nIgnore Single & Pair = {ignore_f}\nSignificance = {sigma_limit}\nSystematic-Error = {margin_f}"
+            )
+        elif s[0].strip() == "help":
+            print("Commands available: ", end="")
+            prCyan(
+                "mass=, couplings=, systematic-error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n"
+            )
+            print(
+                "Couplings available: LM11L, LM12L, LM13L, LM21L, LM22L, LM23L, LM31L, LM32L, LM33L, LM11R, LM12R, LM13R, LM21R, LM22R, LM23R, LM31R, LM32R, LM33R"
+            )
+            print(
+                "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n"
+            )
+        elif s[0].strip() == "initiate":
+            if not ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f):
+                prRed(
+                    "[Lambda Error]: Example of a valid input - 'LM23L LM33R LM12R'\n"
+                )
+                continue
+            num_lam = len(lambdas_f.split())
+            lam_values_f = [" ".join(["0"] * num_lam)]
+            home(
+                *parse(mass_f, lambdas_f, ignore_f, margin_f, lam_values_f),
+                True,
+                chi_sq_limits,
+            )
+        elif (
+            s[0].strip() == "exit"
+            or s[0].strip() == "q"
+            or s[0].strip() == "exit()"
+            or s[0].strip() == ".exit"
+        ):
+            return
+        else:
+            prRed(
+                f"Command {s[0]} not recognised. Please retry or enter 'q' to exit.\n"
+            )

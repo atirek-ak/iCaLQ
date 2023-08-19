@@ -79,3 +79,28 @@ def parse_lam(original_lambdastring, lam_val_f):
     combined_lambda = list(zip(*combined_lambda))
     temp_lam_vals.append(list(combined_lambda[1]))
     return temp_lam_vals, original_lam_vals
+
+
+def get_lam_separate(lam):
+    """
+    Separate sympy lambda symbols and lambda strings
+    """
+    ee_lam = []
+    mumu_lam = []
+    tautau_lam = []
+    ee_ls = []
+    mumu_ls = []
+    tautau_ls = []
+
+    for lamda in lam:
+        temp_str_sym = str(lamda)
+        if temp_str_sym[3] == "1":
+            ee_lam.append(lamda)
+            ee_ls.append(temp_str_sym)
+        elif temp_str_sym[3] == "2":
+            mumu_lam.append(lamda)
+            mumu_ls.append(temp_str_sym)
+        elif temp_str_sym[3] == "3":
+            tautau_lam.append(lamda)
+            tautau_ls.append(temp_str_sym)
+    return [ee_lam, mumu_lam, tautau_lam], [ee_ls, mumu_ls, tautau_ls]

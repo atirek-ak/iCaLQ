@@ -1,5 +1,7 @@
+import pandas as pd
+
 # Declaring variables which need not be reloaded every run
-CHI_SQ_LIMITS_1 = [
+chi_sq_limits_1 = [
     1.00,
     2.295748928898636,
     3.5267403802617303,
@@ -18,7 +20,7 @@ CHI_SQ_LIMITS_1 = [
     18.11319133873574,
     19.197568537049687,
 ]
-CHI_SQ_LIMITS_2 = [
+chi_sq_limits_2 = [
     4.00,
     6.180074306244173,
     8.024881760266252,
@@ -37,3 +39,55 @@ CHI_SQ_LIMITS_2 = [
     26.653380234523553,
     27.952164463248984,
 ]
+
+interpolation_type = "slinear"
+mev2gev = 0.001
+
+mass_quarks = {"1": [2.3, 4.8], "2": [1275, 95], "3": [173070, 4180]}
+
+for gen in mass_quarks:
+    mass_quarks[gen] = [x * mev2gev for x in mass_quarks[gen]]
+
+mass_leptons = {"1": [0.511, 0.0022], "2": [105.7, 0.17], "3": [1777, 15.5]}
+for gen in mass_leptons:
+    mass_leptons[gen] = [x * mev2gev for x in mass_leptons[gen]]
+
+data_mass_list = [1000, 1500, 2000, 2500, 3000]
+luminosity_tau = 139 * 1000
+luminosity_e_mu = 140 * 1000
+standard_HHbT = pd.read_csv("./data/HEPdata/HHbT.csv", header=[0])
+standard_HHbV = pd.read_csv("./data/HEPdata/HHbV.csv", header=[0])
+standard_LHbT = pd.read_csv("./data/HEPdata/LHbT.csv", header=[0])
+standard_LHbV = pd.read_csv("./data/HEPdata/LHbV.csv", header=[0])
+standard_ee = pd.read_csv("./data/HEPdata/dielectron.csv", header=[0])
+standard_mumu = pd.read_csv("./data/HEPdata/dimuon.csv", header=[0])
+ND = [
+    standard_HHbT["ND"].to_numpy(),
+    standard_HHbV["ND"].to_numpy(),
+    standard_LHbT["ND"].to_numpy(),
+    standard_LHbV["ND"].to_numpy(),
+    standard_ee["ND"].to_numpy(),
+    standard_mumu["ND"].to_numpy(),
+]
+NSM = [
+    standard_HHbT["Standard Model"].to_numpy(),
+    standard_HHbV["Standard Model"].to_numpy(),
+    standard_LHbT["Standard Model"].to_numpy(),
+    standard_LHbV["Standard Model"].to_numpy(),
+    standard_ee["Standard Model"].to_numpy(),
+    standard_mumu["Standard Model"].to_numpy(),
+]
+
+# Path variables for cross section:
+cs_sc_path = "./data/cross_section/"
+df_pair = pd.read_csv(f"{cs_sc_path}pair.csv")
+df_single = pd.read_csv(f"{cs_sc_path}single.csv")
+df_interference = pd.read_csv(f"{cs_sc_path}interference.csv")
+df_tchannel = pd.read_csv(f"{cs_sc_path}tchannel.csv")
+df_pureqcd = pd.read_csv(f"{cs_sc_path}pureqcd.csv")
+cross_terms_tchannel = "./data/cross_section/tchannel_doublecoupling.csv"
+double_coupling_data_tchannel = pd.read_csv(cross_terms_tchannel, header=[0])
+
+efficiency_prefix = "./data/efficiency/"
+t_ct_prefix = "./data/efficiency/t/"
+tagnames = ["/HHbT.csv", "/HHbV.csv", "/LHbT.csv", "/LHbV.csv"]
