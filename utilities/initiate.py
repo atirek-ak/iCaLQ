@@ -71,13 +71,10 @@ def initiate_interactive():
     sigma_limit = 2
     margin_f = "0.1"
     lam_values_f = []
-    print("Commands available: ", end="")
-    prCyan(
-        "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n"
-    )
-    print("Default Model loaded: U1")
-    print(
-        "Couplings available: LM11L, LM12L, LM13L, LM21L, LM22L, LM23L, LM31L, LM32L, LM33L, LM11R, LM12R, LM13R, LM21R, LM22R, LM23R, LM31R, LM32R, LM33R"
+    print_initiate_message(
+        "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
+        "Default Model loaded: U1",
+        "Couplings available: LM11L, LM12L, LM13L, LM21L, LM22L, LM23L, LM31L, LM32L, LM33L, LM11R, LM12R, LM13R, LM21R, LM22R, LM23R, LM31R, LM32R, LM33R",
     )
     while True:
         prCyan("icalq > ")
@@ -109,15 +106,10 @@ def initiate_interactive():
                 f"\nMass: {mass_f}\nCouplings: {lambdas_f}\nIgnore Single & Pair = {ignore_f}\nSignificance = {sigma_limit}\nSystematic-Error = {margin_f}"
             )
         elif s[0].strip() == "help":
-            print("Commands available: ", end="")
-            prCyan(
-                "mass=, couplings=, systematic-error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n"
-            )
-            print(
-                "Couplings available: LM11L, LM12L, LM13L, LM21L, LM22L, LM23L, LM31L, LM32L, LM33L, LM11R, LM12R, LM13R, LM21R, LM22R, LM23R, LM31R, LM32R, LM33R"
-            )
-            print(
-                "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n"
+            print_initiate_message(
+                "mass=, couplings=, systematic-error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
+                "Couplings available: LM11L, LM12L, LM13L, LM21L, LM22L, LM23L, LM31L, LM32L, LM33L, LM11R, LM12R, LM13R, LM21R, LM22R, LM23R, LM31R, LM32R, LM33R",
+                "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n",
             )
         elif s[0].strip() == "initiate":
             if not ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f):
@@ -132,14 +124,16 @@ def initiate_interactive():
                 True,
                 chi_sq_limits,
             )
-        elif (
-            s[0].strip() == "exit"
-            or s[0].strip() == "q"
-            or s[0].strip() == "exit()"
-            or s[0].strip() == ".exit"
-        ):
+        elif s[0].strip() in ["exit", "q", "exit()", ".exit"]:
             return
         else:
             prRed(
                 f"Command {s[0]} not recognised. Please retry or enter 'q' to exit.\n"
             )
+
+
+def print_initiate_message(arg0, arg1, arg2):
+    print("Commands available: ", end="")
+    prCyan(arg0)
+    print(arg1)
+    print(arg2)

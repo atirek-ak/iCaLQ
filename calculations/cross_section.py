@@ -18,6 +18,7 @@ def interpolate_cs_func(df, ls):
         for coupling in ls
     ]
 
+
 def interpolate_cs_ct_func(df):
     """
     Interpolating cross-section of t-channel's cross terms
@@ -58,19 +59,19 @@ def get_cs(mass, lambdastring, num_lam):
         tautau_cs.append(tautau_temp)
     # cross terms:
     ee_t_ct = [
-        double_coupling_data_tchannel[lambdastring[i] + "_" + lambdastring[j]]
+        double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
         for i in range(num_lam)
         for j in range(i + 1, num_lam)
         if lambdastring[i][3] == lambdastring[j][3] and lambdastring[i][3] == "1"
     ]
     mumu_t_ct = [
-        double_coupling_data_tchannel[lambdastring[i] + "_" + lambdastring[j]]
+        double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
         for i in range(num_lam)
         for j in range(i + 1, num_lam)
         if lambdastring[i][3] == lambdastring[j][3] and lambdastring[i][3] == "2"
     ]
     tautau_t_ct = [
-        double_coupling_data_tchannel[lambdastring[i] + "_" + lambdastring[j]]
+        double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
         for i in range(num_lam)
         for j in range(i + 1, num_lam)
         if lambdastring[i][3] == lambdastring[j][3] and lambdastring[i][3] == "3"

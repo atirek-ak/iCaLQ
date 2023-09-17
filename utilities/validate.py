@@ -68,7 +68,7 @@ def lam_val_ok(lam_val_f, num_lam):
         return False
     try:
         for i in range(num_lam):
-            a = float(lam_vals[i])
+            _ = float(lam_vals[i])
     except ValueError:
         return False
     return True

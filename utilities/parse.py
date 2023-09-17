@@ -71,13 +71,12 @@ def parse_lam(original_lambdastring, lam_val_f):
     """
     Parsing queries while in interactive mode
     """
-    temp_lam_vals = []
     lam_val_f = lam_val_f.replace(",", " ")
     original_lam_vals = [lam_val_f.strip().split()]
     combined_lambda = zip(original_lambdastring, original_lam_vals[0])
     combined_lambda = sorted(combined_lambda, key=cmp_to_key(compare_lambda))
     combined_lambda = list(zip(*combined_lambda))
-    temp_lam_vals.append(list(combined_lambda[1]))
+    temp_lam_vals = [list(combined_lambda[1])]
     return temp_lam_vals, original_lam_vals
 
 

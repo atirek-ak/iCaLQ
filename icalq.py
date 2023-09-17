@@ -56,21 +56,35 @@ def run():
         welcome_message()
 
     if args.non_interactive:
-        if input_card == "":
-            sys.exit(
-                "[Card Error]: Input Card file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
-            )
-        if input_vals == "":
-            sys.exit(
-                "[Values Error]: Input Values file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
-            )
-        print(f"Input Card file: {input_card}")
-        print(f"Input Values file: {input_vals}")
-        print(f"Output Yes file: {output_yes}")
-        print(f"Output No file: {output_no}")
-        initiate_with_files(input_card, input_vals, output_yes, output_no)
+        non_interactive_message(input_card, input_vals, output_yes, output_no)
     else:
         initiate_interactive()
+
+
+def non_interactive_message(
+    input_card: str, input_vals: str, output_yes: str, output_no: str
+):
+    """
+    Print an initial message for the non-interactive mode
+
+    :param input_card: File path to the .card file for non-interactive input
+    :param input_vals: File path to the .vals file(values file) for non-interactive input
+    :param output_yes: File path of the output file (allowed values)
+    :param output_no: File path of the output file (disallowed values)
+    """
+    if not input_card:
+        sys.exit(
+            "[Card Error]: Input Card file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
+        )
+    if not input_vals:
+        sys.exit(
+            "[Values Error]: Input Values file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
+        )
+    print(f"Input Card file: {input_card}")
+    print(f"Input Values file: {input_vals}")
+    print(f"Output Yes file: {output_yes}")
+    print(f"Output No file: {output_no}")
+    initiate_with_files(input_card, input_vals, output_yes, output_no)
 
 
 try:

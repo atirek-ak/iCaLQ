@@ -4,7 +4,7 @@
 Alpha version
 
 ## Introduction
-This is a dilepton limits calculator. LHC data is taken from [here](https://www.hepdata.net/record/ins1782650). The FeynRules models of the leptoquarks considered can be found in the repository. The alpha version includes only the U1 leptoquark. Physics details and implementation details can be found in this [paper].
+This is a dilepton limits calculator. LHC data is taken from [here](https://www.hepdata.net/record/ins1782650). The FeynRules models of the leptoquarks considered can be found in the repository. The alpha version includes only the U1 & S1 leptoquark models. Physics details and implementation details can be found in this [paper].
 
 The calculator can be used in two modes: [interactive](#interactive-mode) and [non-interactive](#non-interactive-mode).
 
@@ -47,6 +47,7 @@ icalq > initiate
 The first 4 commands set the input parameters as `<command> = <value>`. The rest do not take any argument.
 
 - `mass` should be an integer between 1000 and 3000 (inclusive).
+- `model` currently only U1 & S1 leptoquark models are supported.
 - `couplings` should list couplings in the format _LMxyL_ or _LMxyR_ where _x_ is the quark number and _y_ is the lepton number and the last _L_ or _R_ denote left or right handedness respectively.
 - `significance` takes values 1 or 2.
 - `ignore_single_pair` takes values _yes_ or _no_. Input _yes_ means that the single and pair productions will be ignored and this will speed up calculations.
@@ -94,4 +95,4 @@ Options:
 
 ## Caveats
 
-The calculator is in its alpha version and will undergo extensive testing. Currently only U1 leptoquark is used, more leptoquark models will be added later. Any comments regarding the calculator can be emailed to [us](mailto:yash.chaurasia@research.iiit.ac.in).
+The calculator is in its alpha version and will undergo extensive testing. Currently only U1 & S1 leptoquark models are used, more leptoquark models will be added later. Any comments regarding the calculator can be emailed to [us](mailto:yash.chaurasia@research.iiit.ac.in).

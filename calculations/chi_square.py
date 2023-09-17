@@ -6,7 +6,6 @@ from utilities.constants import (
     ND,
     luminosity_tau,
     luminosity_e_mu,
-    chi_sq_limits_2,
 )
 
 
@@ -261,8 +260,7 @@ def get_chisq_ind(
                 )
                 ** 2
             ) / denominator[bin_no]
-    chi_sq_tag = sym.Add(chi_ind)
-    return chi_sq_tag
+    return sym.Add(chi_ind)
 
 
 def get_chi_square_symb(
@@ -371,12 +369,7 @@ def get_delta_chisq(
     delta_chisq = []
     for lam_val, lam_val_copy in zip(lam_vals, lam_vals_original):
         temp = [float(x) for x in lam_val]
-        all_zeroes = True
-        for x in temp:
-            if x:
-                all_zeroes = False
-                break
-        if all_zeroes:
+        if not any(temp):
             temp = [0.00000001] * len(lam_val)
         chisq_given_vals = numpy_chisq(*flatten(temp))
         delta_chisq.append(chisq_given_vals - chisq_min)
