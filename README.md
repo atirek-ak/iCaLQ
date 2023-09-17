@@ -47,7 +47,6 @@ icalq > initiate
 The first 4 commands set the input parameters as `<command> = <value>`. The rest do not take any argument.
 
 - `mass` should be an integer between 1000 and 3000 (inclusive).
-- `model` currently only U1 & S1 leptoquark models are supported.
 - `couplings` should list couplings in the format _LMxyL_ or _LMxyR_ where _x_ is the quark number and _y_ is the lepton number and the last _L_ or _R_ denote left or right handedness respectively.
 - `significance` takes values 1 or 2.
 - `ignore_single_pair` takes values _yes_ or _no_. Input _yes_ means that the single and pair productions will be ignored and this will speed up calculations.

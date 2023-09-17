@@ -57,6 +57,7 @@ def run():
 
     if args.non_interactive:
         non_interactive_message(input_card, input_vals, output_yes, output_no)
+        initiate_with_files(input_card, input_vals, output_yes, output_no)
     else:
         initiate_interactive()
 
@@ -84,7 +85,6 @@ def non_interactive_message(
     print(f"Input Values file: {input_vals}")
     print(f"Output Yes file: {output_yes}")
     print(f"Output No file: {output_no}")
-    initiate_with_files(input_card, input_vals, output_yes, output_no)
 
 
 try:

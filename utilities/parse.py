@@ -2,6 +2,8 @@ import sys
 from typing import Any
 from functools import cmp_to_key
 
+from utilities.constants import leptoquark_models
+
 
 def compare_lambda(item1: Any, item2: Any) -> int:
     """
@@ -17,7 +19,12 @@ def compare_lambda(item1: Any, item2: Any) -> int:
 
 
 def parse(
-    mass_f: str, lambdas_f: str, ignore_f: str, margin_f: str, lam_values_f: list[str]
+    mass_f: str,
+    lambdas_f: str,
+    ignore_f: str,
+    margin_f: str,
+    lam_values_f: list[str],
+    leptoquark_model: str,
 ):
     """
     Parsing string input to their appropriate format. Outputs to be used by home function.
@@ -56,6 +63,8 @@ def parse(
         lambdastring = list(combined_lambda[0])
         temp_lam_vals.append(list(combined_lambda[1]))
     lam_vals = temp_lam_vals
+    if leptoquark_model not in leptoquark_models:
+        raise ValueError(f"Model inputted should belong to {leptoquark_models}")
     return (
         mass,
         lambdastring,
@@ -64,6 +73,7 @@ def parse(
         lam_vals,
         original_lam_vals,
         margin,
+        leptoquark_model,
     )
 
 

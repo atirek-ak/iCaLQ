@@ -71,6 +71,7 @@ def initiate_interactive():
     sigma_limit = 2
     margin_f = "0.1"
     lam_values_f = []
+    leptoquark_model = ""
     print_initiate_message(
         "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
         "Default Model loaded: U1",
@@ -88,10 +89,11 @@ def initiate_interactive():
             lambdas_f = s[1].strip()
         elif s[0].strip() == "ignore_single_pair" and slen == 2:
             ignore_f = s[1].strip()
-        elif s[0].strip() == "systematic-error" and slen == 2:
+        elif s[0].strip() == "systematic_error" and slen == 2:
             margin_f = s[1].strip()
         elif s[0].strip() == "import_model" and slen == 2:
-            print("Currently only U1 model is available.")
+            # print("Currently only U1 model is available.")
+            leptoquark_model = s[1].strip()
         elif s[0].strip() == "significance" and slen == 2:
             if s[1].strip() == "1":
                 sigma_limit = 1
@@ -120,7 +122,14 @@ def initiate_interactive():
             num_lam = len(lambdas_f.split())
             lam_values_f = [" ".join(["0"] * num_lam)]
             home(
-                *parse(mass_f, lambdas_f, ignore_f, margin_f, lam_values_f),
+                *parse(
+                    mass_f,
+                    lambdas_f,
+                    ignore_f,
+                    margin_f,
+                    lam_values_f,
+                    leptoquark_model,
+                ),
                 True,
                 chi_sq_limits,
             )

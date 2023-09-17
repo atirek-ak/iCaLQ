@@ -40,6 +40,8 @@ chi_sq_limits_2 = [
     27.952164463248984,
 ]
 
+leptoquark_models = ["S1", "U1"]
+
 interpolation_type = "slinear"
 mev2gev = 0.001
 
@@ -55,12 +57,16 @@ for gen in mass_leptons:
 data_mass_list = [1000, 1500, 2000, 2500, 3000]
 luminosity_tau = 139 * 1000
 luminosity_e_mu = 140 * 1000
-standard_HHbT = pd.read_csv("./data/HEPdata/HHbT.csv", header=[0])
-standard_HHbV = pd.read_csv("./data/HEPdata/HHbV.csv", header=[0])
-standard_LHbT = pd.read_csv("./data/HEPdata/LHbT.csv", header=[0])
-standard_LHbV = pd.read_csv("./data/HEPdata/LHbV.csv", header=[0])
-standard_ee = pd.read_csv("./data/HEPdata/dielectron.csv", header=[0])
-standard_mumu = pd.read_csv("./data/HEPdata/dimuon.csv", header=[0])
+
+DATA_PREFIX = "data"
+LHC_DATA_PREFIX = f"{DATA_PREFIX}/HEPdata"
+
+standard_HHbT = pd.read_csv(f"{LHC_DATA_PREFIX}/HHbT.csv", header=[0])
+standard_HHbV = pd.read_csv(f"{LHC_DATA_PREFIX}/HHbV.csv", header=[0])
+standard_LHbT = pd.read_csv(f"{LHC_DATA_PREFIX}/LHbT.csv", header=[0])
+standard_LHbV = pd.read_csv(f"{LHC_DATA_PREFIX}/LHbV.csv", header=[0])
+standard_ee = pd.read_csv(f"{LHC_DATA_PREFIX}/dielectron.csv", header=[0])
+standard_mumu = pd.read_csv(f"{LHC_DATA_PREFIX}/dimuon.csv", header=[0])
 ND = [
     standard_HHbT["ND"].to_numpy(),
     standard_HHbV["ND"].to_numpy(),
@@ -80,14 +86,51 @@ NSM = [
 
 # Path variables for cross section:
 cs_sc_path = "./data/cross_section/"
-df_pair = pd.read_csv(f"{cs_sc_path}pair.csv")
-df_single = pd.read_csv(f"{cs_sc_path}single.csv")
-df_interference = pd.read_csv(f"{cs_sc_path}interference.csv")
-df_tchannel = pd.read_csv(f"{cs_sc_path}tchannel.csv")
-df_pureqcd = pd.read_csv(f"{cs_sc_path}pureqcd.csv")
-cross_terms_tchannel = "./data/cross_section/tchannel_doublecoupling.csv"
-double_coupling_data_tchannel = pd.read_csv(cross_terms_tchannel, header=[0])
 
-efficiency_prefix = "./data/efficiency/"
-t_ct_prefix = "./data/efficiency/t/"
+
+# df_pair = pd.read_csv(f"{cs_sc_path}pair.csv")
+def get_df_pair(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pair.csv")
+
+
+# df_single = pd.read_csv(f"{cs_sc_path}single.csv")
+def get_df_single(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/single.csv")
+
+
+# df_interference = pd.read_csv(f"{cs_sc_path}interference.csv")
+def get_df_interference(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/interference.csv")
+
+
+# df_tchannel = pd.read_csv(f"{cs_sc_path}tchannel.csv")
+def get_df_tchannel(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/tchannel.csv")
+
+
+# df_pureqcd = pd.read_csv(f"{cs_sc_path}pureqcd.csv")
+def get_df_pureqcd(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pureqcd.csv")
+
+
+# double_coupling_data_tchannel = pd.read_csv(cross_terms_tchannel, header=[0])
+def get_double_coupling_data_tchannel(model: str):
+    return pd.read_csv(
+        f"{DATA_PREFIX}/model/{model}/cross_section/tchannel_doublecoupling.csv",
+        header=[0],
+    )
+
+
+# efficiency_prefix = "./data/efficiency/"
+def get_efficiency_prefix(model: str):
+    return f"{DATA_PREFIX}/model/{model}/efficiency/"
+
+
+
+
+# t_ct_prefix = "./data/efficiency/t/"
+def get_t_ct_prefix(model: str):
+    return f"{DATA_PREFIX}/model/{model}/efficiency/t/"
+
+
 tagnames = ["/HHbT.csv", "/HHbV.csv", "/LHbT.csv", "/LHbV.csv"]

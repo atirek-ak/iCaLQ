@@ -3,12 +3,12 @@ from scipy.interpolate import interp1d
 from utilities.constants import (
     interpolation_type,
     data_mass_list,
-    df_pureqcd,
-    df_pair,
-    df_single,
-    df_interference,
-    df_tchannel,
-    double_coupling_data_tchannel,
+    get_df_pureqcd,
+    get_df_pair,
+    get_df_single,
+    get_df_interference,
+    get_df_tchannel,
+    get_double_coupling_data_tchannel,
 )
 
 
@@ -29,15 +29,15 @@ def interpolate_cs_ct_func(df):
     ]
 
 
-def get_cs(mass, lambdastring, num_lam):
+def get_cs(mass, lambdastring, num_lam, leptoquark_model):
     """
     Get cross sections from data files
     """
-    cs_q = interpolate_cs_func(df_pureqcd, lambdastring)
-    cs_p = interpolate_cs_func(df_pair, lambdastring)
-    cs_s = interpolate_cs_func(df_single, lambdastring)
-    cs_i = interpolate_cs_func(df_interference, lambdastring)
-    cs_t = interpolate_cs_func(df_tchannel, lambdastring)
+    cs_q = interpolate_cs_func(get_df_pureqcd(leptoquark_model), lambdastring)
+    cs_p = interpolate_cs_func(get_df_pair(leptoquark_model), lambdastring)
+    cs_s = interpolate_cs_func(get_df_single(leptoquark_model), lambdastring)
+    cs_i = interpolate_cs_func(get_df_interference(leptoquark_model), lambdastring)
+    cs_t = interpolate_cs_func(get_df_tchannel(leptoquark_model), lambdastring)
     cs_l = [cs_q(mass), cs_p(mass), cs_s(mass), cs_i(mass), cs_t(mass)]
     #
     ee_cs = []
@@ -58,6 +58,7 @@ def get_cs(mass, lambdastring, num_lam):
         mumu_cs.append(mumu_temp)
         tautau_cs.append(tautau_temp)
     # cross terms:
+    double_coupling_data_tchannel = get_double_coupling_data_tchannel(leptoquark_model)
     ee_t_ct = [
         double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
         for i in range(num_lam)

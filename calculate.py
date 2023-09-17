@@ -23,6 +23,7 @@ def home(
     lam_vals,
     original_lam_vals,
     margin,
+    leptoquark_model,
     interactive,
     chi_sq_limits,
     output_yes="icalq_yes.csv",
@@ -30,9 +31,11 @@ def home(
 ):
     num_lam = len(lambdastring)
     lam = sym.symbols(lambdastring)
-    cs_list = get_cs(mass, lambdastring, num_lam)
+    cs_list = get_cs(mass, lambdastring, num_lam, leptoquark_model)
     closest_mass = get_closest_mass(mass)
-    eff_list = get_efficiencies(closest_mass, lambdastring, num_lam, cs_list)
+    eff_list = get_efficiencies(
+        closest_mass, lambdastring, num_lam, cs_list, leptoquark_model
+    )
     mass_dict = make_mass_dict(lambdastring, num_lam)
     all_lam, all_ls = get_lam_separate(lam)
     br_frac = branching_fraction(all_ls, all_lam, mass_dict, mass, 0)
