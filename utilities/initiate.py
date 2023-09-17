@@ -33,11 +33,12 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
         sys.exit(f"Number of lines in file: {len(c_lines)}, expected 5. Exiting.")
 
     # extract data
-    mass_f = c_lines[0].split("#")[0].strip()
-    lambdas_f = c_lines[1].split("#")[0].strip()
-    ignore_f = c_lines[2].split("#")[0].strip()
-    sigma_f = c_lines[3].split("#")[0].strip()
-    margin_f = c_lines[4].split("#")[0].strip()
+    leptoquark_model = c_lines[0].split("#")[0].strip()
+    mass_f = c_lines[1].split("#")[0].strip()
+    lambdas_f = c_lines[2].split("#")[0].strip()
+    ignore_f = c_lines[3].split("#")[0].strip()
+    sigma_f = c_lines[4].split("#")[0].strip()
+    margin_f = c_lines[5].split("#")[0].strip()
 
     # validate data
     if sigma_f == "1":
@@ -52,7 +53,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
         sys.exit("[Input Error]: Syntax Error encountered in input card. Exiting.")
 
     home(
-        *parse(mass_f, lambdas_f, ignore_f, margin_f, v_lines),
+        *parse(mass_f, lambdas_f, ignore_f, margin_f, v_lines, leptoquark_model),
         False,
         chi_sq_limits,
         output_yes,
