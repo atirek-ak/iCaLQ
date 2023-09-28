@@ -58,9 +58,7 @@ def get_cs(mass, lambdastring, num_lam, leptoquark_model):
         mumu_cs.append(mumu_temp)
         tautau_cs.append(tautau_temp)
     # cross terms:
-    double_coupling_data_tchannel = get_double_coupling_data_tchannel(
-        leptoquark_model
-    ).head(5)
+    double_coupling_data_tchannel = get_double_coupling_data_tchannel(leptoquark_model)
     ee_t_ct = [
         double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
         for i in range(num_lam)
