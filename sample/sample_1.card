@@ -1,6 +1,6 @@
 S1              # lepqtoquark model
-3000			# mass
-LM23R    # couplings
+1000			# mass
+LM11L    # couplings
 no				# ignore single and pair
 2				# significance
 0.1				# systematic error
