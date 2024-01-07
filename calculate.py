@@ -62,13 +62,15 @@ def home(
         )
         for randarr in np.random.rand(3, num_lam)
     ]
-    minima_list_2 = [
-        optimize.minimize(lambda x: numpy_chisq(*flatten(x)), randarr)
-        for randarr in np.random.rand(3, num_lam)
-    ]
-    for m in minima_list_1 + minima_list_2:
+    # minima_list_2 = [
+    #     optimize.minimize(lambda x: numpy_chisq(*flatten(x)), randarr)
+    #     for randarr in np.random.rand(3, num_lam)
+    # ]
+    # for m in minima_list_1 + minima_list_2:
+    for m in minima_list_1:
         if m.fun < minima.fun:
-            print("New Minimum Found!")
+            print(f"New Minimum Found: {m.fun}")
+            print(f"Lambda: {m.x}")
             minima = m
     chisq_min = minima.fun
     opt_lambda_list = minima.x
