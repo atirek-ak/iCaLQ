@@ -60,7 +60,7 @@ def home(
             method="Nelder-Mead",
             options={"fatol": 0.0001},
         )
-        for randarr in np.random.rand(3, num_lam)
+        for randarr in np.random.rand(6, num_lam)
     ]
     # minima_list_2 = [
     #     optimize.minimize(lambda x: numpy_chisq(*flatten(x)), randarr)
