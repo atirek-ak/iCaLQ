@@ -48,11 +48,11 @@ def get_cs(mass, lambdastring, num_lam, leptoquark_model):
         mumu_temp = []
         tautau_temp = []
         for lamda, cs in zip(lambdastring, process):
-            if lamda[3] == "1":
+            if lamda[8] == "1":
                 ee_temp.append(cs)
-            elif lamda[3] == "2":
+            elif lamda[8] == "2":
                 mumu_temp.append(cs)
-            elif lamda[3] == "3":
+            elif lamda[8] == "3":
                 tautau_temp.append(cs)
         ee_cs.append(ee_temp)
         mumu_cs.append(mumu_temp)
@@ -63,19 +63,19 @@ def get_cs(mass, lambdastring, num_lam, leptoquark_model):
         double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
         for i in range(num_lam)
         for j in range(i + 1, num_lam)
-        if lambdastring[i][3] == lambdastring[j][3] and lambdastring[i][3] == "1"
+        if lambdastring[i][8] == lambdastring[j][8] and lambdastring[i][8] == "1"
     ]
     mumu_t_ct = [
         double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
         for i in range(num_lam)
         for j in range(i + 1, num_lam)
-        if lambdastring[i][3] == lambdastring[j][3] and lambdastring[i][3] == "2"
+        if lambdastring[i][8] == lambdastring[j][8] and lambdastring[i][8] == "2"
     ]
     tautau_t_ct = [
         double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
         for i in range(num_lam)
         for j in range(i + 1, num_lam)
-        if lambdastring[i][3] == lambdastring[j][3] and lambdastring[i][3] == "3"
+        if lambdastring[i][8] == lambdastring[j][8] and lambdastring[i][8] == "3"
     ]
     cs_ee_t_ct_func = interpolate_cs_ct_func(ee_t_ct)
     cs_ee_t_ct_temp = cs_ee_t_ct_func(mass)
@@ -92,18 +92,18 @@ def get_cs(mass, lambdastring, num_lam, leptoquark_model):
     cs_tautau_t_ct = cs_tautau_t_ct_temp[:]
     for i in range(num_lam):
         for j in range(i + 1, num_lam):
-            if lambdastring[i][3] == lambdastring[j][3]:
-                if lambdastring[i][3] == "1":
+            if lambdastring[i][8] == lambdastring[j][8]:
+                if lambdastring[i][8] == "1":
                     cs_ee_t_ct[ee_cntr] = (
                         cs_ee_t_ct_temp[ee_cntr] - cs_l[4][i] - cs_l[4][j]
                     )
                     ee_cntr += 1
-                elif lambdastring[i][3] == "2":
+                elif lambdastring[i][8] == "2":
                     cs_mumu_t_ct[mumu_cntr] = (
                         cs_mumu_t_ct_temp[mumu_cntr] - cs_l[4][i] - cs_l[4][j]
                     )
                     mumu_cntr += 1
-                elif lambdastring[i][3] == "3":
+                elif lambdastring[i][8] == "3":
                     cs_tautau_t_ct[tautau_cntr] = (
                         cs_tautau_t_ct_temp[tautau_cntr] - cs_l[4][i] - cs_l[4][j]
                     )

@@ -21,101 +21,121 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
     ] = cs_list
 
     path_interference_ee = [
-        get_efficiency_prefix(leptoquark_model) + "i/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "i/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "1"
+        if coupling[8] == "1"
     ]
     path_pair_ee = [
-        get_efficiency_prefix(leptoquark_model) + "p/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "p/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "1"
+        if coupling[8] == "1"
     ]
     path_single_ee = [
-        get_efficiency_prefix(leptoquark_model) + "s/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "s/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "1"
+        if coupling[8] == "1"
     ]
     path_tchannel_ee = [
-        get_efficiency_prefix(leptoquark_model) + "t/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "t/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "1"
+        if coupling[8] == "1"
     ]
     path_pureqcd_ee = [
-        get_efficiency_prefix(leptoquark_model) + "q/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "q/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "1"
+        if coupling[8] == "1"
     ]
 
     path_interference_mumu = [
-        get_efficiency_prefix(leptoquark_model) + "i/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "i/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "2"
+        if coupling[8] == "2"
     ]
     path_pair_mumu = [
-        get_efficiency_prefix(leptoquark_model) + "p/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "p/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "2"
+        if coupling[8] == "2"
     ]
     path_single_mumu = [
-        get_efficiency_prefix(leptoquark_model) + "s/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "s/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "2"
+        if coupling[8] == "2"
     ]
     path_tchannel_mumu = [
-        get_efficiency_prefix(leptoquark_model) + "t/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "t/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "2"
+        if coupling[8] == "2"
     ]
     path_pureqcd_mumu = [
-        get_efficiency_prefix(leptoquark_model) + "q/" + str(coupling[2:])
+        get_efficiency_prefix(leptoquark_model)
+        + "q/"
+        + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
-        if coupling[3] == "2"
+        if coupling[8] == "2"
     ]
 
     path_interference_tautau = [
         get_efficiency_prefix(leptoquark_model)
         + "i/"
-        + str(coupling[2:])
+        + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
         + str(closest_mass)
         for coupling in lambdastring
-        if coupling[3] == "3"
+        if coupling[8] == "3"
     ]
     path_pair_tautau = [
         get_efficiency_prefix(leptoquark_model)
         + "p/"
-        + str(coupling[2:])
+        + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
         + str(closest_mass)
         for coupling in lambdastring
-        if coupling[3] == "3"
+        if coupling[8] == "3"
     ]
     path_single_tautau = [
         get_efficiency_prefix(leptoquark_model)
         + "s/"
-        + str(coupling[2:])
+        + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
         + str(closest_mass)
         for coupling in lambdastring
-        if coupling[3] == "3"
+        if coupling[8] == "3"
     ]
     path_tchannel_tautau = [
         get_efficiency_prefix(leptoquark_model)
         + "t/"
-        + str(coupling[2:])
+        + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
         + str(closest_mass)
         for coupling in lambdastring
-        if coupling[3] == "3"
+        if coupling[8] == "3"
     ]
     path_pureqcd_tautau = [
         get_efficiency_prefix(leptoquark_model)
         + "q/"
-        + str(coupling[2:])
+        + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
         + str(closest_mass)
         for coupling in lambdastring
-        if coupling[3] == "3"
+        if coupling[8] == "3"
     ]
 
     ee_path_t_ct = []
@@ -123,27 +143,39 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
     tautau_path_t_ct = []
     for i in range(num_lam):
         for j in range(i + 1, num_lam):
-            if lambdastring[i][3] == lambdastring[j][3]:
-                if lambdastring[i][3] == "1":
+            if lambdastring[i][8] == lambdastring[j][8]:
+                if lambdastring[i][8] == "1":
                     ee_path_t_ct.append(
                         get_t_ct_prefix(leptoquark_model)
-                        + str(lambdastring[i][2:])
+                        + str(
+                            lambdastring[i][6] + lambdastring[i][8] + lambdastring[i][4]
+                        )
                         + "_"
-                        + str(lambdastring[j][2:])
+                        + str(
+                            lambdastring[j][6] + lambdastring[j][8] + lambdastring[j][4]
+                        )
                     )
-                elif lambdastring[i][3] == "2":
+                elif lambdastring[i][8] == "2":
                     mumu_path_t_ct.append(
                         get_t_ct_prefix(leptoquark_model)
-                        + str(lambdastring[i][2:])
+                        + str(
+                            lambdastring[i][6] + lambdastring[i][8] + lambdastring[i][4]
+                        )
                         + "_"
-                        + str(lambdastring[j][2:])
+                        + str(
+                            lambdastring[j][6] + lambdastring[j][8] + lambdastring[j][4]
+                        )
                     )
-                elif lambdastring[i][3] == "3":
+                elif lambdastring[i][8] == "3":
                     tautau_path_t_ct.append(
                         get_t_ct_prefix(leptoquark_model)
-                        + str(lambdastring[i][2:])
+                        + str(
+                            lambdastring[i][6] + lambdastring[i][8] + lambdastring[i][4]
+                        )
                         + "_"
-                        + str(lambdastring[j][2:])
+                        + str(
+                            lambdastring[j][6] + lambdastring[j][8] + lambdastring[j][4]
+                        )
                         + "/"
                         + str(closest_mass)
                     )

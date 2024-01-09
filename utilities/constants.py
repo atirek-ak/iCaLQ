@@ -40,7 +40,8 @@ chi_sq_limits_2 = [
     27.952164463248984,
 ]
 
-leptoquark_models = ["S1", "U1"]
+scalar_leptoquark_models = ["S1"]
+vector_leptoquark_models = ["U1"]
 
 interpolation_type = "slinear"
 mev2gev = 0.001
@@ -124,8 +125,6 @@ def get_double_coupling_data_tchannel(model: str):
 # efficiency_prefix = "./data/efficiency/"
 def get_efficiency_prefix(model: str):
     return f"{DATA_PREFIX}/model/{model}/efficiency/"
-
-
 
 
 # t_ct_prefix = "./data/efficiency/t/"

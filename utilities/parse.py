@@ -2,7 +2,7 @@ import sys
 from typing import Any
 from functools import cmp_to_key
 
-from utilities.constants import leptoquark_models
+from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models
 
 
 def compare_lambda(item1: Any, item2: Any) -> int:
@@ -11,10 +11,10 @@ def compare_lambda(item1: Any, item2: Any) -> int:
     """
     a1 = list(item1[0])
     a2 = list(item2[0])
-    if a1[3] != a2[3]:
-        return ord(a1[3]) - ord(a2[3])
+    if a1[8] != a2[8]:
+        return ord(a1[8]) - ord(a2[8])
     if a1[4] == a2[4]:
-        return ord(a1[2]) - ord(a2[2])
+        return ord(a1[6]) - ord(a2[6])
     return -1 if a1[4] == "L" else 1
 
 
@@ -38,7 +38,7 @@ def parse(
     # convert to correct data types
     mass = float(mass_f)
     margin = float(margin_f)
-    original_lambdastring = lambdas_f.replace(",", " ").strip().split()
+    original_lambdastring = lambdas_f.strip().split()
     ignorePairSingle = ignore_f.strip().lower() in {"yes", "y"}
     original_lam_vals = []
     temp_lam_vals = []
@@ -63,8 +63,10 @@ def parse(
         lambdastring = list(combined_lambda[0])
         temp_lam_vals.append(list(combined_lambda[1]))
     lam_vals = temp_lam_vals
-    if leptoquark_model not in leptoquark_models:
-        raise ValueError(f"Model inputted should belong to {leptoquark_models}")
+    if leptoquark_model not in scalar_leptoquark_models + vector_leptoquark_models:
+        raise ValueError(
+            f"Model inputted should belong to {scalar_leptoquark_models + vector_leptoquark_models}"
+        )
     return (
         mass,
         lambdastring,
@@ -103,13 +105,13 @@ def get_lam_separate(lam):
 
     for lamda in lam:
         temp_str_sym = str(lamda)
-        if temp_str_sym[3] == "1":
+        if temp_str_sym[8] == "1":
             ee_lam.append(lamda)
             ee_ls.append(temp_str_sym)
-        elif temp_str_sym[3] == "2":
+        elif temp_str_sym[8] == "2":
             mumu_lam.append(lamda)
             mumu_ls.append(temp_str_sym)
-        elif temp_str_sym[3] == "3":
+        elif temp_str_sym[8] == "3":
             tautau_lam.append(lamda)
             tautau_ls.append(temp_str_sym)
     return [ee_lam, mumu_lam, tautau_lam], [ee_ls, mumu_ls, tautau_ls]

@@ -1,7 +1,10 @@
 from utilities.colour import prRed
+from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models
 
 
-def ready_to_initiate(mass_f: str, lambdas_f: str, ignore_f: str, margin_f: str):
+def ready_to_initiate(
+    mass_f: str, lambdas_f: str, ignore_f: str, margin_f: str, leptoquark_model: str
+):
     """
     Checking if the inputs are in the correct format
 
@@ -29,13 +32,18 @@ def ready_to_initiate(mass_f: str, lambdas_f: str, ignore_f: str, margin_f: str)
     if not lambdas:
         return False
     for i in range(len(lambdas)):
-        if lambdas[i][:2] != "LM":
+        if not (
+            (lambdas[i][:1] == "y" and leptoquark_model in scalar_leptoquark_models)
+            or (lambdas[i][:1] == "x" and leptoquark_model in vector_leptoquark_models)
+        ):
             return False
-        if lambdas[i][2] not in ["1", "2", "3"]:
+        if lambdas[i][6] not in ["1", "2", "3"]:
             return False
-        if lambdas[i][3] not in ["1", "2", "3"]:
+        if lambdas[i][8] not in ["1", "2", "3"]:
             return False
-        if lambdas[i][4] not in ["L", "R", "3"]:
+        if lambdas[i][3] not in ["L", "R"]:
+            return False
+        if lambdas[i][4] not in ["L", "R"]:
             return False
 
     # validate Ignore single and pair production

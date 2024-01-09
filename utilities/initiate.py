@@ -1,6 +1,12 @@
 import sys
+from uu import Error
 
-from utilities.constants import chi_sq_limits_1, chi_sq_limits_2
+from utilities.constants import (
+    chi_sq_limits_1,
+    chi_sq_limits_2,
+    scalar_leptoquark_models,
+    vector_leptoquark_models,
+)
 from utilities.validate import ready_to_initiate
 from utilities.parse import parse
 from utilities.colour import prCyan, prRed
@@ -49,7 +55,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
         sys.exit(
             "[Sigma Error]: Line 4 of input card must contain either 1 or 2 as the sigma value. Exiting."
         )
-    if not (ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f)):
+    if not (ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f, leptoquark_model)):
         sys.exit("[Input Error]: Syntax Error encountered in input card. Exiting.")
 
     home(
@@ -73,11 +79,20 @@ def initiate_interactive():
     margin_f = "0.1"
     lam_values_f = []
     leptoquark_model = ""
-    print_initiate_message(
-        "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
-        "Default Model loaded: U1",
-        "Couplings available: LM11L, LM12L, LM13L, LM21L, LM22L, LM23L, LM31L, LM32L, LM33L, LM11R, LM12R, LM13R, LM21R, LM22R, LM23R, LM31R, LM32R, LM33R",
-    )
+    if leptoquark_model in vector_leptoquark_models:
+        print_initiate_message(
+            "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
+            f"Model loaded: {leptoquark_model}",
+            "Couplings available: x10LL[1,1],x10LL[2,1],x10LL[3,1],x10RR[1,1],x10RR[2,1],x10RR[3,1],x10LL[1,2],x10LL[2,2],x10LL[3,2],x10RR[1,2],x10RR[2,2],x10RR[3,2],x10LL[1,3],x10LL[2,3],x10LL[3,3],x10RR[1,3],x10RR[2,3],x10RR[3,3]",
+        )
+    elif leptoquark_model in scalar_leptoquark_models:
+        print_initiate_message(
+            "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
+            f"Model loaded: {leptoquark_model}",
+            "Couplings available: y10LL[1,1],y10LL[2,1],y10LL[3,1],y10RR[1,1],y10RR[2,1],y10RR[3,1],y10LL[1,2],y10LL[2,2],y10LL[3,2],y10RR[1,2],y10RR[2,2],y10RR[3,2],y10LL[1,3],y10LL[2,3],y10LL[3,3],y10RR[1,3],y10RR[2,3],y10RR[3,3]",
+        )
+    else:
+        raise Error("Model inputted not supported by the calculator.")
     while True:
         prCyan("icalq > ")
         s = input().split("=")
@@ -111,13 +126,15 @@ def initiate_interactive():
         elif s[0].strip() == "help":
             print_initiate_message(
                 "mass=, couplings=, systematic-error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
-                "Couplings available: LM11L, LM12L, LM13L, LM21L, LM22L, LM23L, LM31L, LM32L, LM33L, LM11R, LM12R, LM13R, LM21R, LM22R, LM23R, LM31R, LM32R, LM33R",
+                "Couplings available: y10LL[1,1],y10LL[2,1],y10LL[3,1],y10RR[1,1],y10RR[2,1],y10RR[3,1],y10LL[1,2],y10LL[2,2],y10LL[3,2],y10RR[1,2],y10RR[2,2],y10RR[3,2],y10LL[1,3],y10LL[2,3],y10LL[3,3],y10RR[1,3],y10RR[2,3],y10RR[3,3],x10LL[1,1],x10LL[2,1],x10LL[3,1],x10RR[1,1],x10RR[2,1],x10RR[3,1],x10LL[1,2],x10LL[2,2],x10LL[3,2],x10RR[1,2],x10RR[2,2],x10RR[3,2],x10LL[1,3],x10LL[2,3],x10LL[3,3],x10RR[1,3],x10RR[2,3],x10RR[3,3]",
                 "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n",
             )
         elif s[0].strip() == "initiate":
-            if not ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f):
+            if not ready_to_initiate(
+                mass_f, lambdas_f, ignore_f, margin_f, leptoquark_model
+            ):
                 prRed(
-                    "[Lambda Error]: Example of a valid input - 'LM23L LM33R LM12R'\n"
+                    "[Lambda Error]: Example of a valid input - 'y10LL[2,1],y10LL[3,1],y10RR[1,1]'\n"
                 )
                 continue
             num_lam = len(lambdas_f.split())

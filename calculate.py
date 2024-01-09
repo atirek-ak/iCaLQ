@@ -30,7 +30,7 @@ def home(
     output_no="icalq_no.csv",
 ):
     num_lam = len(lambdastring)
-    lam = sym.symbols(lambdastring)
+    lam = [sym.Symbol(ls) for ls in lambdastring]
     cs_list = get_cs(mass, lambdastring, num_lam, leptoquark_model)
     closest_mass = get_closest_mass(mass)
     eff_list = get_efficiencies(
