@@ -45,6 +45,12 @@ def run():
         default="icalq_no.csv",
         help="[filename]: Specify the name of output file (disallowed values) (overwrites the existing file). Default: icalq_no.csv",
     )
+    parser.add_argument(
+        "--branching-fraction",
+        type=float,
+        default=0,
+        help="Width constant to be added to the branching fraction of all processes",
+    )
 
     args = parser.parse_args()
     input_card = args.input_card
@@ -56,14 +62,21 @@ def run():
         welcome_message()
 
     if args.non_interactive:
-        non_interactive_message(input_card, input_vals, output_yes, output_no)
-        initiate_with_files(input_card, input_vals, output_yes, output_no)
+        non_interactive_message(
+            input_card, input_vals, output_yes, output_no
+        )
+        initiate_with_files(
+            input_card, input_vals, output_yes, output_no
+        )
     else:
         initiate_interactive()
 
 
 def non_interactive_message(
-    input_card: str, input_vals: str, output_yes: str, output_no: str
+    input_card: str,
+    input_vals: str,
+    output_yes: str,
+    output_no: str,
 ):
     """
     Print an initial message for the non-interactive mode

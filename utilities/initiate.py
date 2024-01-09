@@ -15,7 +15,9 @@ from calculate import home
 chi_sq_limits = chi_sq_limits_2
 
 
-def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
+def initiate_with_files(
+    card: str, vals: str, output_yes: str, output_no: str
+):
     """
     Initiate procedure if non-interactive input is given
 
@@ -45,6 +47,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     ignore_f = c_lines[3].split("#")[0].strip()
     sigma_f = c_lines[4].split("#")[0].strip()
     margin_f = c_lines[5].split("#")[0].strip()
+    width_constant = c_lines[6].split("#")[0].strip()
 
     # validate data
     if sigma_f == "1":
@@ -58,10 +61,19 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     if not (ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f, leptoquark_model)):
         sys.exit("[Input Error]: Syntax Error encountered in input card. Exiting.")
 
+    width_constant = float(width_constant)
     home(
-        *parse(mass_f, lambdas_f, ignore_f, margin_f, v_lines, leptoquark_model),
+        *parse(
+            mass_f,
+            lambdas_f,
+            ignore_f,
+            margin_f,
+            v_lines,
+            leptoquark_model,
+        ),
         False,
         chi_sq_limits,
+        width_constant,
         output_yes,
         output_no,
     )
@@ -79,6 +91,7 @@ def initiate_interactive():
     margin_f = "0.1"
     lam_values_f = []
     leptoquark_model = ""
+    width_constant = 0
     if leptoquark_model in vector_leptoquark_models:
         print_initiate_message(
             "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
@@ -91,8 +104,6 @@ def initiate_interactive():
             f"Model loaded: {leptoquark_model}",
             "Couplings available: y10LL[1,1],y10LL[2,1],y10LL[3,1],y10RR[1,1],y10RR[2,1],y10RR[3,1],y10LL[1,2],y10LL[2,2],y10LL[3,2],y10RR[1,2],y10RR[2,2],y10RR[3,2],y10LL[1,3],y10LL[2,3],y10LL[3,3],y10RR[1,3],y10RR[2,3],y10RR[3,3]",
         )
-    else:
-        raise Error("Model inputted not supported by the calculator.")
     while True:
         prCyan("icalq > ")
         s = input().split("=")
@@ -108,8 +119,9 @@ def initiate_interactive():
         elif s[0].strip() == "systematic_error" and slen == 2:
             margin_f = s[1].strip()
         elif s[0].strip() == "import_model" and slen == 2:
-            # print("Currently only U1 model is available.")
             leptoquark_model = s[1].strip()
+        elif s[0].strip() == "width_constant" and slen == 2:
+            width_constant = float(s[1].strip())
         elif s[0].strip() == "significance" and slen == 2:
             if s[1].strip() == "1":
                 sigma_limit = 1
@@ -125,7 +137,7 @@ def initiate_interactive():
             )
         elif s[0].strip() == "help":
             print_initiate_message(
-                "mass=, couplings=, systematic-error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
+                "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
                 "Couplings available: y10LL[1,1],y10LL[2,1],y10LL[3,1],y10RR[1,1],y10RR[2,1],y10RR[3,1],y10LL[1,2],y10LL[2,2],y10LL[3,2],y10RR[1,2],y10RR[2,2],y10RR[3,2],y10LL[1,3],y10LL[2,3],y10LL[3,3],y10RR[1,3],y10RR[2,3],y10RR[3,3],x10LL[1,1],x10LL[2,1],x10LL[3,1],x10RR[1,1],x10RR[2,1],x10RR[3,1],x10LL[1,2],x10LL[2,2],x10LL[3,2],x10RR[1,2],x10RR[2,2],x10RR[3,2],x10LL[1,3],x10LL[2,3],x10LL[3,3],x10RR[1,3],x10RR[2,3],x10RR[3,3]",
                 "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n",
             )
@@ -150,6 +162,7 @@ def initiate_interactive():
                 ),
                 True,
                 chi_sq_limits,
+                width_constant,
             )
         elif s[0].strip() in ["exit", "q", "exit()", ".exit"]:
             return

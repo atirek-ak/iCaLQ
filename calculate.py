@@ -26,6 +26,7 @@ def home(
     leptoquark_model,
     interactive,
     chi_sq_limits,
+    width_constant: float,
     output_yes="icalq_yes.csv",
     output_no="icalq_no.csv",
 ):
@@ -38,14 +39,14 @@ def home(
     )
     mass_dict = make_mass_dict(lambdastring, num_lam)
     all_lam, all_ls = get_lam_separate(lam)
-    br_frac = branching_fraction(all_ls, all_lam, mass_dict, mass, 0)
+    br_frac = branching_fraction(all_ls, all_lam, mass_dict, mass, width_constant)
     chisq_symb = get_chi_square_symb(
         mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin
     )
     # print("Lambdifying...")
     numpy_chisq = lambdify(flatten(lam), chisq_symb, modules="numpy")
     startLambda = 0.5
-    startLambdas = np.array([startLambda for x in range(num_lam)])
+    startLambdas = np.array([startLambda for _ in range(num_lam)])
     print("Minimizing...")
     minima = optimize.minimize(
         lambda x: numpy_chisq(*flatten(x)),

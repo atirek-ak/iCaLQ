@@ -50,7 +50,7 @@ The first 4 commands set the input parameters as `<command> = <value>`. The rest
 - `couplings` should list couplings in the format _LMxyL_ or _LMxyR_ where _x_ is the quark number and _y_ is the lepton number and the last _L_ or _R_ denote left or right handedness respectively.
 - `significance` takes values 1 or 2.
 - `ignore_single_pair` takes values _yes_ or _no_. Input _yes_ means that the single and pair productions will be ignored and this will speed up calculations.
-- `systematic-error` denotes the systematic error margin. Default is 10%.
+- `systematic_error` denotes the systematic error margin. Default is 10%.
 - `import_model` to specify which leptoquark model to use.
 - `status` displayes the current values of input parameters.
 - `help` displays the list of commands available.

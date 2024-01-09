@@ -39,7 +39,7 @@ def decay_width_massfactor(mlq: float, M: list):
 
 
 # Calculate branching fraction of dielectron, dimuon an ditau using decay_width
-def branching_fraction(all_ls, all_lam, md, Mlq, width_const=0):
+def branching_fraction(all_ls, all_lam, md, Mlq, width_const: float=0):
     denom = width_const
     numer = [0, 0, 0]
     for i in range(len(all_ls)):
