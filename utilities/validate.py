@@ -33,8 +33,8 @@ def ready_to_initiate(
         return False
     for i in range(len(lambdas)):
         if not (
-            (lambdas[i][:1] == "y" and leptoquark_model in scalar_leptoquark_models)
-            or (lambdas[i][:1] == "x" and leptoquark_model in vector_leptoquark_models)
+            (lambdas[i][:1] == "Y" and leptoquark_model in scalar_leptoquark_models)
+            or (lambdas[i][:1] == "X" and leptoquark_model in vector_leptoquark_models)
         ):
             return False
         if lambdas[i][6] not in ["1", "2", "3"]:

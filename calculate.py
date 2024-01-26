@@ -84,12 +84,12 @@ def home(
         while True:
             print("\n > ", end="")
             lam_val_f = input()
-            if lam_val_f == "done":
+            if lam_val_f.lower() in ["done", "exit"]:
                 return
             if not lam_val_ok(lam_val_f, num_lam):
                 prRed(f"[Query Error]: Please input {num_lam} float input/s.\n")
                 # prRed(f"[Query Error]: Query values for lambdas are either not {num_lam} (number of lambdas) in count or not convertible to float.\n")
-                print("Type 'done' to continue to icalq prompt.")
+                print("Type 'done' or 'exit' to continue to icalq prompt.")
                 continue
             lam_vals, original_lam_vals = parse_lam(original_lambdastring, lam_val_f)
             delta_chisq, validity_list = get_delta_chisq(

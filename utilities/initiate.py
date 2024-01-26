@@ -15,9 +15,7 @@ from calculate import home
 chi_sq_limits = chi_sq_limits_2
 
 
-def initiate_with_files(
-    card: str, vals: str, output_yes: str, output_no: str
-):
+def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     """
     Initiate procedure if non-interactive input is given
 
@@ -86,24 +84,22 @@ def initiate_interactive():
     global chi_sq_limits
     mass_f = ""
     lambdas_f = ""
-    ignore_f = "yes"
+    ignore_f = "no"
     sigma_limit = 2
     margin_f = "0.1"
     lam_values_f = []
     leptoquark_model = ""
     width_constant = 0
-    if leptoquark_model in vector_leptoquark_models:
-        print_initiate_message(
-            "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
-            f"Model loaded: {leptoquark_model}",
-            "Couplings available: x10LL[1,1],x10LL[2,1],x10LL[3,1],x10RR[1,1],x10RR[2,1],x10RR[3,1],x10LL[1,2],x10LL[2,2],x10LL[3,2],x10RR[1,2],x10RR[2,2],x10RR[3,2],x10LL[1,3],x10LL[2,3],x10LL[3,3],x10RR[1,3],x10RR[2,3],x10RR[3,3]",
-        )
-    elif leptoquark_model in scalar_leptoquark_models:
-        print_initiate_message(
-            "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
-            f"Model loaded: {leptoquark_model}",
-            "Couplings available: y10LL[1,1],y10LL[2,1],y10LL[3,1],y10RR[1,1],y10RR[2,1],y10RR[3,1],y10LL[1,2],y10LL[2,2],y10LL[3,2],y10RR[1,2],y10RR[2,2],y10RR[3,2],y10LL[1,3],y10LL[2,3],y10LL[3,3],y10RR[1,3],y10RR[2,3],y10RR[3,3]",
-        )
+    print_initiate_message(
+        "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, status, initiate, help\n",
+        "",
+        "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: :X10LL[1,1],X10LL[3,2],X10RR[1,1]",
+    )
+    print("Default values set:")
+    print(f"ignore_single_pair = {ignore_f}")
+    print(f"significance = {sigma_limit}")
+    print(f"systematic_error = {margin_f}")
+    print(f"width_constant = {width_constant}")
     while True:
         prCyan("icalq > ")
         s = input().split("=")
@@ -137,8 +133,8 @@ def initiate_interactive():
             )
         elif s[0].strip() == "help":
             print_initiate_message(
-                "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, status, initiate, help\n",
-                "Couplings available: y10LL[1,1],y10LL[2,1],y10LL[3,1],y10RR[1,1],y10RR[2,1],y10RR[3,1],y10LL[1,2],y10LL[2,2],y10LL[3,2],y10RR[1,2],y10RR[2,2],y10RR[3,2],y10LL[1,3],y10LL[2,3],y10LL[3,3],y10RR[1,3],y10RR[2,3],y10RR[3,3],x10LL[1,1],x10LL[2,1],x10LL[3,1],x10RR[1,1],x10RR[2,1],x10RR[3,1],x10LL[1,2],x10LL[2,2],x10LL[3,2],x10RR[1,2],x10RR[2,2],x10RR[3,2],x10LL[1,3],x10LL[2,3],x10LL[3,3],x10RR[1,3],x10RR[2,3],x10RR[3,3]",
+                "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, status, initiate, help\n",
+                "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: :X10LL[1,1],X10LL[3,2],X10RR[1,1]",
                 "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n",
             )
         elif s[0].strip() == "initiate":
@@ -146,7 +142,7 @@ def initiate_interactive():
                 mass_f, lambdas_f, ignore_f, margin_f, leptoquark_model
             ):
                 prRed(
-                    "[Lambda Error]: Example of a valid input - 'y10LL[2,1],y10LL[3,1],y10RR[1,1]'\n"
+                    "[Lambda Error]: Example of a valid input - 'Y10LL[2,1] Y10LL[3,1] Y10RR[1,1]'\n"
                 )
                 continue
             num_lam = len(lambdas_f.split())
