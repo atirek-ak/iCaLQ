@@ -46,7 +46,6 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     sigma_f = c_lines[4].split("#")[0].strip()
     margin_f = c_lines[5].split("#")[0].strip()
     width_constant = c_lines[6].split("#")[0].strip()
-
     # validate data
     if sigma_f == "1":
         chi_sq_limits = chi_sq_limits_1
@@ -129,7 +128,7 @@ def initiate_interactive():
                 prRed("Allowed values of 'significance': 1 or 2\n")
         elif s[0].strip() == "status":
             print(
-                f"\nMass: {mass_f}\nCouplings: {lambdas_f}\nIgnore Single & Pair = {ignore_f}\nSignificance = {sigma_limit}\nSystematic-Error = {margin_f}"
+                f"Mass: {mass_f}\nCouplings: {lambdas_f}\nIgnore Single & Pair = {ignore_f}\nSignificance = {sigma_limit}\nSystematic-Error = {margin_f}\nModel = {leptoquark_model}\nWidth constant = {width_constant}"
             )
         elif s[0].strip() == "help":
             print_initiate_message(

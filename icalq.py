@@ -45,12 +45,6 @@ def run():
         default="icalq_no.csv",
         help="[filename]: Specify the name of output file (disallowed values) (overwrites the existing file). Default: icalq_no.csv",
     )
-    parser.add_argument(
-        "--branching-fraction",
-        type=float,
-        default=0,
-        help="Width constant to be added to the branching fraction of all processes",
-    )
 
     args = parser.parse_args()
     input_card = args.input_card
