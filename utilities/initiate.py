@@ -26,12 +26,12 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     """
     global chi_sq_limits
     try:
-        with open(card) as c:
+        with open(card, encoding="utf8") as c:
             c_lines = c.readlines()
     except OSError:
         sys.exit(f"Card file {card} does not exist. Exiting.")
     try:
-        with open(vals) as v:
+        with open(vals, encoding="utf8") as v:
             v_lines = v.readlines()
     except OSError:
         sys.exit(f"Values file {vals} does not exist. Exiting.")

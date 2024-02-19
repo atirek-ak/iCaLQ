@@ -1,6 +1,6 @@
 def welcome_message():
     try:
-        with open("banner.txt") as f:
+        with open("banner.txt", encoding="utf8") as f:
             contents = f.read()
             print(f"\n{contents}")
     except OSError:

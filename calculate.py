@@ -111,7 +111,7 @@ def home(
     yes_list = [i for i in range(len(validity_list)) if validity_list[i] == "Yes"]
     no_list = [i for i in range(len(validity_list)) if validity_list[i] == "No"]
     print("\nYes List:\n")
-    with open(output_yes, "w") as f:
+    with open(output_yes, "w", encoding="utf8") as f:
         for x in original_lambdastring:
             print(x, end="\t\t")
             print(x, end=",", file=f)
@@ -124,7 +124,7 @@ def home(
             print(delta_chisq[i])
             print(delta_chisq[i], file=f)
     print("\nNo List:\n")
-    with open(output_no, "w") as f:
+    with open(output_no, "w", encoding="utf8") as f:
         for x in original_lambdastring:
             print(x, end="\t\t")
             print(x, end=",", file=f)
