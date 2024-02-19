@@ -1,5 +1,5 @@
 import sys
-from typing import Any
+from typing import Any, List
 from functools import cmp_to_key
 
 from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models
@@ -23,7 +23,7 @@ def parse(
     lambdas_f: str,
     ignore_f: str,
     margin_f: str,
-    lam_values_f: list[str],
+    lam_values_f: List[str],
     leptoquark_model: str,
 ):
     """
