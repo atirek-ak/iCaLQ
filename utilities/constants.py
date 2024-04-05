@@ -133,3 +133,9 @@ def get_t_ct_prefix(model: str):
 
 
 tagnames = ["/HHbT.csv", "/HHbV.csv", "/LHbT.csv", "/LHbV.csv"]
+
+k_factor_pair_production = 1.5
+k_factor_pureqcd = 1.5
+k_factor_single_production = 1.0
+k_factor_t_channel = 1.0
+k_factor_interference = 1.0

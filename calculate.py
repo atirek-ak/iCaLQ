@@ -39,9 +39,9 @@ def home(
     )
     mass_dict = make_mass_dict(lambdastring, num_lam)
     all_lam, all_ls = get_lam_separate(lam)
-    br_frac = branching_fraction(all_ls, all_lam, mass_dict, mass, width_constant)
+    br_frac = branching_fraction(leptoquark_model, all_ls, all_lam, mass_dict, mass, width_constant)
     chisq_symb = get_chi_square_symb(
-        mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin
+        mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model
     )
     # print("Lambdifying...")
     numpy_chisq = lambdify(flatten(lam), chisq_symb, modules="numpy")
