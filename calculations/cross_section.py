@@ -14,7 +14,7 @@ from utilities.constants import (
 
 def interpolate_cs_func(df, ls):
     return lambda mass: [
-        interp1d(data_mass_list, df[coupling][:5], kind=interpolation_type)([mass])[0]
+        interp1d(data_mass_list, df[coupling][:9], kind=interpolation_type)([mass])[0]
         for coupling in ls
     ]
 
