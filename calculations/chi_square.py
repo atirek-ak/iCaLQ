@@ -264,6 +264,7 @@ def get_chisq_ind(
                 )
                 ** 2
             ) / denominator[bin_no]
+    print(chi_ind)
     return sym.Add(chi_ind)
 
 

@@ -24,7 +24,7 @@ def interpolate_cs_ct_func(df):
     Interpolating cross-section of t-channel's cross terms
     """
     return lambda mass: [
-        interp1d(data_mass_list, df[ij], kind=interpolation_type)([mass])[0]
+        interp1d(data_mass_list, df[ij][:9], kind=interpolation_type)([mass])[0]
         for ij in range(len(df))
     ]
 
