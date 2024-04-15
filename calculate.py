@@ -75,7 +75,6 @@ def home(
             minima = m
     chisq_min = minima.fun
     opt_lambda_list = minima.x
-    print(f"Chi sq. minima: {chisq_min}")
     print("Minimum Chi Square at values:", end="")
     print(*[f"\n{lambdastring[i]} : {opt_lambda_list[i]}" for i in range(num_lam)])
     if interactive:

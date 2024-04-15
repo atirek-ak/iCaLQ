@@ -15,8 +15,8 @@ def ready_to_initiate(
     """
     # validate mass
     try:
-        mass = int(mass_f)
-        if mass < 1000 or mass > 5000:
+        mass = float(mass_f)
+        if mass < 1000 or mass > 7000:
             prRed(
                 "[Mass Error]: Acceptable mass values in GeV: integers between 1000 and 3000.\n"
             )

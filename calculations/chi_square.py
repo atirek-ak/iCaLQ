@@ -74,7 +74,7 @@ def get_chisq_ind(
             * b_frac**2
             * luminosity_tau
             for bin_no in range(num_bin)
-        ]
+        ] if mass <=6000 else nq
         for i in range(tautau_lambdas_len):
             np = [
                 np[bin_no]
@@ -84,7 +84,7 @@ def get_chisq_ind(
                 * b_frac**2
                 * luminosity_tau
                 for bin_no in range(num_bin)
-            ]
+            ] if mass <=6000 else np
             ns = [
                 ns[bin_no]
                 + tautau_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
@@ -129,7 +129,7 @@ def get_chisq_ind(
             nq[bin_no]
             + ee_cs[0][0] * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0) * ee_eff_l[0][0][0][bin_no] * b_frac**2 * luminosity_e_mu
             for bin_no in range(num_bin)
-        ]
+        ] if mass <=6000 else nq
         for i in range(ee_lambdas_len):
             np = [
                 np[bin_no]
@@ -139,7 +139,7 @@ def get_chisq_ind(
                 * b_frac**2
                 * luminosity_e_mu
                 for bin_no in range(num_bin)
-            ]
+            ] if mass <=6000 else np
             ns = [
                 ns[bin_no]
                 + ee_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
@@ -187,7 +187,7 @@ def get_chisq_ind(
             * b_frac**2
             * luminosity_e_mu
             for bin_no in range(num_bin)
-        ]
+        ] if mass <=6000 else nq
         for i in range(mumu_lambdas_len):
             np = [
                 np[bin_no]
@@ -197,7 +197,7 @@ def get_chisq_ind(
                 * b_frac**2
                 * luminosity_e_mu
                 for bin_no in range(num_bin)
-            ]
+            ] if mass <=6000 else np
             ns = [
                 ns[bin_no]
                 + mumu_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
@@ -264,7 +264,6 @@ def get_chisq_ind(
                 )
                 ** 2
             ) / denominator[bin_no]
-    print(chi_ind)
     return sym.Add(chi_ind)
 
 

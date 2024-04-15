@@ -1,5 +1,5 @@
 U1              # lepqtoquark model
-2500			# mass
+6000.7			# mass
 X10LL[1,1]      # couplings
 no				# ignore single and pair
 2				# significance
