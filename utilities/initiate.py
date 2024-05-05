@@ -4,8 +4,7 @@ from uu import Error
 from utilities.constants import (
     chi_sq_limits_1,
     chi_sq_limits_2,
-    scalar_leptoquark_models,
-    vector_leptoquark_models,
+    luminosity_tau
 )
 from utilities.validate import ready_to_initiate
 from utilities.parse import parse
@@ -46,6 +45,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     sigma_f = c_lines[4].split("#")[0].strip()
     margin_f = c_lines[5].split("#")[0].strip()
     width_constant = c_lines[6].split("#")[0].strip()
+    luminosity = c_lines[7].split("#")[0].strip()
     # validate data
     if sigma_f == "1":
         chi_sq_limits = chi_sq_limits_1
@@ -67,6 +67,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
             margin_f,
             v_lines,
             leptoquark_model,
+            luminosity,
         ),
         False,
         chi_sq_limits,
@@ -89,6 +90,7 @@ def initiate_interactive():
     lam_values_f = []
     leptoquark_model = ""
     width_constant = 0
+    luminosity = luminosity_tau
     print_initiate_message(
         "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, status, initiate, help\n",
         "",
@@ -99,6 +101,8 @@ def initiate_interactive():
     print(f"significance = {sigma_limit}")
     print(f"systematic_error = {margin_f}")
     print(f"width_constant = {width_constant}")
+    print(f"luminosity = {luminosity}")
+
     while True:
         prCyan("icalq > ")
         s = input().split("=")
@@ -117,6 +121,8 @@ def initiate_interactive():
             leptoquark_model = s[1].strip()
         elif s[0].strip() == "width_constant" and slen == 2:
             width_constant = float(s[1].strip())
+        elif s[0].strip() == "luminosity" and slen == 2:
+            luminosity = float(s[1].strip())
         elif s[0].strip() == "significance" and slen == 2:
             if s[1].strip() == "1":
                 sigma_limit = 1
@@ -132,7 +138,7 @@ def initiate_interactive():
             )
         elif s[0].strip() == "help":
             print_initiate_message(
-                "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, status, initiate, help\n",
+                "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, luminosity=, status, initiate, help\n",
                 "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: :X10LL[1,1],X10LL[3,2],X10RR[1,1]",
                 "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n",
             )
@@ -154,6 +160,7 @@ def initiate_interactive():
                     margin_f,
                     lam_values_f,
                     leptoquark_model,
+                    luminosity
                 ),
                 True,
                 chi_sq_limits,

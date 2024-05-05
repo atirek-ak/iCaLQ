@@ -24,6 +24,7 @@ def home(
     original_lam_vals,
     margin,
     leptoquark_model,
+    luminosity,
     interactive,
     chi_sq_limits,
     width_constant: float,
@@ -41,7 +42,7 @@ def home(
     all_lam, all_ls = get_lam_separate(lam)
     br_frac = branching_fraction(leptoquark_model, all_ls, all_lam, mass_dict, mass, width_constant)
     chisq_symb = get_chi_square_symb(
-        mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model
+        mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model, luminosity
     )
     # print("Lambdifying...")
     numpy_chisq = lambdify(flatten(lam), chisq_symb, modules="numpy")

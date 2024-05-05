@@ -1,7 +1,8 @@
 U1              # lepqtoquark model
-3500			# mass
-X10LL[1,1]      # couplings
+2500			# mass
+X10LL[1,1] X10LL[2,1]      # couplings
 no				# ignore single and pair
 2				# significance
 0.1				# systematic error
 0               # width constant
+139000
