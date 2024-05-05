@@ -1,1 +1,1 @@
-python3 icalq.py -ni --input-card sample/sample_1.card --input-values sample/sample_1.vals --output-yes sample/sample_1_yes.csv --output-no sample/sample_1_no.csv
+python3 icalq.py -ni --input-card sample/sample_1.card --input-values sample/sample_1.vals --output-yes values/1000/X10LL[1,2]_X10LL[2,2].csv --output-no sample/sample_1_no.csv
