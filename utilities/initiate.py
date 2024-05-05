@@ -1,5 +1,5 @@
 import sys
-from uu import Error
+import random
 
 from utilities.constants import (
     chi_sq_limits_1,
@@ -29,13 +29,8 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
             c_lines = c.readlines()
     except OSError:
         sys.exit(f"Card file {card} does not exist. Exiting.")
-    try:
-        with open(vals, encoding="utf8") as v:
-            v_lines = v.readlines()
-    except OSError:
-        sys.exit(f"Values file {vals} does not exist. Exiting.")
-    if len(c_lines) < 5:
-        sys.exit(f"Number of lines in file: {len(c_lines)}, expected 5. Exiting.")
+    if len(c_lines) < 8:
+        sys.exit(f"Number of lines in file: {len(c_lines)}, expected 8. Exiting.")
 
     # extract data
     leptoquark_model = c_lines[0].split("#")[0].strip()
@@ -46,6 +41,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     margin_f = c_lines[5].split("#")[0].strip()
     width_constant = c_lines[6].split("#")[0].strip()
     luminosity = c_lines[7].split("#")[0].strip()
+    random_points = int(c_lines[8].split("#")[0].strip())
     # validate data
     if sigma_f == "1":
         chi_sq_limits = chi_sq_limits_1
@@ -59,6 +55,21 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
         sys.exit("[Input Error]: Syntax Error encountered in input card. Exiting.")
 
     width_constant = float(width_constant)
+
+    # update vals file value with random points if needed
+    if random_points > 0:
+        f = open(vals, "w")
+        for _ in range(random_points): 
+            vals_list = [str(random.uniform(-3.5, 3.5)) for _ in range(len(lambdas_f.split(' ')))]
+            vals_string = " ".join(vals_list)
+            f.write(f"{vals_string}\n")
+        f.close()
+
+    try:
+        with open(vals, encoding="utf8") as v:
+            v_lines = v.readlines()
+    except OSError:
+        sys.exit(f"Values file {vals} does not exist. Exiting.")
     home(
         *parse(
             mass_f,
@@ -72,6 +83,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
         False,
         chi_sq_limits,
         width_constant,
+        vals,
         output_yes,
         output_no,
     )
@@ -160,7 +172,7 @@ def initiate_interactive():
                     margin_f,
                     lam_values_f,
                     leptoquark_model,
-                    luminosity
+                    luminosity,
                 ),
                 True,
                 chi_sq_limits,
