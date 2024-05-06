@@ -18,7 +18,7 @@ def compare_lambda(item1: Any, item2: Any) -> int:
     return -1 if a1[4] == "L" else 1
 
 
-def parse(
+def sort_couplings_and_values(
     mass_f: str,
     lambdas_f: str,
     ignore_f: str,
@@ -37,16 +37,11 @@ def parse(
     :param lambdas_f: Lambda couplings values
     """
     # convert to correct data types
-    mass = float(mass_f)
-    margin = float(margin_f)
-    luminosity=float(luminosity)
     original_lambdastring = lambdas_f.strip().split()
-    ignorePairSingle = ignore_f.strip().lower() in {"yes", "y"}
     original_lam_vals = []
     temp_lam_vals = []
     lambdastring = []
     for val in lam_values_f:
-        val = val.replace(",", " ")
         try:
             if len(val.strip().split()) != len(original_lambdastring):
                 raise ValueError()

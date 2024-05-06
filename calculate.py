@@ -88,7 +88,7 @@ def home(
             if lam_val_f.lower() in ["done", "exit"]:
                 return
             if not lam_val_ok(lam_val_f, num_lam):
-                prRed(f"[Query Error]: Please input {num_lam} float input/s.\n")
+                prRed(f"[Query Error]: Please input {num_lam} float input/s.")
                 # prRed(f"[Query Error]: Query values for lambdas are either not {num_lam} (number of lambdas) in count or not convertible to float.\n")
                 print("Type 'done' or 'exit' to continue to icalq prompt.")
                 continue

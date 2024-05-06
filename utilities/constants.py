@@ -43,6 +43,9 @@ chi_sq_limits_2 = [
 scalar_leptoquark_models = ["S1"]
 vector_leptoquark_models = ["U1"]
 
+minimum_lepptoquark_mass_supported = 1000
+maximum_lepptoquark_mass_supported = 5000
+
 interpolation_type = "slinear"
 mev2gev = 0.001
 

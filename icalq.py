@@ -47,30 +47,30 @@ def run():
     )
 
     args = parser.parse_args()
-    input_card = args.input_card
-    input_vals = args.input_values
-    output_yes = args.output_yes
-    output_no = args.output_no
+    input_card_file = args.input_card
+    input_vals_file = args.input_values
+    output_yes_file = args.output_yes
+    output_no_file= args.output_no
 
     if not args.no_banner:
         welcome_message()
 
     if args.non_interactive:
         non_interactive_message(
-            input_card, input_vals, output_yes, output_no
+            input_card_file, input_vals_file, output_yes_file, output_no_file
         )
         initiate_with_files(
-            input_card, input_vals, output_yes, output_no
+            input_card_file, input_vals_file, output_yes_file, output_no_file
         )
     else:
         initiate_interactive()
 
 
 def non_interactive_message(
-    input_card: str,
-    input_vals: str,
-    output_yes: str,
-    output_no: str,
+    input_card_file: str,
+    input_vals_file: str,
+    output_yes_file: str,
+    output_no_file: str,
 ):
     """
     Print an initial message for the non-interactive mode
@@ -80,18 +80,18 @@ def non_interactive_message(
     :param output_yes: File path of the output file (allowed values)
     :param output_no: File path of the output file (disallowed values)
     """
-    if not input_card:
+    if not input_card_file:
         sys.exit(
             "[Card Error]: Input Card file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
         )
-    if not input_vals:
+    if not input_vals_file:
         sys.exit(
             "[Values Error]: Input Values file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
         )
-    print(f"Input Card file: {input_card}")
-    print(f"Input Values file: {input_vals}")
-    print(f"Output Yes file: {output_yes}")
-    print(f"Output No file: {output_no}")
+    print(f"Input Card file: {input_card_file}")
+    print(f"Input Values file: {input_vals_file}")
+    print(f"Output Yes file: {output_yes_file}")
+    print(f"Output No file: {output_no_file}")
 
 
 try:
