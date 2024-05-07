@@ -100,6 +100,8 @@ def home(
                 numpy_chisq,
                 num_lam,
                 chi_sq_limits,
+                mass,
+                lambdastring
             )
             print(f"Delta Chi Square: {delta_chisq[0]}\nAllowed: {validity_list[0]}")
             if delta_chisq[0] < 0:
@@ -107,7 +109,7 @@ def home(
                     "A negative value should imply precision less than 1e-4 while calculating minima and can be considered equal to 0. Try initiating again to randomize minimization."
                 )
     delta_chisq, validity_list = get_delta_chisq(
-        lam_vals, original_lam_vals, chisq_min, numpy_chisq, num_lam, chi_sq_limits
+        lam_vals, original_lam_vals, chisq_min, numpy_chisq, num_lam, chi_sq_limits, mass,lambdastring
     )
     yes_list = [i for i in range(len(validity_list)) if validity_list[i] == "Yes"]
     no_list = [i for i in range(len(validity_list)) if validity_list[i] == "No"]

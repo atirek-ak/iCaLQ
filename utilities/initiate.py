@@ -29,7 +29,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
             c_lines = c.readlines()
     except OSError:
         sys.exit(f"Card file {card} does not exist. Exiting.")
-    if len(c_lines) < 8:
+    if len(c_lines) < 9:
         sys.exit(f"Number of lines in file: {len(c_lines)}, expected 8. Exiting.")
 
     # extract data
@@ -83,7 +83,6 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
         False,
         chi_sq_limits,
         width_constant,
-        vals,
         output_yes,
         output_no,
     )

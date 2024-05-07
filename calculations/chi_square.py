@@ -60,7 +60,9 @@ def get_chisq_ind(
     nt = [0.0] * num_bin
     ntc = [0.0] * num_bin
     nsm = NSM[tag]
+    # nsm = [x*luminosity/139000 for x in nsm]
     nd = ND[tag]
+    # nd = [x*luminosity/139000 for x in nd]
     denominator = [
         nd[bin_no] + margin * margin * nd[bin_no] ** 2 for bin_no in range(num_bin)
     ]
@@ -372,15 +374,27 @@ def get_chi_square_symb(
         print("Ditau: LHbV contributions computed.")
     return sym.Add(ee_chi, mumu_chi, hhbt_chi, hhbv_chi, lhbt_chi, lhbv_chi)
 
+def add_plot_data(chisq_min, lam_vals, numpy_chisq, mass, lambdastring):
+    for lam_val in lam_vals:
+        temp = [float(x) for x in lam_val]
+        if not any(temp):
+            temp = [0.00000001] * len(lam_val)
+        chisq_given_vals = numpy_chisq(*flatten(temp))
+        file_path = f"plots/data/{lambdastring[0]}.csv"
+        with open(file_path, "a") as f:
+            f.write(f"{mass},{chisq_min},{chisq_given_vals},{lam_val[0]}\n")
+
+
 
 def get_delta_chisq(
-    lam_vals, lam_vals_original, chisq_min, numpy_chisq, num_lam, chi_sq_limits
+    lam_vals, lam_vals_original, chisq_min, numpy_chisq, num_lam, chi_sq_limits, mass, lambdastring
 ):
     """
     Use the lambdified function (numpy_chisq) to calculate chi square for the given query input
     """
     validity_list = []
     delta_chisq = []
+    add_plot_data(chisq_min, lam_vals, numpy_chisq, mass, lambdastring)
     for lam_val, lam_val_copy in zip(lam_vals, lam_vals_original):
         temp = [float(x) for x in lam_val]
         if not any(temp):
