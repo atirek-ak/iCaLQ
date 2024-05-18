@@ -145,7 +145,7 @@ def initiate_interactive():
                 prRed("Allowed values of 'significance': 1 or 2\n")
         elif s[0].strip() == "status":
             print(
-                f"Mass: {mass_f}\nCouplings: {lambdas_f}\nIgnore Single & Pair = {ignore_f}\nSignificance = {sigma_limit}\nSystematic-Error = {margin_f}\nModel = {leptoquark_model}\nWidth constant = {width_constant}"
+                f"Mass: {mass_f}\nCouplings: {lambdas_f}\nIgnore Single & Pair = {ignore_f}\nSignificance = {sigma_limit}\nSystematic-Error = {margin_f}\nModel = {leptoquark_model}\nWidth constant = {width_constant}\nLuminosity = {luminosity}"
             )
         elif s[0].strip() == "help":
             print_initiate_message(
