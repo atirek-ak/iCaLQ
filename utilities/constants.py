@@ -59,6 +59,7 @@ for gen in mass_leptons:
     mass_leptons[gen] = [x * mev2gev for x in mass_leptons[gen]]
 
 data_mass_list = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000]
+
 luminosity_tau = 139 * 1000
 luminosity_e_mu = 140 * 1000
 
@@ -93,12 +94,12 @@ cs_sc_path = "./data/cross_section/"
 
 
 # df_pair = pd.read_csv(f"{cs_sc_path}pair.csv")
-def get_df_pair(model: str):
+def get_df_pair_production(model: str):
     return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pair.csv")
 
 
 # df_single = pd.read_csv(f"{cs_sc_path}single.csv")
-def get_df_single(model: str):
+def get_df_single_production(model: str):
     return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/single.csv")
 
 
@@ -118,7 +119,7 @@ def get_df_pureqcd(model: str):
 
 
 # double_coupling_data_tchannel = pd.read_csv(cross_terms_tchannel, header=[0])
-def get_double_coupling_data_tchannel(model: str):
+def get_cross_terms_data_tchannel(model: str):
     return pd.read_csv(
         f"{DATA_PREFIX}/model/{model}/cross_section/tchannel_doublecoupling.csv",
         header=[0],

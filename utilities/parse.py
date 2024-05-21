@@ -3,9 +3,10 @@ from typing import Any, List
 from functools import cmp_to_key
 
 from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models
+from utilities.data_classes import LeptoquarkParameters
 
 
-def compare_lambda(item1: Any, item2: Any) -> int:
+def compare_coupling(item1: Any, item2: Any) -> int:
     """
     Use this function as the comparator function while sorting lambdas
     """
@@ -19,62 +20,21 @@ def compare_lambda(item1: Any, item2: Any) -> int:
 
 
 def sort_couplings_and_values(
-    mass_f: str,
-    lambdas_f: str,
-    ignore_f: str,
-    margin_f: str,
-    lam_values_f: List[str],
-    leptoquark_model: str,
-    luminosity: str,
+    leptoquark_parameters: LeptoquarkParameters
 ):
     """
-    Parsing string input to their appropriate format. Outputs to be used by home function.
-
-    :param mass_f: Leptoquark mass
-    :param lambdas_f: Lambda couplings
-    :param ignore_f: Ignore single and pair production
-    :param margin_f: Systematic error
-    :param lambdas_f: Lambda couplings values
+    Sort coupling and values so that the correct efficiency files can be read
     """
-    # convert to correct data types
-    original_lambdastring = lambdas_f.strip().split()
-    original_lam_vals = []
-    temp_lam_vals = []
-    lambdastring = []
-    for val in lam_values_f:
-        try:
-            if len(val.strip().split()) != len(original_lambdastring):
-                raise ValueError()
-            for x in val.strip().split():
-                float(x)
-        except ValueError:
-            print(original_lambdastring)
-            sys.exit(
-                f"[Query Error]: Query values for lambdas are either not {len(original_lambdastring)} (number of lambdas) in count or not convertible to float."
-            )
-        original_lam_vals.append(val.strip().split())
-    for lam_val in original_lam_vals:
-        combined_lambda = zip(original_lambdastring, lam_val)
-        combined_lambda = sorted(combined_lambda, key=cmp_to_key(compare_lambda))
-        combined_lambda = list(zip(*combined_lambda))
-        lambdastring = list(combined_lambda[0])
-        temp_lam_vals.append(list(combined_lambda[1]))
-    lam_vals = temp_lam_vals
-    if leptoquark_model not in scalar_leptoquark_models + vector_leptoquark_models:
-        raise ValueError(
-            f"Model inputted should belong to {scalar_leptoquark_models + vector_leptoquark_models}"
-        )
-    return (
-        mass,
-        lambdastring,
-        original_lambdastring,
-        ignorePairSingle,
-        lam_vals,
-        original_lam_vals,
-        margin,
-        leptoquark_model,
-        luminosity,
-    )
+    for coupling_value, line_number in leptoquark_parameters.couplings_values:
+        if len(coupling_value) != len(leptoquark_parameters.couplings):
+            sys.exit(f"[Query Error]: Coupling values length in line {line_number} is {coupling_value} which does not match the length of input couplings {leptoquark_parameters.couplings}")
+    for coupling_value in leptoquark_parameters.couplings_values:
+
+        combined_couplings_and_values = zip(leptoquark_parameters.couplings, coupling_value)
+        sorted_combined_couplings_and_values = sorted(combined_couplings_and_values, key=cmp_to_key(compare_coupling))
+        sorted_combined_couplings_and_values = list(zip(*sorted_combined_couplings_and_values))
+        leptoquark_parameters.sorted_couplings = list(sorted_combined_couplings_and_values[0])
+        leptoquark_parameters.sorted_couplings_values.append(list(sorted_combined_couplings_and_values[1]))
 
 
 def parse_lam(original_lambdastring, lam_val_f):
@@ -84,7 +44,7 @@ def parse_lam(original_lambdastring, lam_val_f):
     lam_val_f = lam_val_f.replace(",", " ")
     original_lam_vals = [lam_val_f.strip().split()]
     combined_lambda = zip(original_lambdastring, original_lam_vals[0])
-    combined_lambda = sorted(combined_lambda, key=cmp_to_key(compare_lambda))
+    combined_lambda = sorted(combined_lambda, key=cmp_to_key(compare_coupling))
     combined_lambda = list(zip(*combined_lambda))
     temp_lam_vals = [list(combined_lambda[1])]
     return temp_lam_vals, original_lam_vals

@@ -1,7 +1,7 @@
 from utilities.constants import data_mass_list, mass_quarks, mass_leptons
 
 
-def get_closest_mass(mass):
+def get_closest_leptoquark_mass(mass):
     """
     Find the closest mass to the input mass
     """
@@ -14,7 +14,7 @@ def get_closest_mass(mass):
     return closest_mass
 
 
-def make_mass_dict(ls, num_lam):
+def make_leptoquark_mass_dict(ls, num_lam):
     md = {}
     for i in range(num_lam):
         if ls[i][4] == "L":

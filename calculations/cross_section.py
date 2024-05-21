@@ -1,121 +1,106 @@
 from scipy.interpolate import interp1d
 
+from utilities.data_classes import LeptoquarkParameters, ProcessCrossSections, ParticleCrossSections, CrossTermsCrossSections
 from utilities.constants import (
     interpolation_type,
     data_mass_list,
     get_df_pureqcd,
-    get_df_pair,
-    get_df_single,
+    get_df_pair_production,
+    get_df_single_production,
     get_df_interference,
     get_df_tchannel,
-    get_double_coupling_data_tchannel,
+    get_cross_terms_data_tchannel,
 )
 
 
-def interpolate_cs_func(df, ls):
+def interpolate_cross_section(df, couplings):
+    """
+    Returns a function to interpolate cross-section for masses whose cross-sections are not generated
+    """
     return lambda mass: [
-        interp1d(data_mass_list, df[coupling][:13], kind=interpolation_type)([mass])[0]
-        for coupling in ls
+        interp1d(data_mass_list, df[coupling][:len(data_mass_list)], kind=interpolation_type)([mass])[0]
+        for coupling in couplings
     ]
 
 
-def interpolate_cs_ct_func(df):
+def interpolate_cross_section_cross_terms(df):
     """
     Interpolating cross-section of t-channel's cross terms
     """
     return lambda mass: [
-        interp1d(data_mass_list, df[ij][:13], kind=interpolation_type)([mass])[0]
-        for ij in range(len(df))
+        interp1d(data_mass_list, df[i][:len(data_mass_list)], kind=interpolation_type)([mass])[0]
+        for i in range(len(df))
     ]
 
 
-def get_cs(mass, lambdastring, num_lam, leptoquark_model):
+def get_cross_sections(leptoquark_parameters: LeptoquarkParameters):
     """
     Get cross sections from data files
     """
-    cs_q = interpolate_cs_func(get_df_pureqcd(leptoquark_model), lambdastring)
-    cs_p = interpolate_cs_func(get_df_pair(leptoquark_model), lambdastring)
-    cs_s = interpolate_cs_func(get_df_single(leptoquark_model), lambdastring)
-    cs_i = interpolate_cs_func(get_df_interference(leptoquark_model), lambdastring)
-    cs_t = interpolate_cs_func(get_df_tchannel(leptoquark_model), lambdastring)
-    cs_l = [cs_q(mass), cs_p(mass), cs_s(mass), cs_i(mass), cs_t(mass)]
-    #
-    ee_cs = []
-    mumu_cs = []
-    tautau_cs = []
-    for process in cs_l:
-        ee_temp = []
-        mumu_temp = []
-        tautau_temp = []
-        for lamda, cs in zip(lambdastring, process):
-            if lamda[8] == "1":
-                ee_temp.append(cs)
-            elif lamda[8] == "2":
-                mumu_temp.append(cs)
-            elif lamda[8] == "3":
-                tautau_temp.append(cs)
-        ee_cs.append(ee_temp)
-        mumu_cs.append(mumu_temp)
-        tautau_cs.append(tautau_temp)
-    # cross terms:
-    double_coupling_data_tchannel = get_double_coupling_data_tchannel(leptoquark_model)
-    ee_t_ct = [
-        double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
-        for i in range(num_lam)
-        for j in range(i + 1, num_lam)
-        if lambdastring[i][8] == lambdastring[j][8] and lambdastring[i][8] == "1"
-    ]
-    mumu_t_ct = [
-        double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
-        for i in range(num_lam)
-        for j in range(i + 1, num_lam)
-        if lambdastring[i][8] == lambdastring[j][8] and lambdastring[i][8] == "2"
-    ]
-    tautau_t_ct = [
-        double_coupling_data_tchannel[f"{lambdastring[i]}_{lambdastring[j]}"]
-        for i in range(num_lam)
-        for j in range(i + 1, num_lam)
-        if lambdastring[i][8] == lambdastring[j][8] and lambdastring[i][8] == "3"
-    ]
-    cs_ee_t_ct_func = interpolate_cs_ct_func(ee_t_ct)
-    cs_ee_t_ct_temp = cs_ee_t_ct_func(mass)
-    cs_mumu_t_ct_func = interpolate_cs_ct_func(mumu_t_ct)
-    cs_mumu_t_ct_temp = cs_mumu_t_ct_func(mass)
-    cs_tautau_t_ct_func = interpolate_cs_ct_func(tautau_t_ct)
-    cs_tautau_t_ct_temp = cs_tautau_t_ct_func(mass)
-    #
-    ee_cntr = 0
-    cs_ee_t_ct = cs_ee_t_ct_temp[:]
-    mumu_cntr = 0
-    cs_mumu_t_ct = cs_mumu_t_ct_temp[:]
-    tautau_cntr = 0
-    cs_tautau_t_ct = cs_tautau_t_ct_temp[:]
-    for i in range(num_lam):
-        for j in range(i + 1, num_lam):
-            if lambdastring[i][8] == lambdastring[j][8]:
-                if lambdastring[i][8] == "1":
-                    cs_ee_t_ct[ee_cntr] = (
-                        cs_ee_t_ct_temp[ee_cntr] - cs_l[4][i] - cs_l[4][j]
-                    )
-                    ee_cntr += 1
-                elif lambdastring[i][8] == "2":
-                    cs_mumu_t_ct[mumu_cntr] = (
-                        cs_mumu_t_ct_temp[mumu_cntr] - cs_l[4][i] - cs_l[4][j]
-                    )
-                    mumu_cntr += 1
-                elif lambdastring[i][8] == "3":
-                    cs_tautau_t_ct[tautau_cntr] = (
-                        cs_tautau_t_ct_temp[tautau_cntr] - cs_l[4][i] - cs_l[4][j]
-                    )
-                    tautau_cntr += 1
+    # initialse particle cross section objects
+    electron_electron_cross_section = ParticleCrossSections()
+    muon_muon_cross_section = ParticleCrossSections()
+    tau_tau_cross_section = ParticleCrossSections()
+
+    # single coupling
+    # read interpolated cross-sections dataframes
+    cross_section_pureqcd_interpolation_function = interpolate_cross_section(get_df_pureqcd(leptoquark_parameters.leptoquark_model), leptoquark_parameters.sorted_couplings)
+    cross_sections_pureqcd = cross_section_pureqcd_interpolation_function(leptoquark_parameters.leptoquark_mass) # list of floats in sorted couplings order
+    cross_section_pair_production_interpolation_function = interpolate_cross_section(get_df_pair_production(leptoquark_parameters.leptoquark_model), leptoquark_parameters.sorted_couplings)
+    cross_sections_pair_production = cross_section_pair_production_interpolation_function(leptoquark_parameters.leptoquark_mass) # list of floats in sorted couplings order
+    cross_section_single_production_interpolation_function = interpolate_cross_section(get_df_single_production(leptoquark_parameters.leptoquark_model), leptoquark_parameters.sorted_couplings)
+    cross_sections_single_production = cross_section_single_production_interpolation_function(leptoquark_parameters.leptoquark_mass) # list of floats in sorted couplings order
+    cross_section_interference_interpolation_function = interpolate_cross_section(get_df_interference(leptoquark_parameters.leptoquark_model), leptoquark_parameters.sorted_couplings)
+    cross_sections_interference = cross_section_interference_interpolation_function(leptoquark_parameters.leptoquark_mass) # list of floats in sorted couplings order
+    cross_section_tchannel_interpolation_function = interpolate_cross_section(get_df_tchannel(leptoquark_parameters.leptoquark_model), leptoquark_parameters.sorted_couplings)
+    cross_sections_tchannel = cross_section_tchannel_interpolation_function(leptoquark_parameters.leptoquark_mass) # list of floats in sorted couplings order
+
+    # categorise them by particle and assign to ParticleCrossSections instance which will be used everywhere
+    for sorted_coupling, cross_section_pureqcd, cross_section_pair_production, cross_section_single_production, cross_section_interference, cross_section_tchannel in zip(leptoquark_parameters.sorted_couplings, cross_sections_pureqcd, cross_sections_pair_production, cross_sections_single_production, cross_sections_interference, cross_sections_tchannel):
+        process_cross_section = ProcessCrossSections(
+            cross_section_pureqcd = cross_section_pureqcd,
+            cross_section_pair_production = cross_section_pair_production,
+            cross_section_single_production = cross_section_single_production,
+            cross_section_interference = cross_section_interference,
+            cross_section_tchannel = cross_section_tchannel,
+            coupling = sorted_coupling,
+        )
+        if sorted_coupling[8] == '1': # electron 
+            electron_electron_cross_section.single_coupling_cross_sections.append(process_cross_section)
+        elif sorted_coupling[8] == '2': # muon
+            muon_muon_cross_section.single_coupling_cross_sections.append(process_cross_section)
+        elif sorted_coupling[8] == '3': # tau
+            tau_tau_cross_section.single_coupling_cross_sections.append(process_cross_section)
+
+
+    # cross terms
+    # read interpolated cross-sections dataframes
+    cross_terms_cross_section_tchannel_df = get_cross_terms_data_tchannel(leptoquark_parameters.leptoquark_model)
+
+    for i in range(len(leptoquark_parameters.sorted_couplings)):
+        for j in range(i+1, len(leptoquark_parameters.sorted_couplings)):
+            cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
+            cross_terms_cross_section_tchannel_df_for_coupling = [ 
+                cross_terms_cross_section_tchannel_df[cross_terms_coupling]
+                for i in range(len(leptoquark_parameters.sorted_couplings))
+                for j in range(i + 1, len(leptoquark_parameters.sorted_couplings))
+                if leptoquark_parameters.couplings[i][8] == leptoquark_parameters.couplings[j][8] # if couplings belong to the same category
+            ]
+            cross_terms_cross_section_tchannel_interpolation_function = interpolate_cross_section_cross_terms(cross_terms_cross_section_tchannel_df_for_coupling)
+            cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel_interpolation_function(leptoquark_parameters.leptoquark_mass)
+            cross_terms_cross_section = CrossTermsCrossSections(
+                cross_section_cross_terms_tchannel = cross_terms_cross_section_tchannel - cross_sections_tchannel[i] - cross_sections_tchannel[j],
+                coupling = cross_terms_coupling,
+            )
+            if cross_terms_coupling[8] == '1': # electron 
+                electron_electron_cross_section.cross_terms_cross_sections.append(cross_terms_cross_section)
+            elif cross_terms_coupling[8] == '2': # muon
+                muon_muon_cross_section.cross_terms_cross_sections.append(cross_terms_cross_section)
+            elif cross_terms_coupling[8] == '3': # tau
+                tau_tau_cross_section.cross_terms_cross_sections.append(cross_terms_cross_section)
+
     return [
-        ee_cs,
-        mumu_cs,
-        tautau_cs,
-        cs_ee_t_ct,
-        cs_mumu_t_ct,
-        cs_tautau_t_ct,
-        cs_ee_t_ct_temp,
-        cs_mumu_t_ct_temp,
-        cs_tautau_t_ct_temp,
+        electron_electron_cross_section,
+        muon_muon_cross_section,
+        tau_tau_cross_section,
     ]

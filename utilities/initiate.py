@@ -6,14 +6,15 @@ from utilities.constants import (
     chi_sq_limits_2,
     luminosity_tau
 )
+from utilities.data_classes import NonInteractiveInputParameters
 from utilities.validate import validate_input_data, check_input_files_exits
 from utilities.parse import sort_couplings_and_values
 from utilities.colour import prCyan, prRed, prCyanNoNewLine
-from calculate import home
+from calculate import calculate
 
 chi_sq_limits = chi_sq_limits_2
 
-def initiate_with_files(input_card_file: str, input_couplings_values_file: str, output_yes_file: str, output_no_file: str):
+def initiate_with_files(non_interactive_input_parameters: NonInteractiveInputParameters):
     """
     Initiate procedure if non-interactive input is given
 
@@ -23,10 +24,10 @@ def initiate_with_files(input_card_file: str, input_couplings_values_file: str, 
     :param output_no_file: File path of the output file (disallowed values)
     """
     global chi_sq_limits
-    check_input_files_exits(input_card_file, input_couplings_values_file)
+    check_input_files_exits(non_interactive_input_parameters.input_card_path, non_interactive_input_parameters.input_values_path)
     
     # read the cards file
-    with open(input_card_file, encoding="utf8") as c:
+    with open(non_interactive_input_parameters.input_card_path, encoding="utf8") as c:
         input_card_lines = c.readlines()
     if len(input_card_lines) < 8:
         sys.exit(f"Number of lines in file: {len(input_card_lines)}, expected 8. Please refer to README to check if all the data is present.")
@@ -53,12 +54,15 @@ def initiate_with_files(input_card_file: str, input_couplings_values_file: str, 
         sys.exit(
             "[Sigma Error]: Line 4 of input card must contain either 1 or 2 as the sigma value. Exiting."
         )
-    leptoquark_paramters, random_points = validate_input_data(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity, random_points):
 
-    # update vals file value with random points if needed
-    if random_points > 0:
-        f = open(input_couplings_values_file, "w")
-        for _ in range(random_points): 
+    # Create the leptoquarkParameters clas instance
+    # From here on, this will be used for referencing to any input data and has all information
+    leptoquark_parameters, validated_random_points = validate_input_data(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity, random_points)
+
+    # update vals file value with random points if random points > 0
+    if validated_random_points > 0:
+        f = open(non_interactive_input_parameters.input_values_path, "w")
+        for _ in range(validated_random_points): 
             coupling_values_list = [str(random.uniform(-3.5, 3.5)) for _ in range(len(couplings))]
             coupling_values_string = " ".join(coupling_values_list)
             f.write(f"{coupling_values_string}\n")
@@ -66,25 +70,21 @@ def initiate_with_files(input_card_file: str, input_couplings_values_file: str, 
 
 
     # read input coupling values file
-    with open(input_couplings_values_file, encoding="utf8") as v:
-        coupling_values_lines = v.readlines()
-    home(
-        *sort_couplings_and_values(
-            leptoquark_mass,
-            couplings,
-            ignore_single_pair_processes,
-            systematic_error,
-            coupling_values_lines,
-            leptoquark_model,
-            luminosity,
-        ),
-        False,
-        chi_sq_limits,
-        decay_width_constant,
-        input_couplings_values_file,
-        output_yes_file,
-        output_no_file,
-    )
+    with open(non_interactive_input_parameters.input_values_path) as v:
+        leptoquark_parameters.couplings_values = v.readlines()
+
+        # parse the coupling values data
+        coupling_values = []
+        for coupling_value in leptoquark_parameters.couplings_values:
+            coupling_value = coupling_value.strip().strip('\n').split(' ')
+            coupling_values.append(coupling_value)
+        leptoquark_parameters.couplings_values
+
+    sort_couplings_and_values(leptoquark_parameters)
+    
+
+    
+    calculate(leptoquark_parameters, non_interactive_input_parameters)
 
 
 def initiate_interactive():
@@ -160,10 +160,10 @@ def initiate_interactive():
             print("initiate [To start the calcualations]")
             print("exit [To exit out of the calculator]")
         elif s[0].strip() == "initiate":
-            leptoquark_paramters, random_points = validate_input_data(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity, random_points):
+            leptoquark_parameters, random_points = validate_input_data(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity, random_points):
             coupling_values = [" ".join(["0"] * len(couplings))]
             
-            home(
+            calculate(
                 *sort_couplings_and_values(
                     leptoquark_mass,
                     couplings,

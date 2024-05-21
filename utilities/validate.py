@@ -1,4 +1,6 @@
 import os
+from typing import Tuple
+
 from utilities.colour import prRed
 from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models, minimum_lepptoquark_mass_supported, maximum_lepptoquark_mass_supported
 from utilities.data_classes import LeptoquarkParameters
@@ -20,10 +22,10 @@ def validate_input_data(
     decay_width_constant: str,
     luminosity: str,
     random_points: str = "0",
-):
+) -> Tuple[LeptoquarkParameters, int]:
     """
     Validate the data from both interactive and non-interactive modes and raise corresponding errors for the user to understand the issue
-    After validating return a class that can be used throughout instead of passing multiple variables
+    After validating, convert the data to the appropriate type, & return a class that can be used throughout instead of passing multiple variables
     """
     # validate leptoquark model
     if leptoquark_model not in scalar_leptoquark_models and leptoquark_model not in vector_leptoquark_models:
@@ -39,7 +41,7 @@ def validate_input_data(
 
 
     # validate couplings
-    couplings_list = couplings.split()
+    couplings_list = couplings.strip().split(' ')
     if not len(couplings_list):
         raise ValueError("Couplings cannot be empty. For valid format, refer to README")
     for i in range(len(couplings_list)):
@@ -69,12 +71,12 @@ def validate_input_data(
     couplings = couplings_list
 
     # validate Ignore single and pair production
-    if ignore_single_pair_processes.lower() not in {"yes", "no", "n", "y"}:
-        raise ValueError("ignore_single_pair takes input either 'yes'/'y' or 'no'/'n'")
     if ignore_single_pair_processes.lower() in {"yes", "y"}:
         ignore_single_pair_processes = True
-    else:
+    elif ignore_single_pair_processes.lower() in {"no", "n"}:
         ignore_single_pair_processes = False
+    else:
+        raise ValueError("ignore_single_pair takes input either 'yes'/'y' or 'no'/'n'")
 
     # validate significance
     try:
@@ -113,7 +115,7 @@ def validate_input_data(
         raise ValueError("Random points should be a valid number")
     
     # create Leptoquark data class
-    leptoquark_paramters = LeptoquarkParameters(
+    leptoquark_parameters = LeptoquarkParameters(
         leptoquark_model=leptoquark_model,
         leptoquark_mass=leptoquark_mass,
         couplings=couplings,
@@ -122,11 +124,10 @@ def validate_input_data(
         systematic_error=systematic_error,
         decay_width_constant=decay_width_constant,
         luminosity=luminosity,
-        random_points=random_points,
     )
 
     # random points is returned seperately as it is not required during the calculations
-    return leptoquark_paramters, random_points
+    return leptoquark_parameters, random_points
 
     
 
