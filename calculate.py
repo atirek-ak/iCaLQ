@@ -28,8 +28,8 @@ def home(
     interactive,
     chi_sq_limits,
     width_constant: float,
-    output_yes="icalq_yes.csv",
-    output_no="icalq_no.csv",
+    output_yes="calq_yes.csv",
+    output_no="calq_no.csv",
 ):
     num_lam = len(lambdastring)
     lam = [sym.Symbol(ls) for ls in lambdastring]
@@ -90,7 +90,7 @@ def home(
             if not lam_val_ok(lam_val_f, num_lam):
                 prRed(f"[Query Error]: Please input {num_lam} float input/s.\n")
                 # prRed(f"[Query Error]: Query values for lambdas are either not {num_lam} (number of lambdas) in count or not convertible to float.\n")
-                print("Type 'done' or 'exit' to continue to icalq prompt.")
+                print("Type 'done' or 'exit' to continue to calq prompt.")
                 continue
             lam_vals, original_lam_vals = parse_lam(original_lambdastring, lam_val_f)
             delta_chisq, validity_list = get_delta_chisq(
@@ -124,8 +124,8 @@ def home(
             for x in original_lam_vals[i]:
                 print(x, end="\t\t")
                 print(x, end=",", file=f)
-            print(delta_chisq[i])
-            print(delta_chisq[i], file=f)
+            print(round(delta_chisq[i], 4))
+            print(round(delta_chisq[i], 4), file=f)
     print("\nNo List:\n")
     with open(output_no, "w", encoding="utf8") as f:
         for x in original_lambdastring:
@@ -137,6 +137,6 @@ def home(
             for x in original_lam_vals[i]:
                 print(x, end="\t\t")
                 print(x, end=",", file=f)
-            print(delta_chisq[i])
-            print(delta_chisq[i], file=f)
+            print(round(delta_chisq[i], 4))
+            print(round(delta_chisq[i], 4), file=f)
     print(f"Output files {output_yes} and {output_no} written")

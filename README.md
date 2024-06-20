@@ -1,4 +1,4 @@
-# iCaLQ
+# CaLQ
 
 #### _LHC Dileption Limits Calculator_
 Alpha version
@@ -20,7 +20,7 @@ pip install numpy sympy scipy pandas
 
 If you wish to use a virtual environment, do the following:
 ```sh
-cd <icalq-direcory>
+cd <calq-direcory>
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -30,19 +30,19 @@ pip install -r requirements.txt
 
 To use the calculator in interactive mode,
 ```sh
-python3 icalq.py
+python3 calq.py
 ```
-You will be greeted with iCaLQ art and a list of available commands. The prompt will be `icalq > `. Example commands include:
+You will be greeted with CaLQ art and a list of available commands. The prompt will be `calq > `. Example commands include:
 ```
-icalq > mass = 1234
-icalq > couplings = LM23L LM33R
-icalq > significance = 1
-icalq > ignore_single_pair = no
-icalq > systematic_error = 0.1
-icalq > import_model = U1
-icalq > status
-icalq > help
-icalq > initiate
+calq > mass = 1234
+calq > couplings = LM23L LM33R
+calq > significance = 1
+calq > ignore_single_pair = no
+calq > systematic_error = 0.1
+calq > import_model = U1
+calq > status
+calq > help
+calq > initiate
 ```
 The first 4 commands set the input parameters as `<command> = <value>`. The rest do not take any argument.
 
@@ -70,27 +70,27 @@ Type `done` to exit query mode. An example query after executing the above comma
 
 The prompt returns to the input mode and input parameters hold the previous values which can be updated. Finally, to exit the calculator,
 ```
-icalq > exit
+calq > exit
 ```
 
 ## Non-interactive Mode
 
 To use the calculator in non-interactive mode, use the tag `-ni` or `--non-interactive`. Note that input cards and query values must be provided in this mode. An example of usage in this mode:
 ```sh
-python3 icalq.py --non-interactive --no-banner --input-card=card.txt --input-values=values.txt --output-yes=yes.csv --output-no=no.csv
+python3 calq.py --non-interactive --no-banner --input-card=card.txt --input-values=values.txt --output-yes=yes.csv --output-no=no.csv
 ```
 
 ```sh
-python3 icalq.py [options]
+python3 calq.py [options]
 ```
 Options:
 - `--help`: Display this help message.
 - `--input-card=[filename]`: Input card file. Line 1: mass, line 2: couplings, line 3: ignore_single_pair, line 4: sigma. These are same as input parameter values mentioned in the interactive version.
 - `--input-values=[filename]`: Input values to check from the given file. Each line contains a query value. If there are _n_ couplings, then each line would be `<f1> <f2> ... <fn>`, where _\<fi>_ are float values.
 - `--non-interactive` or `-ni`: Run in non-interactive mode. This requires input-card and input-values to be specified
-- `--no-banner` or `-nb`: icalq banner is not printed.
-- `--output-yes=[filename]`: Specify the name of output file (allowed values) (overwrites the existing file). Default: icalq_yes.csv
-- `--output-no=[filename]`: Specify the name of output file (disallowed values) (overwrites the existing file). Default: icalq_no.csv
+- `--no-banner` or `-nb`: calq banner is not printed.
+- `--output-yes=[filename]`: Specify the name of output file (allowed values) (overwrites the existing file). Default: calq_yes.csv
+- `--output-no=[filename]`: Specify the name of output file (disallowed values) (overwrites the existing file). Default: calq_no.csv
 
 ## Caveats
 

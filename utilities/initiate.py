@@ -105,7 +105,7 @@ def initiate_interactive():
     print_initiate_message(
         "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, status, initiate, help\n",
         "",
-        "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: :X10LL[1,1],X10LL[3,2],X10RR[1,1]",
+        "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: X10LL[1,1],X10LL[3,2],X10RR[1,1]",
     )
     print("Default values set:")
     print(f"ignore_single_pair = {ignore_f}")
@@ -115,7 +115,7 @@ def initiate_interactive():
     print(f"luminosity = {luminosity}")
 
     while True:
-        prCyan("icalq > ")
+        prCyan("calq > ")
         s = input().split("=")
         slen = len(s)
         if s[0].strip() == "mass" and slen == 2:
@@ -150,7 +150,7 @@ def initiate_interactive():
         elif s[0].strip() == "help":
             print_initiate_message(
                 "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, luminosity=, status, initiate, help\n",
-                "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: :X10LL[1,1],X10LL[3,2],X10RR[1,1]",
+                "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: X10LL[1,1],X10LL[3,2],X10RR[1,1]",
                 "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n",
             )
         elif s[0].strip() == "initiate":
