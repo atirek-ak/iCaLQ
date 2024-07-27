@@ -2,8 +2,12 @@ import pandas as pd
 from enum import Enum
 
 # INFRA
-# input modes
+# coupling input params
+lepton_index = 6
+quark_index = 8
+chirality_index = 6
 
+# input modes
 class InputMode(Enum):
     INTERACTIVE = "interactive"
     NONINTERACTIVE = "noninteractive"
@@ -17,11 +21,40 @@ default_significane = 2
 default_systematic_error = "0.1"
 default_decay_width_constant = 0
 
+# FILES
+DATA_PREFIX = "data"
+
+# cross-section
+def get_cross_sections_df_pair_production(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pair.csv", header=[0])
+def get_cross_sections_df_single_production(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/single.csv", header=[0])
+def get_cross_sections_df_interference(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/interference.csv", header=[0])
+def get_cross_sections_df_tchannel(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/tchannel.csv", header=[0])
+def get_cross_sections_df_pureqcd(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pureqcd.csv", header=[0])
+def get_cross_sections_df_cross_terms_tchannel(model: str):
+    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/tchannel_doublecoupling.csv",header=[0])
+
+# efficiency
+def get_efficiency_prefix(model: str):
+    return f"{DATA_PREFIX}/model/{model}/efficiency"
+def get_t_ct_prefix(model: str):
+    return f"{DATA_PREFIX}/model/{model}/efficiency/t"
+
 # CALCUATION
-# lambda value limits
-# Currently being used for generating random lambda values
-min_lambda_limit = -3.5
-max_lambda_limit = 3.5
+# coupling value limits
+# Currently being used for generating random coupling values
+min_coupling_value_limit = -3.5
+max_coupling_value_limit = 3.5
+
+# tau-tau tagNames
+tagNames = ["HHbT.csv", "HHbV.csv", "LHbT.csv", "LHbV.csv"]
+
+
+
 
 # Declaring variables which need not be reloaded every run
 chi_sq_limits_1 = [
@@ -68,8 +101,6 @@ vector_leptoquark_models = ["U1"]
 
 minimum_lepptoquark_mass_supported = 1000
 maximum_lepptoquark_mass_supported = 5000
-
-interpolation_type = "slinear"
 mev2gev = 0.001
 
 mass_quarks = {"1": [2.3, 4.8], "2": [1275, 95], "3": [173070, 4180]}
@@ -86,7 +117,6 @@ data_mass_list = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 60
 luminosity_tau = 139 * 1000
 luminosity_e_mu = 140 * 1000
 
-DATA_PREFIX = "data"
 LHC_DATA_PREFIX = f"{DATA_PREFIX}/HEPdata"
 
 standard_HHbT = pd.read_csv(f"{LHC_DATA_PREFIX}/HHbT.csv", header=[0])
@@ -112,54 +142,6 @@ NSM = [
     standard_mumu["Standard Model"].to_numpy(),
 ]
 
-# Path variables for cross section:
-cs_sc_path = "./data/cross_section/"
-
-
-# df_pair = pd.read_csv(f"{cs_sc_path}pair.csv")
-def get_df_pair_production(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pair.csv")
-
-
-# df_single = pd.read_csv(f"{cs_sc_path}single.csv")
-def get_df_single_production(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/single.csv")
-
-
-# df_interference = pd.read_csv(f"{cs_sc_path}interference.csv")
-def get_df_interference(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/interference.csv")
-
-
-# df_tchannel = pd.read_csv(f"{cs_sc_path}tchannel.csv")
-def get_df_tchannel(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/tchannel.csv")
-
-
-# df_pureqcd = pd.read_csv(f"{cs_sc_path}pureqcd.csv")
-def get_df_pureqcd(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pureqcd.csv")
-
-
-# double_coupling_data_tchannel = pd.read_csv(cross_terms_tchannel, header=[0])
-def get_cross_terms_data_tchannel(model: str):
-    return pd.read_csv(
-        f"{DATA_PREFIX}/model/{model}/cross_section/tchannel_doublecoupling.csv",
-        header=[0],
-    )
-
-
-# efficiency_prefix = "./data/efficiency/"
-def get_efficiency_prefix(model: str):
-    return f"{DATA_PREFIX}/model/{model}/efficiency/"
-
-
-# t_ct_prefix = "./data/efficiency/t/"
-def get_t_ct_prefix(model: str):
-    return f"{DATA_PREFIX}/model/{model}/efficiency/t/"
-
-
-tagnames = ["/HHbT.csv", "/HHbV.csv", "/LHbT.csv", "/LHbV.csv"]
 
 k_factor_pair_production = 1.5
 k_factor_pureqcd = 1.5

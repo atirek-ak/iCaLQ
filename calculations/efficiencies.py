@@ -1,99 +1,64 @@
 import pandas as pd
 from copy import deepcopy
+from scipy.interpolate import interp1d
 
-from utilities.constants import get_efficiency_prefix, get_t_ct_prefix, tagnames
-from utilities.data_classes import LeptoquarkParameters, ParticleCrossSections
+from calculations.helper import getNumbersFromCsvFiles, transposeMatrix, getImmediateSubdirectories
+from utilities.constants import get_efficiency_prefix, get_t_ct_prefix, tagNames, lepton_index, quark_index, chirality_index
+from utilities.data_classes import LeptoquarkParameters, SingleCouplingEfficiency, CrossTermsEfficiency
 
 
-def get_efficiencies(
-        closest_leptoquark_mass: float, 
+def getEfficiencies(
         leptoquark_parameters: LeptoquarkParameters,
-        electron_electron_cross_section: ParticleCrossSections, 
-        muon_muon_cross_section: ParticleCrossSections, 
-        tau_tau_cross_section: ParticleCrossSections,
-    ):
+        coupling_to_process_cross_section_map: dict,
+    ) -> dict:
     """
     Load efficiencies from the data files
-    """
 
+    The dict that is returns has mapping:
+    Single coupling: coupling -> SingleCouplingEfficiency
+    Cross terms: coupling -> CrossTermsEfficiency
+    """
+    # this map stores the efficiencies for every coupling
+    coupling_to_process_efficiencies_map = dict()
+
+    # directory paths of efficiency files
     path_interference = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "i/"
-        + str(coupling[6] + coupling[8] + coupling[4])
+        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     path_pair = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "p/"
-        + str(coupling[6] + coupling[8] + coupling[4])
+        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/p/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     path_single = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "s/"
-        + str(coupling[6] + coupling[8] + coupling[4])
+        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/s/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     path_tchannel = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "t/"
-        + str(coupling[6] + coupling[8] + coupling[4])
+        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/t/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     path_pureqcd = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "q/"
-        + str(coupling[6] + coupling[8] + coupling[4])
+        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/q/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
+    # Order: qpits
+    efficiency_directory_paths = [path_pureqcd, path_pair, path_interference, path_tchannel, path_single]
 
-    path_interference_tautau = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "i/"
-        + str(coupling[6] + coupling[8] + coupling[4])
-        + "/"
-        + str(closest_leptoquark_mass)
-        for coupling in leptoquark_parameters.sorted_couplings
-        if coupling[8] == "3"
-    ]
-    path_pair_tautau = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "p/"
-        + str(coupling[6] + coupling[8] + coupling[4])
-        + "/"
-        + str(closest_leptoquark_mass)
-        for coupling in leptoquark_parameters.sorted_couplings
-        if coupling[8] == "3"
-    ]
-    path_single_tautau = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "s/"
-        + str(coupling[6] + coupling[8] + coupling[4])
-        + "/"
-        + str(closest_leptoquark_mass)
-        for coupling in leptoquark_parameters.sorted_couplings
-        if coupling[8] == "3"
-    ]
-    path_tchannel_tautau = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "t/"
-        + str(coupling[6] + coupling[8] + coupling[4])
-        + "/"
-        + str(closest_leptoquark_mass)
-        for coupling in leptoquark_parameters.sorted_couplings
-        if coupling[8] == "3"
-    ]
-    path_pureqcd_tautau = [
-        get_efficiency_prefix(leptoquark_parameters.leptoquark_model)
-        + "q/"
-        + str(coupling[6] + coupling[8] + coupling[4])
-        + "/"
-        + str(closest_leptoquark_mass)
-        for coupling in leptoquark_parameters.sorted_couplings
-        if coupling[8] == "3"
-    ]
+    # single coupling efficiencies
+    for coupling in leptoquark_parameters.sorted_couplings:
+        # case tau tau
+        if coupling[quark_index] == 3:
+            coupling_to_process_efficiencies_map[coupling] = readAndInterpolateCsvTautau(efficiency_directory_paths, leptoquark_parameters.leptoquark_mass)
+        else:
+            coupling_to_process_efficiencies_map[coupling] = readAndInterpolateEfficiency(efficiency_directory_paths, leptoquark_parameters.leptoquark_mass)
 
-    # TODO: continue from heree
+    # cross terms
+    # TODO: continue from here
+
+    return coupling_to_process_efficiencies_map
+
+
 
     ee_path_t_ct = []
     mumu_path_t_ct = []
@@ -236,21 +201,21 @@ def get_efficiencies(
         [
             [
                 pd.read_csv(path_pureqcd_tautau[i] + j, header=[0]).to_numpy()[:, 2]
-                for j in tagnames
+                for j in tagNames
             ]
             for i in range(len(path_pureqcd_tautau))
         ],
         [
             [
                 pd.read_csv(path_pair_tautau[i] + j, header=[0]).to_numpy()[:, 2]
-                for j in tagnames
+                for j in tagNames
             ]
             for i in range(len(path_pureqcd_tautau))
         ],
         [
             [
                 pd.read_csv(path_single_tautau[i] + j, header=[0]).to_numpy()[:, 2]
-                for j in tagnames
+                for j in tagNames
             ]
             for i in range(len(path_pureqcd_tautau))
         ],
@@ -259,14 +224,14 @@ def get_efficiencies(
                 pd.read_csv(path_interference_tautau[i] + j, header=[0]).to_numpy()[
                     :, 2
                 ]
-                for j in tagnames
+                for j in tagNames
             ]
             for i in range(len(path_pureqcd_tautau))
         ],
         [
             [
                 pd.read_csv(path_tchannel_tautau[i] + j, header=[0]).to_numpy()[:, 2]
-                for j in tagnames
+                for j in tagNames
             ]
             for i in range(len(path_pureqcd_tautau))
         ],
@@ -291,7 +256,7 @@ def get_efficiencies(
     tautau_eff_t_ct_temp = [
         [
             pd.read_csv(tautau_path_t_ct[j] + i, header=[0]).to_numpy()[:, 2]
-            for i in tagnames
+            for i in tagNames
         ]
         for j in range(len(tautau_path_t_ct))
     ]
@@ -343,3 +308,55 @@ def get_efficiencies(
         mumu_lambdas_len,
         tautau_lambdas_len,
     ]
+
+def readAndInterpolateEfficiency(path_list, mass):
+    # variable which has a list of efficiencies corresponding to each process for given mass
+    process_values = []
+    for process_path in path_list:
+        data_mass_list = getNumbersFromCsvFiles(process_path)
+        # variable which has a list of efficiencies corresponding
+        mass_values = []
+        for file in data_mass_list:
+            file_path = f"{process_path}{file}.csv"
+            data = pd.read_csv(file_path, header=[0]).to_numpy()[:, 2]
+            mass_values.append(data)
+
+        # taking the transpose as we will interpolate over each bin
+        transposed_mass_values = transposeMatrix(mass_values)
+        # this will have a list of interpolated values corresponding to each bin
+        interpolated_mass_values = []
+        # start interpolation
+        for bin_values in transposed_mass_values:
+            interpolation_function = lambda m: interp1d(data_mass_list, bin_values, kind="slinear")(m)
+            interpolated_mass_values.append(interpolation_function(mass))
+        process_values.append(interpolated_mass_values)
+    
+    return process_values
+
+
+def readAndInterpolateCsvTautau(path_list, mass):
+    # variable which has a list of efficiencies corresponding to each process for given mass
+    process_values = []
+    for process_path in path_list:
+        data_mass_list = getImmediateSubdirectories(process_path)
+        # variable which has a list of efficiencies corresponding to each tag
+        tag_values = []
+        for tagName in tagNames:
+            mass_values = []
+            for file in data_mass_list:
+                file_path = f"{process_path}{file}/{tagName}"
+                data = pd.read_csv(file_path, header=[0]).to_numpy()[:, 2]
+                mass_values.append(data)
+
+            # taking the transpose as we will interpolate over each bin
+            transposed_mass_values = transposeMatrix(mass_values)
+            # this will have a list of interpolated values corresponding to each bin
+            interpolated_mass_values = []
+            # start interpolation
+            for bin_values in transposed_mass_values:
+                interpolation_function = lambda m: interp1d(data_mass_list, bin_values, kind="slinear")(m)
+                interpolated_mass_values.append(interpolation_function(mass))
+            tag_values.append(interpolated_mass_values)
+        process_values.append(tag_values)    
+    
+    return process_values

@@ -3,8 +3,8 @@ import random
 from typing import Tuple, List
 
 from utilities.constants import (
-    min_lambda_limit,
-    max_lambda_limit,
+    min_coupling_value_limit,
+    max_coupling_value_limit,
     input_card_number_of_lines,
     InputMode
 )
@@ -66,7 +66,7 @@ def updateRandomPoints(random_points: int, non_interactive_input_parameters: Non
     if random_points > 0:
         f = open(non_interactive_input_parameters.input_values_path, "w")
         for _ in range(random_points): 
-            coupling_values_list = [str(random.uniform(min_lambda_limit, max_lambda_limit)) for _ in range(len(leptoquark_parameters.couplings))]
+            coupling_values_list = [str(random.uniform(min_coupling_value_limit, max_coupling_value_limit)) for _ in range(len(leptoquark_parameters.couplings))]
             coupling_values_string = " ".join(coupling_values_list)
             f.write(f"{coupling_values_string}\n")
         f.close()

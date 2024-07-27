@@ -1,4 +1,10 @@
+from typing import List
+
+
 class LeptoquarkParameters:
+    """
+    class for all parameters required for calculation. This class will have all the values that are user-inputted
+    """
     def __init__(
         self,
         leptoquark_model: str,
@@ -48,7 +54,7 @@ class NonInteractiveInputParameters:
         self.output_no_path = output_no_path
 
 
-class ProcessCrossSections:
+class SingleCouplingCrossSections:
     def __init__(
         self,
         cross_section_pureqcd: float,
@@ -56,29 +62,39 @@ class ProcessCrossSections:
         cross_section_single_production: float,
         cross_section_interference: float,
         cross_section_tchannel: float,
-        coupling: str,
     ):
         self.cross_section_pureqcd = cross_section_pureqcd
         self.cross_section_pair_production = cross_section_pair_production
         self.cross_section_single_production = cross_section_single_production
         self.cross_section_interference = cross_section_interference
         self.cross_section_tchannel = cross_section_tchannel
-        self.coupling = coupling
 
 class CrossTermsCrossSections:
     def __init__(
         self,
         cross_section_cross_terms_tchannel: float,
-        coupling: str,
     ):
         self.cross_section_cross_terms_tchannel = cross_section_cross_terms_tchannel
-        self.coupling = coupling
 
-class ParticleCrossSections:
+
+class SingleCouplingEfficiency:
     def __init__(
         self,
-        single_coupling_cross_sections: list[ProcessCrossSections] = [],
-        cross_terms_cross_sections: list[CrossTermsCrossSections] = [],
+        efficiency_pureqcd: List[float],
+        efficiency_pair_production: List[float],
+        efficiency_single_production: List[float],
+        efficiency_interference: List[float],
+        efficiency_tchannel: List[float],
     ):
-        self.single_coupling_cross_sections = single_coupling_cross_sections
-        self.cross_terms_cross_sections = cross_terms_cross_sections
+        self.efficiency_pureqcd = efficiency_pureqcd
+        self.efficiency_pair_production = efficiency_pair_production
+        self.efficiency_single_production = efficiency_single_production
+        self.efficiency_interference = efficiency_interference
+        self.efficiency_tchannel = efficiency_tchannel
+
+class CrossTermsEfficiency:
+    def __init__(
+        self,
+        efficiency_tchannel: List[float],
+    ):
+        self.efficiency_tchannel = efficiency_tchannel

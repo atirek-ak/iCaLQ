@@ -1,17 +1,4 @@
-from utilities.constants import data_mass_list, mass_quarks, mass_leptons
-
-
-def get_closest_leptoquark_mass(mass):
-    """
-    Find the closest mass to the input mass
-    """
-    closest_mass = 0
-    closest_diff = 10000
-    for val in data_mass_list:
-        if abs(mass - val) < closest_diff:
-            closest_diff = abs(mass - val)
-            closest_mass = val
-    return closest_mass
+from utilities.constants import mass_quarks, mass_leptons
 
 
 def make_leptoquark_mass_dict(ls, num_lam):
