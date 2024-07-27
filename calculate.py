@@ -79,7 +79,7 @@ def calculate(
             if not lam_val_ok(lam_val_f, couplings_length):
                 prRed(f"[Query Error]: Please input {couplings_length} float input/s.")
                 # prRed(f"[Query Error]: Query values for lambdas are either not {couplings_length} (number of lambdas) in count or not convertible to float.\n")
-                print("Type 'done' or 'exit' to continue to icalq prompt.")
+                print("Type 'done' or 'exit' to continue to calq prompt.")
                 continue
             lam_vals, original_lam_vals = parse_lam(original_lambdastring, lam_val_f)
             delta_chisq, validity_list = get_delta_chisq(

@@ -110,7 +110,7 @@ def initiate_interactive():
     print(f"luminosity = {luminosity}")
 
     while True:
-        prCyanNoNewLine("icalq > ")
+        prCyanNoNewLine("calq > ")
         s = input().split("=")
         slen = len(s)
         if s[0].strip() == "import_model" and slen == 2:

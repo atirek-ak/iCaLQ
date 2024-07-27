@@ -4,5 +4,5 @@ def welcome_message():
             contents = f.read()
             print(f"{contents}")
     except OSError:
-        print("iCaLQ: Indirect LHC-Limits Calculator for Leptoquark models")
+        print("CaLQ: Indirect LHC-Limits Calculator for Leptoquark models")
         print("Alpha version")

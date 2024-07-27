@@ -11,7 +11,7 @@ def run():
     """
     Starting function, accepts command line argument and passes control to further functions accordingly.
     """
-    parser = argparse.ArgumentParser(description="iCaLQ Usage:")
+    parser = argparse.ArgumentParser(description="CaLQ Usage:")
 
     parser.add_argument(
         "--input-card",
@@ -32,19 +32,19 @@ def run():
         help="Run in non-interactive mode. This requires input-card and input-values to be specified.",
     )
     parser.add_argument(
-        "--no-banner", "-nb", action="store_true", help="iCaLQ banner is not printed."
+        "--no-banner", "-nb", action="store_true", help="CaLQ banner is not printed."
     )
     parser.add_argument(
         "--output-yes",
         type=str,
-        default="icalq_yes.csv",
-        help="[filename]: Specify the name of output file (allowed values) (overwrites the existing file). Default: icalq_yes.csv",
+        default="calq_yes.csv",
+        help="[filename]: Specify the name of output file (allowed values) (overwrites the existing file). Default: calq_yes.csv",
     )
     parser.add_argument(
         "--output-no",
         type=str,
-        default="icalq_no.csv",
-        help="[filename]: Specify the name of output file (disallowed values) (overwrites the existing file). Default: icalq_no.csv",
+        default="calq_no.csv",
+        help="[filename]: Specify the name of output file (disallowed values) (overwrites the existing file). Default: calq_no.csv",
     )
 
     args = parser.parse_args()
