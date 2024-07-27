@@ -28,8 +28,6 @@ def sort_couplings_and_values(
     for coupling_value, line_number in leptoquark_parameters.couplings_values:
         if len(coupling_value) != len(leptoquark_parameters.couplings):
             sys.exit(f"[Query Error]: Coupling values length in line {line_number} is {coupling_value} which does not match the length of input couplings {leptoquark_parameters.couplings}")
-    for coupling_value in leptoquark_parameters.couplings_values:
-
         combined_couplings_and_values = zip(leptoquark_parameters.couplings, coupling_value)
         sorted_combined_couplings_and_values = sorted(combined_couplings_and_values, key=cmp_to_key(compare_coupling))
         sorted_combined_couplings_and_values = list(zip(*sorted_combined_couplings_and_values))

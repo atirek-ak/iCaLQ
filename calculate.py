@@ -4,7 +4,7 @@ from sympy.utilities.iterables import flatten
 import scipy.optimize as optimize
 import numpy as np
 
-
+from utilities.constants import InputMode
 from utilities.branching_fraction import branching_fraction
 from utilities.data_classes import NonInteractiveInputParameters, LeptoquarkParameters
 from utilities.parse import get_lam_separate, parse_lam
@@ -18,7 +18,8 @@ from calculations.chi_square import get_chi_square_symb, get_delta_chisq
 
 def calculate(
     leptoquark_parameters: LeptoquarkParameters,
-    non_interactive_input_parameters: NonInteractiveInputParameters | None = None,
+    input_mode: InputMode,
+    
 ):
     couplings_length = len(leptoquark_parameters.couplings)
     couplings_symbolic = [sym.Symbol(coupling) for coupling in leptoquark_parameters.couplings]

@@ -1,15 +1,14 @@
 import os
-from typing import Tuple
+from typing import Tuple, List
 
 from utilities.colour import prRed
 from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models, minimum_lepptoquark_mass_supported, maximum_lepptoquark_mass_supported
 from utilities.data_classes import LeptoquarkParameters
 
-def check_input_files_exits(input_card_file: str, input_couplings_values_file: str):
-    if not os.path.isfile(input_card_file):
-        raise Exception("Input card file could not be found. Please check if the input path is correct")
-    if not os.path.isfile(input_couplings_values_file):
-        raise Exception("Input values file could not be found. Please check if the input path is correct")
+def checkIfFilesExist(files: List[str]):
+    for file in files:
+        if not os.path.isfile(file):
+            raise Exception(f"File {file} could not be found. Please check if the input path is correct")
 
 
 def validate_input_data(

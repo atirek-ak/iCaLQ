@@ -3,12 +3,12 @@ class LeptoquarkParameters:
         self,
         leptoquark_model: str,
         leptoquark_mass: float,
-        couplings: list,
         ignore_single_pair_processes: bool,
         significance: int,
         systematic_error: float,
         decay_width_constant: float,
         luminosity: float,
+        couplings: list,
         couplings_values: list = [],
         sorted_couplings: list = [],
         sorted_couplings_values: list = [],
@@ -25,7 +25,16 @@ class LeptoquarkParameters:
         self.sorted_couplings = sorted_couplings
         self.sorted_couplings_values = sorted_couplings_values
 
+
 class NonInteractiveInputParameters:
+    """
+    class for non-interactive mode input parameters to be taken from the user
+
+    :param input_card_path: File path to the .card file for non-interactive input
+    :param input_values_path: File path to the .vals file(values file) for non-interactive input
+    :param output_yes_path: File path of the output file (allowed values)
+    :param output_no_path: File path of the output file (disallowed values)
+    """
     def __init__(
         self,
         input_card_path: str,

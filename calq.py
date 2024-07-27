@@ -3,16 +3,29 @@ import sys
 import argparse
 
 from utilities.data_classes import NonInteractiveInputParameters
-from utilities.welcome import welcome_message
-from utilities.initiate import initiate_with_files, initiate_interactive
+from utilities.welcome import printBanner
+from utilities.initiate.non_interactive.non_interactive import initiateNonInteractive
+from utilities.initiate.interactive.interactive import  initiateInteractive
 
-
-def run():
+# calq execution starts here
+def main():
     """
-    Starting function, accepts command line argument and passes control to further functions accordingly.
+    Calq starting function that parses command line argument 
     """
+    # argparser for CLI arguments
     parser = argparse.ArgumentParser(description="CaLQ Usage:")
-
+    # for choosing interactive/non-interactive modes
+    parser.add_argument(
+        "--non-interactive",
+        "-ni",
+        action="store_true",
+        help="Run in non-interactive mode. This requires input-card and input-values to be specified.",
+    )
+    # wheter to display banner from banner.txt
+    parser.add_argument(
+        "--no-banner", "-nb", action="store_true", help="CaLQ banner is not printed."
+    )
+    # non-interactive mode parameters
     parser.add_argument(
         "--input-card",
         type=str,
@@ -24,15 +37,6 @@ def run():
         type=str,
         default="",
         help="[filename]: Input values to check from the given file. Format is explained in README.txt",
-    )
-    parser.add_argument(
-        "--non-interactive",
-        "-ni",
-        action="store_true",
-        help="Run in non-interactive mode. This requires input-card and input-values to be specified.",
-    )
-    parser.add_argument(
-        "--no-banner", "-nb", action="store_true", help="CaLQ banner is not printed."
     )
     parser.add_argument(
         "--output-yes",
@@ -47,42 +51,34 @@ def run():
         help="[filename]: Specify the name of output file (disallowed values) (overwrites the existing file). Default: calq_no.csv",
     )
 
+    # parse args
     args = parser.parse_args()
-    non_interactive_input_parameters = NonInteractiveInputParameters(
-        input_card_path = args.input_card, 
-        input_values_path = args.input_values, 
-        output_yes_path = args.output_yes, 
-        output_no_path = args.output_no, 
-    )
-    # input_card_file = args.input_card
-    # input_vals_file = args.input_values
-    # output_yes_file = args.output_yes
-    # output_no_file= args.output_no
 
     if not args.no_banner:
-        welcome_message()
+        printBanner()
 
     if args.non_interactive:
-        non_interactive_message(
+        non_interactive_input_parameters = NonInteractiveInputParameters(
+            input_card_path = args.input_card, 
+            input_values_path = args.input_values, 
+            output_yes_path = args.output_yes, 
+            output_no_path = args.output_no, 
+        )
+        nonInteractiveMessage(
             non_interactive_input_parameters
         )
-        initiate_with_files(
+        initiateNonInteractive(
             non_interactive_input_parameters
         )
     else:
-        initiate_interactive()
+        initiateInteractive()
 
 
-def non_interactive_message(
+def nonInteractiveMessage(
     non_interactive_input_parameters: NonInteractiveInputParameters,
 ):
     """
-    Print an initial message for the non-interactive mode
-
-    :param input_card: File path to the .card file for non-interactive input
-    :param input_vals: File path to the .vals file(values file) for non-interactive input
-    :param output_yes: File path of the output file (allowed values)
-    :param output_no: File path of the output file (disallowed values)
+    Print an initial message for non-interactive mode
     """
     if not non_interactive_input_parameters.input_card_path:
         sys.exit(
@@ -99,6 +95,6 @@ def non_interactive_message(
 
 
 try:
-    run()
+    main()
 except KeyboardInterrupt:
     sys.exit("\n\nKeyboardInterrupt recieved. Exiting.")

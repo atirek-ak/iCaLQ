@@ -1,4 +1,4 @@
-def welcome_message():
+def printBanner():
     try:
         with open("banner.txt", encoding="utf8") as f:
             contents = f.read()

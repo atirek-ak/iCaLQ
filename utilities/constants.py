@@ -1,4 +1,27 @@
 import pandas as pd
+from enum import Enum
+
+# INFRA
+# input modes
+
+class InputMode(Enum):
+    INTERACTIVE = "interactive"
+    NONINTERACTIVE = "noninteractive"
+
+# non-interactive card params
+input_card_number_of_lines = 9
+
+# interactive mode default values
+default_ignore_single_pair_processes = "no"
+default_significane = 2
+default_systematic_error = "0.1"
+default_decay_width_constant = 0
+
+# CALCUATION
+# lambda value limits
+# Currently being used for generating random lambda values
+min_lambda_limit = -3.5
+max_lambda_limit = 3.5
 
 # Declaring variables which need not be reloaded every run
 chi_sq_limits_1 = [
