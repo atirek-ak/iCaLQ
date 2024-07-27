@@ -36,7 +36,7 @@ def home(
     cs_list = get_cs(mass, lambdastring, num_lam, leptoquark_model)
     closest_mass = get_closest_mass(mass)
     eff_list = get_efficiencies(
-        closest_mass, lambdastring, num_lam, cs_list, leptoquark_model
+        mass, closest_mass, lambdastring, num_lam, cs_list, leptoquark_model
     )
     mass_dict = make_mass_dict(lambdastring, num_lam)
     all_lam, all_ls = get_lam_separate(lam)

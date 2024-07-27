@@ -55,7 +55,7 @@ mass_leptons = {"1": [0.511, 0.0022], "2": [105.7, 0.17], "3": [1777, 15.5]}
 for gen in mass_leptons:
     mass_leptons[gen] = [x * mev2gev for x in mass_leptons[gen]]
 
-data_mass_list = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000]
+data_mass_list = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
 luminosity_tau = 139 * 1000
 luminosity_e_mu = 140 * 1000
 

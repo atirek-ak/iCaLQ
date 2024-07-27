@@ -1,4 +1,6 @@
 from scipy.interpolate import interp1d
+from scipy.interpolate import InterpolatedUnivariateSpline
+import numpy as np
 
 from utilities.constants import (
     interpolation_type,
@@ -14,9 +16,29 @@ from utilities.constants import (
 
 def interpolate_cs_func(df, ls):
     return lambda mass: [
-        interp1d(data_mass_list, df[coupling][:13], kind=interpolation_type)([mass])[0]
+        InterpolatedUnivariateSpline(data_mass_list, df[coupling][:9], k=1)([mass])[0]
         for coupling in ls
     ]
+
+
+# def interpolate_cs_func(df, ls, mass, interpolation_type='linear'):
+#     # Find the minimum values to shift data (adding a small value to avoid log10 of zero)
+#     min_shift = abs(np.min(df[ls].values.flatten())) + 1 if np.min(df[ls].values.flatten()) <= 0 else 0
+
+#     # Shift and log-transform the data mass list and df values
+#     shifted_mass_list = np.array(data_mass_list) + min_shift
+#     log_data_mass_list = np.log10(shifted_mass_list)
+    
+#     interpolated_values = []
+#     for coupling in ls:
+#         shifted_y = df[coupling][:9] + min_shift
+#         log_y = np.log10(shifted_y)
+#         interp_func = interp1d(log_data_mass_list, log_y, kind=interpolation_type)
+#         interpolated_log_y = interp_func(np.log10(mass + min_shift))
+#         interpolated_y = 10**interpolated_log_y - min_shift
+#         interpolated_values.append(interpolated_y)
+    
+#     return interpolated_values
 
 
 def interpolate_cs_ct_func(df):
@@ -24,7 +46,7 @@ def interpolate_cs_ct_func(df):
     Interpolating cross-section of t-channel's cross terms
     """
     return lambda mass: [
-        interp1d(data_mass_list, df[ij][:13], kind=interpolation_type)([mass])[0]
+        interp1d(data_mass_list, df[ij][:9], kind=interpolation_type)([mass])[0]
         for ij in range(len(df))
     ]
 
@@ -38,8 +60,20 @@ def get_cs(mass, lambdastring, num_lam, leptoquark_model):
     cs_s = interpolate_cs_func(get_df_single(leptoquark_model), lambdastring)
     cs_i = interpolate_cs_func(get_df_interference(leptoquark_model), lambdastring)
     cs_t = interpolate_cs_func(get_df_tchannel(leptoquark_model), lambdastring)
-    cs_l = [cs_q(mass), cs_p(mass), cs_s(mass), cs_i(mass), cs_t(mass)]
-    #
+    cs_l = []
+    cs_l.append(cs_q(mass))
+    cs_l.append(cs_p(mass))
+    cs_l.append(cs_s(mass))
+    cs_l.append(cs_i(mass))
+    cs_l.append(cs_t(mass))
+    # cs_l = [, cs_p(mass), cs_s(mass), cs_i(mass), cs_t(mass)]
+    # cs_q = interpolate_cs_func(get_df_pureqcd(leptoquark_model), lambdastring, mass)
+    # cs_p = interpolate_cs_func(get_df_pair(leptoquark_model), lambdastring, mass)
+    # cs_s = interpolate_cs_func(get_df_single(leptoquark_model), lambdastring, mass)
+    # cs_i = interpolate_cs_func(get_df_interference(leptoquark_model), lambdastring, mass)
+    # cs_t = interpolate_cs_func(get_df_tchannel(leptoquark_model), lambdastring, mass)
+    # cs_l = [cs_q, cs_p, cs_s, cs_i, cs_t]
+    
     ee_cs = []
     mumu_cs = []
     tautau_cs = []

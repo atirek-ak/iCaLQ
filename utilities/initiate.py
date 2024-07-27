@@ -157,9 +157,9 @@ def initiate_interactive():
             if not ready_to_initiate(
                 mass_f, lambdas_f, ignore_f, margin_f, leptoquark_model
             ):
-                prRed(
-                    "[Lambda Error]: Example of a valid input - 'Y10LL[2,1] Y10LL[3,1] Y10RR[1,1]'\n"
-                )
+                # prRed(
+                #     "[Lambda Error]: Example of a valid input - 'Y10LL[2,1] Y10LL[3,1] Y10RR[1,1]'\n"
+                # )
                 continue
             num_lam = len(lambdas_f.split())
             lam_values_f = [" ".join(["0"] * num_lam)]

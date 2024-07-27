@@ -1,10 +1,67 @@
 import pandas as pd
 from copy import deepcopy
+from scipy.interpolate import interp1d
+from scipy.interpolate import InterpolatedUnivariateSpline
+import numpy as np
 
-from utilities.constants import get_efficiency_prefix, get_t_ct_prefix, tagnames
+from utilities.constants import get_efficiency_prefix, get_t_ct_prefix, tagnames, data_mass_list
+
+def read_and_interpolate_csv(path_list, mass, data_mass_list):
+    if any(any(inner_list) for inner_list in path_list) == False:
+        return path_list
+    interpolated_values = []
+    print(path_list)
+    for path in path_list:
+        for index in range(len(path)):
+            # Read data from CSV files for each mass in data_mass_list
+            values = []
+            for m in data_mass_list:
+                csv_path = f"{path[index]}/{int(m)}.csv"
+                data = pd.read_csv(csv_path, header=[0]).to_numpy()[:, 2]
+                values.append(data)
+
+            # Convert values to a numpy array for interpolation
+            values = np.array(values)
+            # print(values)
+            # Perform interpolation for each column
+            # interp_func = InterpolatedUnivariateSpline(data_mass_list, values, k=1)
+            splines = [InterpolatedUnivariateSpline(data_mass_list, values[:, i], k=1) for i in range(values.shape[1])]
+            interpolated_values.append([np.array([spline(mass) for spline in splines])])
+    
+    return [interpolated_values]
 
 
-def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_model):
+def read_and_interpolate_csv_tautau(path_list, mass, data_mass_list):
+    if any(any(inner_list) for inner_list in path_list) == False:
+        return path_list
+    interpolated_values = []
+    for path in path_list:
+        # Read data from CSV files for each mass in data_mass_list
+        path_values = []
+        for tag_name in tagnames:
+            values = []
+            for m in data_mass_list:
+                csv_path = f"{path[0]}{int(m)}{tag_name}"
+                data = pd.read_csv(csv_path, header=[0]).to_numpy()[:, 2]
+                values.append(data)
+            # tag_values.append(values)
+            # Convert values to a numpy array for interpolation
+            values = np.array(values)
+
+            # polynomial interpolation
+            # poly_coeffs = np.polyfit(data_mass_list, values, deg=len(data_mass_list)-1)
+            # poly_interp_func = np.poly1d(poly_coeffs)
+            # path_values.append(poly_interp_func(mass))
+            
+            # Perform interpolation for each column
+            splines = [InterpolatedUnivariateSpline(data_mass_list, values[:, i], k=1) for i in range(values.shape[1])]
+            # interp_func = InterpolatedUnivariateSpline(data_mass_list, values, k=1)
+            path_values.append(np.array([spline(mass) for spline in splines]))
+        interpolated_values.append([path_values])
+    
+    return interpolated_values
+
+def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoquark_model):
     """
     Load efficiencies from the data files
     """
@@ -62,7 +119,7 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
         + str(coupling[6] + coupling[8] + coupling[4])
         for coupling in lambdastring
         if coupling[8] == "2"
-    ]
+]
     path_pair_mumu = [
         get_efficiency_prefix(leptoquark_model)
         + "p/"
@@ -97,7 +154,7 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
         + "i/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        + str(closest_mass)
+        # + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -106,7 +163,7 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
         + "p/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        + str(closest_mass)
+        # + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -115,7 +172,7 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
         + "s/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        + str(closest_mass)
+        # + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -124,7 +181,7 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
         + "t/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        + str(closest_mass)
+        # + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -133,7 +190,7 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
         + "q/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        + str(closest_mass)
+        # + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -179,6 +236,12 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
                         + "/"
                         + str(closest_mass)
                     )
+
+    ee_eff_paths = [
+        path_pureqcd_ee, path_pair_ee, path_single_ee, path_interference_ee, path_tchannel_ee
+    ]
+    ee_eff_l = read_and_interpolate_csv(ee_eff_paths, mass, data_mass_list)
+
 
     ee_eff_l = [
         [
@@ -226,7 +289,12 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
             for i in range(len(path_pureqcd_ee))
         ],
     ]
-
+    mumu_eff_paths = [
+        path_pureqcd_mumu, path_pair_mumu, path_single_mumu, path_interference_mumu, path_tchannel_mumu
+    ]
+    
+    mumu_eff_l = read_and_interpolate_csv(mumu_eff_paths, mass, data_mass_list)
+    print(mumu_eff_l)
     mumu_eff_l = [
         [
             [
@@ -274,7 +342,6 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
             for i in range(len(path_pureqcd_mumu))
         ],
     ]
-
     tautau_eff_l = [
         [
             [
@@ -314,6 +381,12 @@ def get_efficiencies(closest_mass, lambdastring, num_lam, cs_list, leptoquark_mo
             for i in range(len(path_pureqcd_tautau))
         ],
     ]
+    # tautau_eff_paths = [
+    #     path_pureqcd_tautau, path_pair_tautau, path_single_tautau, path_interference_tautau, path_tchannel_tautau
+    # ]
+
+    # tautau_eff_l = read_and_interpolate_csv_tautau(tautau_eff_paths, mass, data_mass_list)
+    # print(tautau_eff_l)
 
     ee_eff_t_ct_temp = [
         [

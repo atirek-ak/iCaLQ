@@ -16,15 +16,20 @@ def ready_to_initiate(
     # validate mass
     try:
         mass = float(mass_f)
-        if mass < 1000 or mass > 7000:
+        if mass < 1000 or mass > 8000:
             prRed(
-                "[Mass Error]: Acceptable mass values in GeV: integers between 1000 and 3000.\n"
+                "[Mass Error]: Acceptable mass values in GeV: integers between 1000 and 5500.\n"
             )
             return False
     except ValueError:
         prRed(
             "[Mass Error]: Mass value should be an integer (between 1000 and 3000).\n"
         )
+        return False
+    
+    # leptoquark model validation
+    if leptoquark_model not in ["U1", "S1"]:
+        prRed("[Model Error]: Leptoquark model should be U1 or S1\n")
         return False
 
     # validate lambda couplings
