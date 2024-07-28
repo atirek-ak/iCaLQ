@@ -72,9 +72,11 @@ class SingleCouplingCrossSections:
 class CrossTermsCrossSections:
     def __init__(
         self,
-        cross_section_cross_terms_tchannel: float,
+        cross_terms_cross_section_tchannel: float, # the cross-section to be used for cross-terms
+        actual_cross_section_tchannel: float, # the cross-section when 2 couplings are switched on
     ):
-        self.cross_section_cross_terms_tchannel = cross_section_cross_terms_tchannel
+        self.cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel
+        self.actual_cross_section_tchannel = actual_cross_section_tchannel
 
 
 class SingleCouplingEfficiency:
@@ -93,8 +95,45 @@ class SingleCouplingEfficiency:
         self.efficiency_tchannel = efficiency_tchannel
 
 class CrossTermsEfficiency:
+    # This will only have t channel for now
     def __init__(
         self,
         efficiency_tchannel: List[float],
+    ):
+        self.efficiency_tchannel = efficiency_tchannel
+        
+class TagsTauTau:
+    def __init__(
+        self,
+        hhbt: List[float],
+        hhbv: List[float],
+        lhbt: List[float],
+        lhbv: List[float],
+    ):
+        self.hhbt = hhbt
+        self.hhbv = hhbv
+        self.lhbt = lhbt
+        self.lhbv = lhbv
+
+class SingleCouplingEfficiencyTauTau:
+    def __init__(
+        self,
+        efficiency_pureqcd: TagsTauTau,
+        efficiency_pair_production: TagsTauTau,
+        efficiency_single_production: TagsTauTau,
+        efficiency_interference: TagsTauTau,
+        efficiency_tchannel: TagsTauTau,
+    ):
+        self.efficiency_pureqcd = efficiency_pureqcd
+        self.efficiency_pair_production = efficiency_pair_production
+        self.efficiency_single_production = efficiency_single_production
+        self.efficiency_interference = efficiency_interference
+        self.efficiency_tchannel = efficiency_tchannel
+
+class CrossTermsEfficiencyTauTau:
+    # This will only have t channel for now
+    def __init__(
+        self,
+        efficiency_tchannel: List[TagsTauTau],
     ):
         self.efficiency_tchannel = efficiency_tchannel

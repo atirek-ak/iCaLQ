@@ -1,3 +1,4 @@
+from typing import Dict, Union
 from scipy.interpolate import interp1d
 
 from utilities.data_classes import LeptoquarkParameters, SingleCouplingCrossSections, ParticleCrossSections, CrossTermsCrossSections
@@ -8,6 +9,7 @@ from utilities.constants import (
     get_cross_sections_df_tchannel,
     get_cross_sections_df_pureqcd,
     get_cross_sections_df_cross_terms_tchannel,
+    quark_index
 )
 
 def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> dict:
@@ -19,7 +21,7 @@ def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> dict:
     Cross terms: coupling -> CrossTermsCrossSections
     """
     # this map stores the cross-sections for every coupling
-    coupling_to_process_cross_section_map = dict()
+    coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]] = {}
 
     # single coupling
     # read interpolated cross-sections dataframes
@@ -50,12 +52,13 @@ def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> dict:
     for i in range(len(leptoquark_parameters.sorted_couplings)):
         for j in range(i+1, len(leptoquark_parameters.sorted_couplings)):
             # if couplings belong to the same category
-            if leptoquark_parameters.couplings[i][8] == leptoquark_parameters.couplings[j][8]:
+            if leptoquark_parameters.couplings[i][quark_index] == leptoquark_parameters.couplings[j][quark_index]:
                 cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
                 cross_terms_cross_section_tchannel_interpolation_function = interpolateLinearCrossSection(cross_terms_cross_section_tchannel_df, [cross_terms_coupling])
                 cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel_interpolation_function(leptoquark_parameters.leptoquark_mass)
                 coupling_to_process_cross_section_map[cross_terms_coupling] = CrossTermsCrossSections(
-                    cross_section_cross_terms_tchannel = cross_terms_cross_section_tchannel - cross_sections_tchannel[i] - cross_sections_tchannel[j],
+                    cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel - cross_sections_tchannel[i] - cross_sections_tchannel[j],
+                    actual_cross_section_tchannel = cross_terms_cross_section_tchannel,
                 )
     
     return coupling_to_process_cross_section_map
