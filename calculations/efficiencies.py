@@ -57,9 +57,9 @@ def getEfficiencies(
     for i in range(len(leptoquark_parameters.sorted_couplings)):
         for j in range(i+1, len(leptoquark_parameters.sorted_couplings)):
             # if couplings belong to the same category
-            if leptoquark_parameters.couplings[i][quark_index] == leptoquark_parameters.couplings[j][quark_index]:
+            if leptoquark_parameters.sorted_couplings[i][quark_index] == leptoquark_parameters.sorted_couplings[j][quark_index]:
                 cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
-                cross_terms_directory_path = f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/t/{leptoquark_parameters.couplings[i][lepton_index]}{leptoquark_parameters.couplings[i][quark_index]}{leptoquark_parameters.couplings[i][chirality_index]}_{leptoquark_parameters.couplings[j][lepton_index]}{leptoquark_parameters.couplings[j][quark_index]}{leptoquark_parameters.couplings[j][chirality_index]}/"
+                cross_terms_directory_path = f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/t/{leptoquark_parameters.sorted_couplings[i][lepton_index]}{leptoquark_parameters.sorted_couplings[i][quark_index]}{leptoquark_parameters.sorted_couplings[i][chirality_index]}_{leptoquark_parameters.sorted_couplings[j][lepton_index]}{leptoquark_parameters.sorted_couplings[j][quark_index]}{leptoquark_parameters.sorted_couplings[j][chirality_index]}/"
                 if coupling[quark_index] == 3:
                     coupling_to_process_efficiencies_map[cross_terms_coupling] = readAndInterpolateEfficiencyTauTau([[cross_terms_directory_path]], leptoquark_parameters, coupling_to_process_cross_section_map, coupling_to_process_efficiencies_map, cross_terms_coupling, cross_terms= True)
                 else:

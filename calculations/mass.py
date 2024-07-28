@@ -1,14 +1,16 @@
-from utilities.constants import mass_quarks, mass_leptons
+from typing import List, Dict
+
+from utilities.constants import mass_quarks, mass_leptons, chirality_index, lepton_index, quark_index
 
 
-def make_leptoquark_mass_dict(ls, num_lam):
-    md = {}
-    for i in range(num_lam):
-        if ls[i][4] == "L":
-            md[ls[i]] = [
-                [mass_quarks[ls[i][6]][1], mass_leptons[ls[i][8]][0]],
-                [mass_quarks[ls[i][6]][0], mass_leptons[ls[i][8]][1]],
+def makeLeptoquarkMassDictionary(couplings: List[str]) -> Dict[str, List[List[str]]]:
+    mass_dictionary: Dict[str, List[List[str]]] = {}
+    for coupling in couplings:
+        if coupling[chirality_index] == "L":
+            mass_dictionary[coupling] = [
+                [mass_quarks[coupling[lepton_index]][1], mass_leptons[coupling[quark_index]][0]],
+                [mass_quarks[coupling[lepton_index]][0], mass_leptons[coupling[quark_index]][1]],
             ]
-        elif ls[i][4] == "R":
-            md[ls[i]] = [[mass_quarks[ls[i][6]][1], mass_leptons[ls[i][8]][0]]]
-    return md
+        elif coupling[4] == "R":
+            mass_dictionary[coupling] = [[mass_quarks[coupling[lepton_index]][1], mass_leptons[coupling[quark_index]][0]]]
+    return mass_dictionary

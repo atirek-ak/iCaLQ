@@ -1,79 +1,59 @@
 import math
+from typing import Dict, List
+import sympy as sym
+
+from utilities.data_classes import LeptoquarkParameters
+from utilities.constants import chirality_index
+from typing import List
 
 
-def momentum(mlq: float, mq: float, ml: float):
-    """
-    mlq: mass of leptoquark
-    mq: mass of quark
-    ml: mass pf lepton
-    """
-    a = math.pow(mlq + ml, 2) - math.pow(mq, 2)
-    b = math.pow(mlq - ml, 2) - math.pow(mq, 2)
-    return math.sqrt(a * b) / (2 * mlq)
+def momentum(leptoquark_mass: float, quark_mass: float, lepton_mass: float):
+    a = math.pow(leptoquark_mass + lepton_mass, 2) - math.pow(quark_mass, 2)
+    b = math.pow(leptoquark_mass - lepton_mass, 2) - math.pow(quark_mass, 2)
+    return math.sqrt(a * b) / (2 * leptoquark_mass)
 
 
-def abseffcoupl_massfactor(mlq: float, mq: float, ml: float):
-    """
-    mlq: mass of leptoquark
-    ml: mass pf lepton
-    mq: mass of quark
-    """
+def absoluteeEfficiencyCouplingMassFactor(leptoquark_mass: float, quark_mass: float, lepton_mass: float):
     return (
-        math.pow(mlq, 2)
-        - (math.pow(ml, 2) + math.pow(mq, 2))
-        - math.pow((math.pow(ml, 2) - math.pow(mq, 2)), 2) / math.pow(mlq, 2)
-        - (6 * ml * mq)
+        math.pow(leptoquark_mass, 2)
+        - (math.pow(lepton_mass, 2) + math.pow(quark_mass, 2))
+        - math.pow((math.pow(lepton_mass, 2) - math.pow(quark_mass, 2)), 2) / math.pow(leptoquark_mass, 2)
+        - (6 * lepton_mass * quark_mass)
     )
 
 
-def U1_decay_width_massfactor(mlq: float, M: list):
-    """
-    mlq: mass of leptoquark
-    M:  list with [mlq, mq, ml]
-    """
+def U1DecayWidthMassFactor(leptoquark_mass: float, mass_dictionary: List[float]):
     return (
-        momentum(mlq, M[0], M[1])
-        * abseffcoupl_massfactor(mlq, M[0], M[1])
-        / (8 * math.pow(math.pi, 2) * math.pow(mlq, 2))
+        momentum(leptoquark_mass, mass_dictionary[0], mass_dictionary[1])
+        * absoluteeEfficiencyCouplingMassFactor(leptoquark_mass, mass_dictionary[0], mass_dictionary[1])
+        / (8 * math.pow(math.pi, 2) * math.pow(leptoquark_mass, 2))
     )
 
-def S1_decay_width(mlq: float, M: list):
-    mq = M[0]
-    ml= M[1]
-    return (math.pow(mlq, 2) - math.pow(ml + mq, 2)) * (math.sqrt((math.pow(mlq, 2) - math.pow(ml + mq, 2)) * (math.pow(mlq, 2) - math.pow(ml - mq, 2)))) / (8 * math.pi * math.pow(mlq, 3))
+def S1DecayWidthMassFactor(leptoquark_mass: float, mass_dictionary: List[float]):
+    quark_mass = mass_dictionary[0]
+    lepton_mass = mass_dictionary[1]
+    return (math.pow(leptoquark_mass, 2) - math.pow(lepton_mass + quark_mass, 2)) * (math.sqrt((math.pow(leptoquark_mass, 2) - math.pow(lepton_mass + quark_mass, 2)) * (math.pow(leptoquark_mass, 2) - math.pow(lepton_mass - quark_mass, 2)))) / (8 * math.pi * math.pow(leptoquark_mass, 3))
     
 
 
-# Calculate branching fraction of dielectron, dimuon an ditau using decay_width
-def branching_fraction(leptoquark_model, all_ls, all_lam, md, Mlq, width_const: float=0):
+# Calculate branching fraction using decay_width
+def getBranchingFraction(leptoquark_parameters: LeptoquarkParameters, symbolic_couplings: List[sym.Symbol], mass_dictionary: Dict[str, List[List[str]]]) -> Dict[str, sym.Symbol]:
+    coupling_to_branching_fraction_map: Dict[str, sym.Symbol]
+    for coupling, symbolic_coupling in zip(leptoquark_parameters.sorted_couplings, symbolic_couplings):
+        denominator = leptoquark_parameters.decay_width_constant
+        numerator = 0
+        if leptoquark_parameters.leptoquark_model == "U1":
+            denominator += symbolic_coupling ** 2 * U1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][0])
+            numerator += symbolic_coupling ** 2 * U1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][0])
+            if coupling[chirality_index] == 'L':
+                denominator += symbolic_coupling ** 2 * U1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][1])
+        elif leptoquark_parameters.leptoquark_model == "S1":
+            denominator += symbolic_coupling ** 2 * S1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][0])
+            numerator += symbolic_coupling ** 2 * S1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][0])
+            if coupling[chirality_index] == 'L':
+                denominator += symbolic_coupling ** 2 * S1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][1])
+
+        coupling_to_branching_fraction_map[coupling] = numerator/denominator
     
-    denom = width_const
-    numer = [0, 0, 0]
-    for i in range(len(all_ls)):
-        for j in range(len(all_ls[i])):
-            if leptoquark_model == "U1":
-                denom += all_lam[i][j] ** 2 * U1_decay_width_massfactor(
-                    Mlq, md[all_ls[i][j]][0]
-                )
-                numer[i] += all_lam[i][j] ** 2 * U1_decay_width_massfactor(
-                    Mlq, md[all_ls[i][j]][0]
-                )
-                if all_ls[i][j][4] == "L":
-                    denom += all_lam[i][j] ** 2 * U1_decay_width_massfactor(
-                        Mlq, md[all_ls[i][j]][1]
-                    )
-            elif leptoquark_model == "S1":
-                denom += all_lam[i][j] ** 2 * S1_decay_width(
-                    Mlq, md[all_ls[i][j]][0]
-                )
-                numer[i] += all_lam[i][j] ** 2 * S1_decay_width(
-                    Mlq, md[all_ls[i][j]][0]
-                )
-                if all_ls[i][j][4] == "L":
-                    denom += all_lam[i][j] ** 2 * S1_decay_width(
-                        Mlq, md[all_ls[i][j]][1]
-                    )
-
-
-
-    return [nu / denom for nu in numer]
+    return coupling_to_branching_fraction_map
+    

@@ -44,14 +44,18 @@ def get_efficiency_prefix(model: str):
 def get_t_ct_prefix(model: str):
     return f"{DATA_PREFIX}/model/{model}/efficiency/t"
 
+# tau-tau tagNames
+tagNames = ["HHbT.csv", "HHbV.csv", "LHbT.csv", "LHbV.csv"]
+
 # CALCUATION
 # coupling value limits
 # Currently being used for generating random coupling values
 min_coupling_value_limit = -3.5
 max_coupling_value_limit = 3.5
 
-# tau-tau tagNames
-tagNames = ["HHbT.csv", "HHbV.csv", "LHbT.csv", "LHbV.csv"]
+# lepton & quark masses
+mass_quarks = {'1': [0.0023, 0.0048], '2': [1.275, 0.095], '3': [173.07, 4.18]}
+mass_leptons = {'1': [0.000511, 2.2e-06], '2': [0.1057, 0.00017], '3': [1.777, 0.0155]}
 
 
 
@@ -101,16 +105,6 @@ vector_leptoquark_models = ["U1"]
 
 minimum_lepptoquark_mass_supported = 1000
 maximum_lepptoquark_mass_supported = 5000
-mev2gev = 0.001
-
-mass_quarks = {"1": [2.3, 4.8], "2": [1275, 95], "3": [173070, 4180]}
-
-for gen in mass_quarks:
-    mass_quarks[gen] = [x * mev2gev for x in mass_quarks[gen]]
-
-mass_leptons = {"1": [0.511, 0.0022], "2": [105.7, 0.17], "3": [1777, 15.5]}
-for gen in mass_leptons:
-    mass_leptons[gen] = [x * mev2gev for x in mass_leptons[gen]]
 
 data_mass_list = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000]
 

@@ -5,13 +5,13 @@ import scipy.optimize as optimize
 import numpy as np
 
 from utilities.constants import InputMode
-from utilities.branching_fraction import branching_fraction
-from utilities.data_classes import NonInteractiveInputParameters, LeptoquarkParameters
+from utilities.branching_fraction import getBranchingFraction
+from utilities.data_classes import LeptoquarkParameters
 from utilities.parse import get_lam_separate, parse_lam
 from utilities.validate import lam_val_ok
 from utilities.colour import prRed
 from calculations.cross_section import getCrossSections
-from calculations.mass import make_leptoquark_mass_dict
+from calculations.mass import makeLeptoquarkMassDictionary
 from calculations.efficiencies import getEfficiencies
 from calculations.chi_square import get_chi_square_symb, get_delta_chisq
 
@@ -28,15 +28,17 @@ def calculate(
     coupling_to_process_cross_section_map = getCrossSections(leptoquark_parameters)
     eff_list = getEfficiencies(leptoquark_parameters, coupling_to_process_cross_section_map)
 
-    couplings_symbolic = [sym.Symbol(coupling) for coupling in leptoquark_parameters.couplings]
-    mass_dict = make_leptoquark_mass_dict(leptoquark_parameters.couplings, len(leptoquark_parameters.couplings))
-    all_lam, all_ls = get_lam_separate(couplings_symbolic)
-    br_frac = branching_fraction(leptoquark_model, all_ls, all_lam, mass_dict, mass, width_constant)
+    # make symbolic couplings 
+    symbolic_couplings = [sym.Symbol(coupling) for coupling in leptoquark_parameters.sorted_couplings]
+
+    # get branching fraction
+    mass_dictionary = makeLeptoquarkMassDictionary(leptoquark_parameters.sorted_couplings)
+    coupling_to_branching_fraction_map = getBranchingFraction(leptoquark_parameters, symbolic_couplings, mass_dictionary)
     chisq_symb = get_chi_square_symb(
-        mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model, luminosity
+        mass, all_lam, cs_list, eff_list, coupling_to_branching_fraction_map, ignorePairSingle, margin, leptoquark_model, luminosity
     )
     # print("Lambdifying...")
-    numpy_chisq = lambdify(flatten(couplings_symbolic), chisq_symb, modules="numpy")
+    numpy_chisq = lambdify(flatten(symbolic_couplings), chisq_symb, modules="numpy")
     startLambda = 0.5
     startLambdas = np.array([startLambda for _ in range(len(leptoquark_parameters.couplings))])
     print("Minimizing...")
