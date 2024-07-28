@@ -1,10 +1,9 @@
 import pandas as pd
 from typing import Dict, Union, List
-from copy import deepcopy
 from scipy.interpolate import interp1d
 
-from calculations.helper import getNumbersFromCsvFiles, transposeMatrix, getImmediateSubdirectories
-from utilities.constants import get_efficiency_prefix, get_t_ct_prefix, tagNames, lepton_index, quark_index, chirality_index
+from calculations.helper import getNumbersFromCsvFiles, transposeMatrix, getImmediateSubdirectories, getCrossSectionFromProcess, getEfficienciesFromProcess, getEfficienciesFromProcessAndTagNameTauTau
+from utilities.constants import get_efficiency_prefix, tagNames, lepton_index, quark_index, chirality_index
 from utilities.data_classes import LeptoquarkParameters, SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau, TagsTauTau, SingleCouplingCrossSections, CrossTermsCrossSections
 
 
@@ -70,6 +69,9 @@ def getEfficiencies(
 
 
 def readAndInterpolateEfficiency(path_list: List[List[str]], leptoquark_parameters: LeptoquarkParameters, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]] = {}, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]] = {}, cross_terms_coupling: str = "", coupling1: str = "", coupling2: str = "", cross_terms: bool = False):
+    """
+    interpolate single & cross-terms efficiencies, & for cross-terms calculates the correct efficiencies
+    """
     # variable which has a list of efficiencies corresponding to each process for given mass
     process_values = []
     for process_path in path_list:
@@ -95,8 +97,8 @@ def readAndInterpolateEfficiency(path_list: List[List[str]], leptoquark_paramete
             coupling1_cross_section = getCrossSectionFromProcess(process_path, coupling_to_process_cross_section_map, coupling1)
             coupling2_cross_section = getCrossSectionFromProcess(process_path, coupling_to_process_cross_section_map, coupling2)
             # get single couplings efficiencies
-            coupling1_efficiencies = getEfficienciesFromProcessAndTagName(process_path, coupling_to_process_efficiencies_map, coupling1)
-            coupling2_efficiencies = getEfficienciesFromProcessAndTagName(process_path, coupling_to_process_efficiencies_map, coupling2)
+            coupling1_efficiencies = getEfficienciesFromProcess(process_path, coupling_to_process_efficiencies_map, coupling1)
+            coupling2_efficiencies = getEfficienciesFromProcess(process_path, coupling_to_process_efficiencies_map, coupling2)
             for interpolated_mass_value, coupling1_efficiency, coupling2_efficiency in zip(interpolated_mass_values, coupling1_efficiencies, coupling2_efficiencies):
             # we compute the cross-terms efficiency using the formula
             # CS1 * EFF1 + CS2 * EFF2 + cross-terms-CS *  cross-terms-EFF = 2-couplings-CS * 2-couplings-EFF
@@ -125,37 +127,6 @@ def readAndInterpolateEfficiency(path_list: List[List[str]], leptoquark_paramete
         efficiency_tchannel = process_values[3],
         efficiency_single_production = process_values[4],
     )
-
-def getCrossSectionFromProcess(process_path: str, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]], coupling: str) -> float:
-    singleCouplingCrossSection = coupling_to_process_cross_section_map[coupling]
-    # Path: {DATA_PREFIX}/model/{model}/efficiency/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/
-    if process_path.split('/')[4] == 'q':
-        return singleCouplingCrossSection.cross_section_pureqcd
-    elif process_path.split('/')[4] == 'p':
-        return singleCouplingCrossSection.cross_section_pair_production
-    elif process_path.split('/')[4] == 'i':
-        return singleCouplingCrossSection.cross_section_interference
-    elif process_path.split('/')[4] == 't':
-        return singleCouplingCrossSection.cross_section_tchannel
-    elif process_path.split('/')[4] == 's':
-        return singleCouplingCrossSection.cross_section_single_production
-    return 0
-
-def getEfficienciesFromProcessAndTagName(process_path: str, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], coupling: str) -> List[float]:
-    efficienciesObject = coupling_to_process_efficiencies_map[coupling]
-    # Path: {DATA_PREFIX}/model/{model}/efficiency/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/
-    if process_path.split('/')[4] == 'q':
-        return efficienciesObject.efficiency_pureqcd
-    elif process_path.split('/')[4] == 'p':
-        return efficienciesObject.efficiency_pair_production
-    elif process_path.split('/')[4] == 'i':
-        return efficienciesObject.efficiency_interference
-    elif process_path.split('/')[4] == 't':
-        return efficienciesObject.efficiency_tchannel
-    elif process_path.split('/')[4] == 's':
-        return efficienciesObject.efficiency_single_production
-
-    return []
 
 def readAndInterpolateEfficiencyTauTau(path_list: List[List[str]], leptoquark_parameters: LeptoquarkParameters, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]] = {}, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]] = {}, cross_terms_coupling: str = "", coupling1: str = "", coupling2: str = "", cross_terms: bool = False):
     # variable which has a list of efficiencies corresponding to each process for given mass
@@ -224,31 +195,3 @@ def readAndInterpolateEfficiencyTauTau(path_list: List[List[str]], leptoquark_pa
         efficiency_tchannel = process_values[3],
         efficiency_single_production = process_values[4],
     )
-
-def getEfficienciesFromProcessAndTagNameTauTau(process_path: str, tagName: str, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], coupling: str) -> List[float]:
-    efficienciesObject = coupling_to_process_efficiencies_map[coupling]
-    # Path: {DATA_PREFIX}/model/{model}/efficiency/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/
-    # get TagsTauTau object
-    tagsTauTau: TagsTauTau
-    if process_path.split('/')[4] == 'q':
-        tagsTauTau = efficienciesObject.efficiency_pureqcd
-    elif process_path.split('/')[4] == 'p':
-        tagsTauTau = efficienciesObject.efficiency_pair_production
-    elif process_path.split('/')[4] == 'i':
-        tagsTauTau = efficienciesObject.efficiency_interference
-    elif process_path.split('/')[4] == 't':
-        tagsTauTau = efficienciesObject.efficiency_tchannel
-    elif process_path.split('/')[4] == 's':
-        tagsTauTau = efficienciesObject.efficiency_single_production
-    
-    # from TagsTauTau object, we get the list of efficiencies
-    if tagName == "HHbT.csv":
-        return tagsTauTau.hhbt
-    elif tagName == "HHbV.csv":
-        return tagsTauTau.hhbv
-    elif tagName == "LHbT.csv":
-        return tagsTauTau.lhbt
-    elif tagName == "LHbV.csv":
-        return tagsTauTau.lhbv
-
-    return []
