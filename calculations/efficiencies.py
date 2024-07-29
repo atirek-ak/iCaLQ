@@ -3,14 +3,14 @@ from typing import Dict, Union, List
 from scipy.interpolate import interp1d
 
 from calculations.helper import getNumbersFromCsvFiles, transposeMatrix, getImmediateSubdirectories, getCrossSectionFromProcess, getEfficienciesFromProcess, getEfficienciesFromProcessAndTagNameTauTau
-from utilities.constants import get_efficiency_prefix, tagNames, lepton_index, quark_index, chirality_index
+from utilities.constants import get_efficiency_prefix, tag_names, lepton_index, quark_index, chirality_index
 from utilities.data_classes import LeptoquarkParameters, SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau, TagsTauTau, SingleCouplingCrossSections, CrossTermsCrossSections
 
 
 def getEfficiencies(
         leptoquark_parameters: LeptoquarkParameters,
         coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]],
-    ) -> dict:
+    ) -> Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]]:
     """
     Load efficiencies from the data files
 
@@ -68,7 +68,7 @@ def getEfficiencies(
     return coupling_to_process_efficiencies_map
 
 
-def readAndInterpolateEfficiency(path_list: List[List[str]], leptoquark_parameters: LeptoquarkParameters, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]] = {}, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]] = {}, cross_terms_coupling: str = "", coupling1: str = "", coupling2: str = "", cross_terms: bool = False):
+def readAndInterpolateEfficiency(path_list: List[List[str]], leptoquark_parameters: LeptoquarkParameters, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]] = {}, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]] = {}, cross_terms_coupling: str = "", coupling1: str = "", coupling2: str = "", cross_terms: bool = False) -> Union[SingleCouplingEfficiency, CrossTermsEfficiency]:
     """
     interpolate single & cross-terms efficiencies, & for cross-terms calculates the correct efficiencies
     """
@@ -128,14 +128,17 @@ def readAndInterpolateEfficiency(path_list: List[List[str]], leptoquark_paramete
         efficiency_single_production = process_values[4],
     )
 
-def readAndInterpolateEfficiencyTauTau(path_list: List[List[str]], leptoquark_parameters: LeptoquarkParameters, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]] = {}, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]] = {}, cross_terms_coupling: str = "", coupling1: str = "", coupling2: str = "", cross_terms: bool = False):
+def readAndInterpolateEfficiencyTauTau(path_list: List[List[str]], leptoquark_parameters: LeptoquarkParameters, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]] = {}, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]] = {}, cross_terms_coupling: str = "", coupling1: str = "", coupling2: str = "", cross_terms: bool = False) -> Union[SingleCouplingEfficiencyTauTau, CrossTermsEfficiencyTauTau]:
+    """
+    interpolate single & cross-terms efficiencies, & for cross-terms calculates the correct efficiencies for tau-tau generations
+    """
     # variable which has a list of efficiencies corresponding to each process for given mass
     process_values = []
     for process_path in path_list:
         data_mass_list = getImmediateSubdirectories(process_path)
         # variable which has a list of efficiencies corresponding to each tag
         tag_values = []
-        for tagName in tagNames:
+        for tagName in tag_names:
             mass_values = []
             for file in data_mass_list:
                 file_path = f"{process_path}{file}/{tagName}"

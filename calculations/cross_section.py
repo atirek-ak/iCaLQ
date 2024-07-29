@@ -1,7 +1,7 @@
-from typing import Dict, Union
+from typing import Dict, Union, Callable, List
 from scipy.interpolate import interp1d
 
-from utilities.data_classes import LeptoquarkParameters, SingleCouplingCrossSections, ParticleCrossSections, CrossTermsCrossSections
+from utilities.data_classes import LeptoquarkParameters, SingleCouplingCrossSections, CrossTermsCrossSections
 from utilities.constants import (
     get_cross_sections_df_pair_production,
     get_cross_sections_df_single_production,
@@ -12,7 +12,7 @@ from utilities.constants import (
     quark_index
 )
 
-def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> dict:
+def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]]:
     """
     Get cross sections from data files
     
@@ -63,7 +63,7 @@ def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> dict:
     
     return coupling_to_process_cross_section_map
 
-def interpolateLinearCrossSection(df, couplings):
+def interpolateLinearCrossSection(df, couplings) -> Callable[[float], List[float]]:
     """
     Returns a function for linear interpolate of cross-section for all masses
     """

@@ -5,6 +5,9 @@ class LeptoquarkParameters:
     """
     class for all parameters required for calculation. This class will have all the values that are user-inputted
     """
+    def __init__(self):
+        pass
+    
     def __init__(
         self,
         leptoquark_model: str,
@@ -41,6 +44,9 @@ class NonInteractiveInputParameters:
     :param output_yes_path: File path of the output file (allowed values)
     :param output_no_path: File path of the output file (disallowed values)
     """
+    def __init__(self):
+        pass
+
     def __init__(
         self,
         input_card_path: str,
@@ -134,6 +140,6 @@ class CrossTermsEfficiencyTauTau:
     # This will only have t channel for now
     def __init__(
         self,
-        efficiency_tchannel: List[TagsTauTau],
+        efficiency_tchannel: TagsTauTau,
     ):
         self.efficiency_tchannel = efficiency_tchannel

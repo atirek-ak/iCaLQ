@@ -1,394 +1,337 @@
 import sympy as sym
+from typing import Dict, List, Union
 from sympy.utilities.iterables import flatten
 
+from utilities.data_classes import LeptoquarkParameters, SingleCouplingCrossSections, CrossTermsCrossSections, SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau
 from utilities.constants import (
-    NSM,
-    ND,
-    k_factor_pair_production,
-    k_factor_pureqcd,
-    k_factor_single_production,
-    k_factor_t_channel,
-    k_factor_interference
+    lhc_data_HHbT,
+    lhc_data_HHbV,
+    lhc_data_LHbT,
+    lhc_data_LHbV,
+    lhc_data_ee,
+    lhc_data_mumu,
+    k_factor_U1_pair_production,
+    k_factor_U1_pureqcd,
+    k_factor_U1_single_production,
+    k_factor_U1_t_channel,
+    k_factor_U1_interference,
+    quark_index,
+    tag_names,
+    pureqcd_contribution_mass_limit
 )
 
+def calculateCouplingContribution(leptoquark_parameters: LeptoquarkParameters, coupling: str, symbolic_coupling: sym.Symbol, branching_fraction: sym.Symbol, cross_section: SingleCouplingCrossSections, efficiencies: SingleCouplingEfficiency) -> sym.Symbol:
+    """
+    Compute the chi-square polynomial for each coupling
+    """
+    # number of bins is the total bins efficiency was divided into during data generation
+    # we take t-channel here as it is also present is efficiency is of type CrossTermsEfficiency
+    number_of_bins = len(efficiencies.efficiency_tchannel)
 
-def get_chisq_ind(
-    tag, mass, all_lam, cs_list, eff_list, b_frac, ignorePairSingle, margin, leptoquark_model, luminosity,
-):
-    """
-    Calculate a partial polynomial
-    """
-    [ee_lam, mumu_lam, tautau_lam] = all_lam
-    [
-        ee_eff_l,
-        mumu_eff_l,
-        tautau_eff_l,
-        ee_eff_t_ct,
-        mumu_eff_t_ct,
-        tautau_eff_t_ct,
-        ee_lambdas_len,
-        mumu_lambdas_len,
-        tautau_lambdas_len,
-    ] = eff_list
-    [
-        ee_cs,
-        mumu_cs,
-        tautau_cs,
-        cs_ee_t_ct,
-        cs_mumu_t_ct,
-        cs_tautau_t_ct,
-        _,
-        _,
-        _,
-    ] = cs_list
-    if (
-        (tag < 4 and len(tautau_eff_l[0]) == 0)
-        or (tag == 4 and len(ee_eff_l[0]) == 0)
-        or (tag == 5 and len(mumu_eff_l[0]) == 0)
-    ):
-        return 0
-    if tag < 4:
-        num_bin = len(tautau_eff_l[0][0][tag])
-    elif tag == 4:
-        num_bin = len(ee_eff_l[0][0][0])
-    elif tag == 5:
-        num_bin = len(mumu_eff_l[0][0][0])
-    nq = [0.0] * num_bin
-    np = [0.0] * num_bin
-    ns = [0.0] * num_bin
-    ni = [0.0] * num_bin
-    nt = [0.0] * num_bin
-    ntc = [0.0] * num_bin
-    nsm = NSM[tag]
-    nd = ND[tag]
-    denominator = [
-        nd[bin_no] + margin * margin * nd[bin_no] ** 2 for bin_no in range(num_bin)
-    ]
-    if tag < 4:
-        nq = [
-            nq[bin_no]
-            + tautau_cs[0][0] * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0)
-            * tautau_eff_l[0][0][tag][bin_no]
-            * b_frac**2
-            * luminosity
-            for bin_no in range(num_bin)
-        ] if mass <=6000 else nq
-        for i in range(tautau_lambdas_len):
-            np = [
-                np[bin_no]
-                + tautau_cs[1][i] * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
-                * tautau_eff_l[1][i][tag][bin_no]
-                * tautau_lam[i] ** 4
-                * b_frac**2
-                * luminosity
-                for bin_no in range(num_bin)
-            ] if mass <=6000 else np
-            ns = [
-                ns[bin_no]
-                + tautau_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
-                * tautau_eff_l[2][i][tag][bin_no]
-                * tautau_lam[i] ** 2
-                * b_frac
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-            ni = [
-                ni[bin_no]
-                + tautau_cs[3][i] * (k_factor_interference if leptoquark_model == "S1" else 1.0)
-                * tautau_eff_l[3][i][tag][bin_no]
-                * tautau_lam[i] ** 2
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-            nt = [
-                nt[bin_no] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
-                + tautau_cs[4][i]
-                * tautau_eff_l[4][i][tag][bin_no]
-                * tautau_lam[i] ** 4
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-        ntc_cntr = 0
-        for i in range(tautau_lambdas_len):
-            for j in range(i + 1, tautau_lambdas_len):
-                "use cross-terms"
-                ntc = [
-                    ntc[bin_no]
-                    + cs_tautau_t_ct[ntc_cntr] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
-                    * tautau_eff_t_ct[ntc_cntr][tag][bin_no]
-                    * tautau_lam[i] ** 2
-                    * tautau_lam[j] ** 2
-                    * luminosity
-                    for bin_no in range(num_bin)
-                ]
-                ntc_cntr += 1
-    elif tag == 4:
-        nq = [
-            nq[bin_no]
-            + ee_cs[0][0] * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0) * ee_eff_l[0][0][0][bin_no] * b_frac**2 * luminosity
-            for bin_no in range(num_bin)
-        ] if mass <=6000 else nq
-        for i in range(ee_lambdas_len):
-            np = [
-                np[bin_no]
-                + ee_cs[1][i] * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
-                * ee_eff_l[1][i][0][bin_no]
-                * ee_lam[i] ** 4
-                * b_frac**2
-                * luminosity
-                for bin_no in range(num_bin)
-            ] if mass <=6000 else np
-            ns = [
-                ns[bin_no]
-                + ee_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
-                * ee_eff_l[2][i][0][bin_no]
-                * ee_lam[i] ** 2
-                * b_frac
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-            ni = [
-                ni[bin_no]
-                + ee_cs[3][i] * (k_factor_interference if leptoquark_model == "S1" else 1.0)
-                * ee_eff_l[3][i][0][bin_no]
-                * ee_lam[i] ** 2
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-            nt = [
-                nt[bin_no]
-                + ee_cs[4][i] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
-                * ee_eff_l[4][i][0][bin_no]
-                * ee_lam[i] ** 4
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-        ntc_cntr = 0
-        for i in range(ee_lambdas_len):
-            for j in range(i + 1, ee_lambdas_len):
-                "use cross-terms"
-                ntc = [
-                    ntc[bin_no]
-                    + cs_ee_t_ct[ntc_cntr] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
-                    * ee_eff_t_ct[ntc_cntr][0][bin_no]
-                    * ee_lam[i] ** 2
-                    * ee_lam[j] ** 2
-                    * luminosity
-                    for bin_no in range(num_bin)
-                ]
-                ntc_cntr += 1
-    elif tag == 5:
-        nq = [
-            nq[bin_no]
-            + mumu_cs[0][0] * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0)
-            * mumu_eff_l[0][0][0][bin_no]
-            * b_frac**2
-            * luminosity
-            for bin_no in range(num_bin)
-        ] if mass <=6000 else nq
-        for i in range(mumu_lambdas_len):
-            np = [
-                np[bin_no]
-                + mumu_cs[1][i] * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
-                * mumu_eff_l[1][i][0][bin_no]
-                * mumu_lam[i] ** 4
-                * b_frac**2
-                * luminosity
-                for bin_no in range(num_bin)
-            ] if mass <=6000 else np
-            ns = [
-                ns[bin_no]
-                + mumu_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
-                * mumu_eff_l[2][i][0][bin_no]
-                * mumu_lam[i] ** 2
-                * b_frac
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-            ni = [
-                ni[bin_no]
-                + mumu_cs[3][i] * (k_factor_interference if leptoquark_model == "S1" else 1.0)
-                * mumu_eff_l[3][i][0][bin_no]
-                * mumu_lam[i] ** 2
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-            nt = [
-                nt[bin_no]
-                + mumu_cs[4][i] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
-                * mumu_eff_l[4][i][0][bin_no]
-                * mumu_lam[i] ** 4
-                * luminosity
-                for bin_no in range(num_bin)
-            ]
-        ntc_cntr = 0
-        for i in range(mumu_lambdas_len):
-            for j in range(i + 1, mumu_lambdas_len):
-                "use cross-terms"
-                ntc = [
-                    ntc[bin_no]
-                    + cs_mumu_t_ct[ntc_cntr] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
-                    * mumu_eff_t_ct[ntc_cntr][0][bin_no]
-                    * mumu_lam[i] ** 2
-                    * mumu_lam[j] ** 2
-                    * luminosity
-                    for bin_no in range(num_bin)
-                ]
-                ntc_cntr += 1
-    chi_ind = 0.0
-    for bin_no in range(num_bin):
-        if ignorePairSingle:
-            chi_ind += (
-                (
-                    ni[bin_no]
-                    + nt[bin_no]
-                    + ntc[bin_no]
-                    + nsm[bin_no]
-                    - nd[bin_no]
-                )
-                ** 2
-            ) / denominator[bin_no]
+    # initialise bins 
+    pureqcd_contribution = [0.0] * number_of_bins
+    pair_production_contribution = [0.0] * number_of_bins
+    interference_contribution = [0.0] * number_of_bins
+    tchannel_contribution = [0.0] * number_of_bins
+    single_production_contribution = [0.0] * number_of_bins
+
+    # LHC data
+    standard_model_contribution = []
+    nd_contribution = []
+    if coupling[quark_index] == '1':
+        standard_model_contribution = lhc_data_ee["Standard Model"].to_numpy()
+        nd_contribution = lhc_data_ee["ND"].to_numpy()
+    elif coupling[quark_index] == '2':
+        standard_model_contribution = lhc_data_mumu["Standard Model"].to_numpy()
+        nd_contribution = lhc_data_mumu["ND"].to_numpy()
+
+    # common denominator
+    denominator = [nd_contribution[bin_number] + leptoquark_parameters.systematic_error * leptoquark_parameters.systematic_error * nd_contribution[bin_number] ** 2 for bin_number in range(number_of_bins)]
+
+    # k-factors initialization with default values
+    k_factor_pureqcd = 1
+    k_factor_pair_production = 1
+    k_factor_interference = 1
+    k_factor_tchannel = 1
+    k_factor_single_production = 1
+    if leptoquark_parameters.leptoquark_model == "U1":
+        k_factor_pureqcd = k_factor_U1_pureqcd
+        k_factor_pair_production =  k_factor_U1_pair_production
+        k_factor_interference = k_factor_U1_interference
+        k_factor_tchannel = k_factor_U1_t_channel
+        k_factor_single_production = k_factor_U1_single_production
+
+    # process wise contributions
+    for bin_number in range(number_of_bins):
+        # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
+        if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
+            pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
+        # pair production
+        pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
+        interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
+        tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
+        single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+
+    # calculate total contribution
+    total_contribution = 0.0
+    for bin_number in range(number_of_bins):
+        if leptoquark_parameters.ignore_single_pair_processes:
+            total_contribution += (
+                pureqcd_contribution[bin_number] + pair_production_contribution[bin_number] + interference_contribution[bin_number] + tchannel_contribution[bin_number] + single_production_contribution[bin_number] + standard_model_contribution[bin_number] - nd_contribution[bin_number]
+            )**2 / (denominator[bin_number])
         else:
-            chi_ind += (
-                (
-                    nq[bin_no]
-                    + np[bin_no]
-                    + ns[bin_no]
-                    + ni[bin_no]
-                    + nt[bin_no]
-                    + ntc[bin_no]
-                    + nsm[bin_no]
-                    - nd[bin_no]
-                )
-                ** 2
-            ) / denominator[bin_no]
-    return sym.Add(chi_ind)
+            total_contribution += (
+                pureqcd_contribution[bin_number] + pair_production_contribution[bin_number] + interference_contribution[bin_number] + tchannel_contribution[bin_number] + single_production_contribution[bin_number] + standard_model_contribution[bin_number] - nd_contribution[bin_number]
+            )**2 / (denominator[bin_number])
+    
+    return sym.simplify(total_contribution)
+
+def calculateCouplingContributionCrossTerms(leptoquark_parameters: LeptoquarkParameters, coupling1: str, coupling2: str, symbolic_coupling1: sym.Symbol, symbolic_coupling2: sym.Symbol, cross_section: CrossTermsCrossSections, efficiencies: CrossTermsEfficiency) -> sym.Symbol:
+    """
+    Compute the chi-square polynomial for each coupling
+    """
+    # number of bins is the total bins efficiency was divided into during data generation
+    # we take t-channel here as it is also present is efficiency is of type CrossTermsEfficiency
+    number_of_bins = len(efficiencies.efficiency_tchannel)
+
+    # initialise bins 
+    cross_terms_tchannel_contribution = [0.0] * number_of_bins
+
+    # LHC data
+    standard_model_contribution = []
+    nd_contribution = []
+    if coupling1[quark_index] == '1':
+        standard_model_contribution = lhc_data_ee["Standard Model"].to_numpy()
+        nd_contribution = lhc_data_ee["ND"].to_numpy()
+    elif coupling1[quark_index] == '2':
+        standard_model_contribution = lhc_data_mumu["Standard Model"].to_numpy()
+        nd_contribution = lhc_data_mumu["ND"].to_numpy()
+
+    # common denominator
+    denominator = [nd_contribution[bin_number] + leptoquark_parameters.systematic_error * leptoquark_parameters.systematic_error * nd_contribution[bin_number] ** 2 for bin_number in range(number_of_bins)]
+
+    # k-factors initialization with default values
+    k_factor_tchannel = 1
+    if leptoquark_parameters.leptoquark_model == "U1":
+        k_factor_tchannel = k_factor_U1_t_channel
+
+    # process wise contributions
+    for bin_number in range(number_of_bins):
+        cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+
+    # calculate total contribution
+    total_contribution = 0.0
+    for bin_number in range(number_of_bins):
+        total_contribution += (
+            cross_terms_tchannel_contribution[bin_number] + standard_model_contribution[bin_number] - nd_contribution[bin_number]
+        )**2 / (denominator[bin_number])
+    
+    return sym.simplify(total_contribution)
 
 
-def get_chi_square_symb(
-    mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model, luminosity
-):
+def calculateCouplingContributionTauTau(leptoquark_parameters: LeptoquarkParameters, coupling: str, symbolic_coupling: sym.Symbol, branching_fraction: sym.Symbol, cross_section: Union[SingleCouplingCrossSections, CrossTermsCrossSections], efficiencies: Union[SingleCouplingEfficiencyTauTau, CrossTermsEfficiencyTauTau]) -> sym.Symbol:
     """
-    Compute the polynomial by getting partial polynomials
+    Compute the chi-square polynomial for each coupling
     """
-    ee_chi = 0
-    mumu_chi = 0
-    hhbt_chi = 0
-    hhbv_chi = 0
-    lhbt_chi = 0
-    lhbv_chi = 0
-    if len(all_lam[0]) > 0:
-        ee_chi = sym.simplify(
-            get_chisq_ind(
-                4,
-                mass,
-                all_lam,
-                cs_list,
-                eff_list,
-                br_frac[0],
-                ignorePairSingle,
-                margin,
-                leptoquark_model,
-                luminosity,
-            )
-        )
-        print("Dielectron contributions computed.")
-    if len(all_lam[1]) > 0:
-        mumu_chi = sym.simplify(
-            get_chisq_ind(
-                5,
-                mass,
-                all_lam,
-                cs_list,
-                eff_list,
-                br_frac[1],
-                ignorePairSingle,
-                margin,
-                leptoquark_model,
-                luminosity,
-            )
-        )
-        print("Dimuon contributions computed.")
-    if len(all_lam[2]) > 0:
-        hhbt_chi = sym.simplify(
-            get_chisq_ind(
-                0,
-                mass,
-                all_lam,
-                cs_list,
-                eff_list,
-                br_frac[2],
-                ignorePairSingle,
-                margin,
-                leptoquark_model,
-                luminosity,
-            )
-        )
-        print("Ditau: HHbT contributions computed.")
-        hhbv_chi = sym.simplify(
-            get_chisq_ind(
-                1,
-                mass,
-                all_lam,
-                cs_list,
-                eff_list,
-                br_frac[2],
-                ignorePairSingle,
-                margin,
-                leptoquark_model,
-                luminosity,
-            )
-        )
-        print("Ditau: HHbV contributions computed.")
-        lhbt_chi = sym.simplify(
-            get_chisq_ind(
-                2,
-                mass,
-                all_lam,
-                cs_list,
-                eff_list,
-                br_frac[2],
-                ignorePairSingle,
-                margin,
-                leptoquark_model,
-                luminosity,
-            )
-        )
-        print("Ditau: LHbT contributions computed.")
-        lhbv_chi = sym.simplify(
-            get_chisq_ind(
-                3,
-                mass,
-                all_lam,
-                cs_list,
-                eff_list,
-                br_frac[2],
-                ignorePairSingle,
-                margin,
-                leptoquark_model,
-                luminosity,
-            )
-        )
-        print("Ditau: LHbV contributions computed.")
-    return sym.Add(ee_chi, mumu_chi, hhbt_chi, hhbv_chi, lhbt_chi, lhbv_chi)
+    # number of bins is the total bins efficiency was divided into during data generation
+    # we take t-channel here as it is also present is efficiency is of type CrossTermsEfficiency
+    total_contribution = 0.0
+    for tag_name in tag_names:
+        number_of_bins = 0
+        if tag_name == "HHbT.csv":
+            number_of_bins = len(efficiencies.efficiency_tchannel.hhbt)
+        elif tag_name == "HHbV.csv":
+            number_of_bins = len(efficiencies.efficiency_tchannel.hhbv)
+        elif tag_name == "LHbT.csv":
+            number_of_bins = len(efficiencies.efficiency_tchannel.lhbt)
+        elif tag_name == "LHbV.csv":
+            number_of_bins = len(efficiencies.efficiency_tchannel.lhbv)
 
+        # initialise bins 
+        pureqcd_contribution = [0.0] * number_of_bins
+        pair_production_contribution = [0.0] * number_of_bins
+        interference_contribution = [0.0] * number_of_bins
+        tchannel_contribution = [0.0] * number_of_bins
+        single_production_contribution = [0.0] * number_of_bins
 
-def get_delta_chisq(
-    lam_vals, lam_vals_original, chisq_min, numpy_chisq, num_lam, chi_sq_limits
-):
+        # LHC data
+        standard_model_contribution = []
+        nd_contribution = []
+        if tag_name == "HHbT.csv":
+            standard_model_contribution = lhc_data_HHbT["Standard Model"].to_numpy()
+            nd_contribution = lhc_data_HHbT["ND"].to_numpy()
+        elif tag_name == "HHbV.csv":
+            standard_model_contribution = lhc_data_HHbV["Standard Model"].to_numpy()
+            nd_contribution = lhc_data_HHbV["ND"].to_numpy()
+        elif tag_name == "LHbT.csv":
+            standard_model_contribution = lhc_data_LHbT["Standard Model"].to_numpy()
+            nd_contribution = lhc_data_LHbT["ND"].to_numpy()
+        elif tag_name == "LHbV.csv":
+            standard_model_contribution = lhc_data_LHbV["Standard Model"].to_numpy()
+            nd_contribution = lhc_data_LHbV["ND"].to_numpy()
+
+        # common denominator
+        denominator = [nd_contribution[bin_number] + leptoquark_parameters.systematic_error * leptoquark_parameters.systematic_error * nd_contribution[bin_number] ** 2 for bin_number in range(number_of_bins)]
+
+        # k-factors initialization with default values
+        k_factor_pureqcd = 1
+        k_factor_pair_production = 1
+        k_factor_interference = 1
+        k_factor_tchannel = 1
+        k_factor_single_production = 1
+        if leptoquark_parameters.leptoquark_model == "U1":
+            k_factor_pureqcd = k_factor_U1_pureqcd
+            k_factor_pair_production =  k_factor_U1_pair_production
+            k_factor_interference = k_factor_U1_interference
+            k_factor_tchannel = k_factor_U1_t_channel
+            k_factor_single_production = k_factor_U1_single_production
+
+        # process wise contributions
+        for bin_number in range(number_of_bins):
+            if tag_name == "HHbT.csv":
+                # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
+                if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
+                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.hhbt[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
+                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.hhbt[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
+                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.hhbt[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
+                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.hhbt[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
+                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.hhbt[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+            elif tag_name == "HHbV.csv":
+                # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
+                if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
+                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.hhbv[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
+                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.hhbv[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
+                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.hhbv[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
+                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.hhbv[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
+                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.hhbv[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+            elif tag_name == "LHbT.csv":
+                # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
+                if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
+                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.lhbt[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
+                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.lhbt[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
+                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.lhbt[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
+                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.lhbt[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
+                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.lhbt[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+            elif tag_name == "LHbV.csv":
+                # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
+                if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
+                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.lhbv[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
+                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.lhbv[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
+                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.lhbv[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
+                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.lhbv[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
+                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.lhbv[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+
+        # calculate total contribution
+        for bin_number in range(number_of_bins):
+            if leptoquark_parameters.ignore_single_pair_processes:
+                total_contribution += (
+                    pureqcd_contribution[bin_number] + pair_production_contribution[bin_number] + interference_contribution[bin_number] + tchannel_contribution[bin_number] + single_production_contribution[bin_number] + standard_model_contribution[bin_number] - nd_contribution[bin_number]
+                )**2 / (denominator[bin_number])
+            else:
+                total_contribution += (
+                    pureqcd_contribution[bin_number] + pair_production_contribution[bin_number] + interference_contribution[bin_number] + tchannel_contribution[bin_number] + single_production_contribution[bin_number] + standard_model_contribution[bin_number] - nd_contribution[bin_number]
+                )**2 / (denominator[bin_number])
+        total_contribution = sym.simplify(total_contribution)
+    
+    return sym.simplify(total_contribution)
+
+def calculateCouplingContributionTauTauCrossTerms(leptoquark_parameters: LeptoquarkParameters, coupling1: str, coupling2: str, symbolic_coupling1: sym.Symbol, symbolic_coupling2: sym.Symbol, cross_section: CrossTermsCrossSections, efficiencies: CrossTermsEfficiencyTauTau) -> sym.Symbol:
     """
-    Use the lambdified function (numpy_chisq) to calculate chi square for the given query input
+    Compute the chi-square polynomial for each coupling
     """
-    validity_list = []
-    delta_chisq = []
-    for lam_val, lam_val_copy in zip(lam_vals, lam_vals_original):
-        temp = [float(x) for x in lam_val]
-        if not any(temp):
-            temp = [0.00000001] * len(lam_val)
-        chisq_given_vals = numpy_chisq(*flatten(temp))
-        delta_chisq.append(chisq_given_vals - chisq_min)
-        if chisq_given_vals - chisq_min <= chi_sq_limits[num_lam - 1]:
-            validity_list.append("Yes")
+    # number of bins is the total bins efficiency was divided into during data generation
+    # we take t-channel here as it is also present is efficiency is of type CrossTermsEfficiency
+    total_contribution = 0.0
+    for tag_name in tag_names:
+        number_of_bins = 0
+        if tag_name == "HHbT.csv":
+            number_of_bins = len(efficiencies.efficiency_tchannel.hhbt)
+        elif tag_name == "HHbV.csv":
+            number_of_bins = len(efficiencies.efficiency_tchannel.hhbv)
+        elif tag_name == "LHbT.csv":
+            number_of_bins = len(efficiencies.efficiency_tchannel.lhbt)
+        elif tag_name == "LHbV.csv":
+            number_of_bins = len(efficiencies.efficiency_tchannel.lhbv)
+
+        # initialise bins 
+        cross_terms_tchannel_contribution = [0.0] * number_of_bins
+
+        # LHC data
+        standard_model_contribution = []
+        nd_contribution = []
+        if tag_name == "HHbT.csv":
+            standard_model_contribution = lhc_data_HHbT["Standard Model"].to_numpy()
+            nd_contribution = lhc_data_HHbT["ND"].to_numpy()
+        elif tag_name == "HHbV.csv":
+            standard_model_contribution = lhc_data_HHbV["Standard Model"].to_numpy()
+            nd_contribution = lhc_data_HHbV["ND"].to_numpy()
+        elif tag_name == "LHbT.csv":
+            standard_model_contribution = lhc_data_LHbT["Standard Model"].to_numpy()
+            nd_contribution = lhc_data_LHbT["ND"].to_numpy()
+        elif tag_name == "LHbV.csv":
+            standard_model_contribution = lhc_data_LHbV["Standard Model"].to_numpy()
+            nd_contribution = lhc_data_LHbV["ND"].to_numpy()
+
+        # common denominator
+        denominator = [nd_contribution[bin_number] + leptoquark_parameters.systematic_error * leptoquark_parameters.systematic_error * nd_contribution[bin_number] ** 2 for bin_number in range(number_of_bins)]
+
+        # k-factors initialization with default values
+        k_factor_tchannel = 1
+        if leptoquark_parameters.leptoquark_model == "U1":
+            k_factor_tchannel = k_factor_U1_t_channel
+
+        # process wise contributions
+        for bin_number in range(number_of_bins):
+            if tag_name == "HHbT.csv":
+                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.hhbt[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+            elif tag_name == "HHbV.csv":
+                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.hhbv[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+            elif tag_name == "LHbT.csv":
+                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.lhbt[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+            elif tag_name == "LHbV.csv":
+                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.lhbv[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+
+        # calculate total contribution
+        for bin_number in range(number_of_bins):
+            total_contribution += (
+                cross_terms_tchannel_contribution[bin_number] + standard_model_contribution[bin_number] - nd_contribution[bin_number]
+            )**2 / (denominator[bin_number])
+        total_contribution = sym.simplify(total_contribution)
+    
+    return sym.simplify(total_contribution)
+
+def getChiSquareSymbolic(leptoquark_parameters: LeptoquarkParameters, branching_fraction: sym.Symbol, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]], coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], symbolic_couplings: List[sym.Symbol]) -> sym.Symbol:
+    """
+    Compute the chi-square polynomial
+    """
+    chi_square: sym.Symbol = 0
+
+    # calculate single coupling contribution
+    for coupling, symbolic_coupling, in zip(leptoquark_parameters.sorted_couplings, symbolic_couplings):
+        if coupling[quark_index] == '3':
+            chi_square = sym.Add(chi_square, calculateCouplingContributionTauTau(
+                leptoquark_parameters, coupling, symbolic_coupling, branching_fraction, coupling_to_process_cross_section_map[coupling], coupling_to_process_efficiencies_map[coupling]
+            ))
         else:
-            validity_list.append("No")
-    return delta_chisq, validity_list
+            chi_square = sym.Add(chi_square, calculateCouplingContribution(
+                leptoquark_parameters, coupling, symbolic_coupling, branching_fraction, coupling_to_process_cross_section_map[coupling], coupling_to_process_efficiencies_map[coupling]
+            ))
+        print(f"{coupling} contributions calculated!!")
+    
+    # calculate cross-terms contribution
+    for i in range(len(leptoquark_parameters.sorted_couplings)):
+        for j in range(i+1, len(leptoquark_parameters.sorted_couplings)):
+            # if couplings belong to the same category
+            if leptoquark_parameters.sorted_couplings[i][quark_index] == leptoquark_parameters.sorted_couplings[j][quark_index]:
+                cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
+                if coupling[quark_index] == '3':
+                    chi_square = sym.Add(chi_square, calculateCouplingContributionTauTau(
+                        leptoquark_parameters, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], symbolic_couplings[i], symbolic_couplings[j], coupling_to_process_cross_section_map[cross_terms_coupling], coupling_to_process_efficiencies_map[cross_terms_coupling]
+                    ))
+                else:
+                    chi_square = sym.Add(chi_square, calculateCouplingContribution(
+                        leptoquark_parameters, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], symbolic_couplings[i], symbolic_couplings[j], coupling_to_process_cross_section_map[cross_terms_coupling], coupling_to_process_efficiencies_map[cross_terms_coupling]
+                    ))
+                print(f"{cross_terms_coupling} contributions calculated!!")
+
+    return sym.simplify(chi_square)

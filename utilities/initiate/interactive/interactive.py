@@ -1,6 +1,3 @@
-import sys
-import random
-
 from utilities.constants import (
     luminosity_tau,
     default_ignore_single_pair_processes,
@@ -10,8 +7,8 @@ from utilities.constants import (
     InputMode
 )
 from utilities.data_classes import NonInteractiveInputParameters
-from utilities.validate import validate_input_data, checkIfFilesExist
-from utilities.parse import sort_couplings_and_values
+from utilities.validate import validateInputData, checkIfFilesExist
+from utilities.parse import sortCouplingsAndValues
 from utilities.colour import prCyan, prRed, prCyanNoNewLine
 from calculate import calculate
 
@@ -69,7 +66,7 @@ def initiateInteractive():
         elif s[0].strip() == "help":
             printHelp()
         elif s[0].strip() == "initiate":
-            leptoquark_parameters, _ = validate_input_data(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity)
+            leptoquark_parameters, _ = validateInputData(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity)
             leptoquark_parameters.couplings_values = [" ".join(["0"] * len(couplings))]
             calculate(leptoquark_parameters, InputMode.INTERACTIVE)
         elif s[0].strip().lower() in ["exit", "q", "exit()", ".exit"]:

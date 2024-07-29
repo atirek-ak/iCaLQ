@@ -1,8 +1,16 @@
 import os
+import sympy as sym
 from typing import Dict, Union, List
+from sympy.utilities.iterables import flatten
+
 from utilities.data_classes import SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau, TagsTauTau, SingleCouplingCrossSections, CrossTermsCrossSections
+from utilities.data_classes import LeptoquarkParameters 
+from utilities.constants import chi_sq_limits_1, chi_sq_limits_2
 
 def getNumbersFromCsvFiles(directory):
+    """
+    get masses list on the basis of the .csv files present in the directory
+    """
     # List to store the numbers
     numbers = []
     
@@ -18,6 +26,9 @@ def getNumbersFromCsvFiles(directory):
     return numbers
 
 def getImmediateSubdirectories(directory):
+    """
+    get masses list on the basis of the immediate subdirectories present in the directory
+    """
     # List to store the names of subdirectories
     subdirectories = []
     
@@ -53,6 +64,9 @@ def getCrossSectionFromProcess(process_path: str, coupling_to_process_cross_sect
     return 0
 
 def getEfficienciesFromProcess(process_path: str, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], coupling: str) -> List[float]:
+    """
+    return the correct efficiencies on the basis of process
+    """
     efficienciesObject = coupling_to_process_efficiencies_map[coupling]
     # Path: {DATA_PREFIX}/model/{model}/efficiency/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/
     if process_path.split('/')[4] == 'q':
@@ -69,6 +83,9 @@ def getEfficienciesFromProcess(process_path: str, coupling_to_process_efficienci
     return []
 
 def getEfficienciesFromProcessAndTagNameTauTau(process_path: str, tagName: str, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], coupling: str) -> List[float]:
+    """
+    return the correct efficiencies for tautau on the basis of process & tag
+    """
     efficienciesObject = coupling_to_process_efficiencies_map[coupling]
     # Path: {DATA_PREFIX}/model/{model}/efficiency/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/
     # get TagsTauTau object
@@ -95,3 +112,26 @@ def getEfficienciesFromProcessAndTagNameTauTau(process_path: str, tagName: str, 
         return tagsTauTau.lhbv
 
     return []
+
+
+def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_values_list: List[List[float]], chi_square_minima: float, numpy_chi_square_symbolic: sym.Symbol):
+    """
+    Use the lambdified function (numpy_chi_square_symbolic) to calculate chi square for the given query input
+    """
+    validity_list = []
+    delta_chi_square = []
+    for coupling_values in coupling_values_list:
+        chi_square_value = numpy_chi_square_symbolic(*flatten(coupling_values))
+        delta_chi_square.append(chi_square_value - chi_square_minima)
+        if leptoquark_parameters.significance == 1:
+            if chi_square_value - chi_square_minima <= chi_sq_limits_1(len(leptoquark_parameters.sorted_couplings)-1):
+                validity_list.append("Yes")
+            else:
+                validity_list.append("No")
+        elif leptoquark_parameters.significance == 2:
+            if chi_square_value - chi_square_minima <= chi_sq_limits_2(len(leptoquark_parameters.sorted_couplings)-1):
+                validity_list.append("Yes")
+            else:
+                validity_list.append("No")
+    
+    return delta_chi_square, validity_list

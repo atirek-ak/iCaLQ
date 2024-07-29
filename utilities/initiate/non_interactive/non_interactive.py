@@ -9,8 +9,8 @@ from utilities.constants import (
     InputMode
 )
 from utilities.data_classes import NonInteractiveInputParameters, LeptoquarkParameters
-from utilities.validate import validate_input_data
-from utilities.parse import sort_couplings_and_values
+from utilities.validate import validateInputData
+from utilities.parse import sortCouplingsAndValues
 from utilities.colour import prCyan, prRed, prCyanNoNewLine
 from utilities.initiate.non_interactive.validate import validateNonInteractiveInput
 from calculate import calculate
@@ -30,7 +30,7 @@ def initiateNonInteractive(non_interactive_input_parameters: NonInteractiveInput
     # read input coupling values
     readInputCouplingValues(non_interactive_input_parameters, leptoquark_parameters)
     
-    calculate(leptoquark_parameters, non_interactive_input_parameters, InputMode.NONINTERACTIVE)
+    calculate(leptoquark_parameters, InputMode.NONINTERACTIVE, non_interactive_input_parameters)
 
 
 def readCardData(non_interactive_input_parameters: NonInteractiveInputParameters) -> Tuple[LeptoquarkParameters, int]:
@@ -57,7 +57,7 @@ def readCardData(non_interactive_input_parameters: NonInteractiveInputParameters
 
     # Create the leptoquarkParameters class instance
     # From here on, this will be used for referencing to any input data and has all information
-    return validate_input_data(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity, random_points)
+    return validateInputData(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity, random_points)
 
 def updateRandomPoints(random_points: int, non_interactive_input_parameters: NonInteractiveInputParameters, leptoquark_parameters: LeptoquarkParameters):
     """
@@ -85,4 +85,4 @@ def readInputCouplingValues(non_interactive_input_parameters: NonInteractiveInpu
             coupling_values.append(coupling_value)
         leptoquark_parameters.couplings_values = coupling_values
 
-    sort_couplings_and_values(leptoquark_parameters)
+    sortCouplingsAndValues(leptoquark_parameters)

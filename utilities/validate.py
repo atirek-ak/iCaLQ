@@ -2,7 +2,7 @@ import os
 from typing import Tuple, List
 
 from utilities.colour import prRed
-from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models, minimum_lepptoquark_mass_supported, maximum_lepptoquark_mass_supported
+from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models, minimum_leptoquark_mass_supported, maximum_leptoquark_mass_supported
 from utilities.data_classes import LeptoquarkParameters
 
 def checkIfFilesExist(files: List[str]):
@@ -11,7 +11,7 @@ def checkIfFilesExist(files: List[str]):
             raise Exception(f"File {file} could not be found. Please check if the input path is correct")
 
 
-def validate_input_data(
+def validateInputData(
     leptoquark_model: str,
     leptoquark_mass: str, 
     couplings: str, 
@@ -35,8 +35,8 @@ def validate_input_data(
         leptoquark_mass = float(leptoquark_mass)
     except:
         raise ValueError("Leptoquark mass should be a valid number")
-    if leptoquark_mass < minimum_lepptoquark_mass_supported or leptoquark_mass > maximum_lepptoquark_mass_supported:
-        raise ValueError(f"Leptoquark mass should range from {minimum_lepptoquark_mass_supported} to {maximum_lepptoquark_mass_supported} MeV")
+    if leptoquark_mass < minimum_leptoquark_mass_supported or leptoquark_mass > maximum_leptoquark_mass_supported:
+        raise ValueError(f"Leptoquark mass should range from {minimum_leptoquark_mass_supported} to {maximum_leptoquark_mass_supported} MeV")
 
 
     # validate couplings
@@ -130,16 +130,18 @@ def validate_input_data(
 
     
 
-def lam_val_ok(lam_val_f, num_lam):
+def validateInteractiveInputCouplingValues(coupling_values_input_interactive: str, couplings_length: int) -> bool:
     """
     Check if queries are in correct form
     """
-    lam_vals = lam_val_f.replace(",", " ").split()
-    if len(lam_vals) != num_lam:
+    coupling_values = coupling_values_input_interactive.split()
+    if len(coupling_values) != couplings_length:
+        prRed(f"[Query Error]: Please input {len(couplings_length)} couplings values input.")
         return False
     try:
-        for i in range(num_lam):
-            _ = float(lam_vals[i])
+        for i in range(couplings_length):
+            _ = float(coupling_values[i])
     except ValueError:
+        prRed(f"[Query Error]: Please input numerical values as input")
         return False
     return True

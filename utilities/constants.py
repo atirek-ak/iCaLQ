@@ -44,8 +44,17 @@ def get_efficiency_prefix(model: str):
 def get_t_ct_prefix(model: str):
     return f"{DATA_PREFIX}/model/{model}/efficiency/t"
 
-# tau-tau tagNames
-tagNames = ["HHbT.csv", "HHbV.csv", "LHbT.csv", "LHbV.csv"]
+# LHC data
+LHC_DATA_PREFIX = f"{DATA_PREFIX}/HEPdata"
+lhc_data_HHbT = pd.read_csv(f"{LHC_DATA_PREFIX}/HHbT.csv", header=[0])
+lhc_data_HHbV = pd.read_csv(f"{LHC_DATA_PREFIX}/HHbV.csv", header=[0])
+lhc_data_LHbT = pd.read_csv(f"{LHC_DATA_PREFIX}/LHbT.csv", header=[0])
+lhc_data_LHbV = pd.read_csv(f"{LHC_DATA_PREFIX}/LHbV.csv", header=[0])
+lhc_data_ee = pd.read_csv(f"{LHC_DATA_PREFIX}/dielectron.csv", header=[0])
+lhc_data_mumu = pd.read_csv(f"{LHC_DATA_PREFIX}/dimuon.csv", header=[0])
+
+# tau-tau tag_names
+tag_names = ["HHbT.csv", "HHbV.csv", "LHbT.csv", "LHbV.csv"]
 
 # CALCUATION
 # coupling value limits
@@ -57,10 +66,10 @@ max_coupling_value_limit = 3.5
 mass_quarks = {'1': [0.0023, 0.0048], '2': [1.275, 0.095], '3': [173.07, 4.18]}
 mass_leptons = {'1': [0.000511, 2.2e-06], '2': [0.1057, 0.00017], '3': [1.777, 0.0155]}
 
+# pureqcd contribution mass limit
+pureqcd_contribution_mass_limit = 6000
 
-
-
-# Declaring variables which need not be reloaded every run
+# 1 sigma chi square limits
 chi_sq_limits_1 = [
     1.00,
     2.295748928898636,
@@ -80,6 +89,8 @@ chi_sq_limits_1 = [
     18.11319133873574,
     19.197568537049687,
 ]
+
+# 2 sigma chi square limits
 chi_sq_limits_2 = [
     4.00,
     6.180074306244173,
@@ -100,45 +111,21 @@ chi_sq_limits_2 = [
     27.952164463248984,
 ]
 
+# leptoquark models
 scalar_leptoquark_models = ["S1"]
 vector_leptoquark_models = ["U1"]
 
-minimum_lepptoquark_mass_supported = 1000
-maximum_lepptoquark_mass_supported = 5000
+# mass limits supported
+minimum_leptoquark_mass_supported = 1000
+maximum_leptoquark_mass_supported = 5000
 
-data_mass_list = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000]
-
+# default luminosity values
 luminosity_tau = 139 * 1000
 luminosity_e_mu = 140 * 1000
 
-LHC_DATA_PREFIX = f"{DATA_PREFIX}/HEPdata"
-
-standard_HHbT = pd.read_csv(f"{LHC_DATA_PREFIX}/HHbT.csv", header=[0])
-standard_HHbV = pd.read_csv(f"{LHC_DATA_PREFIX}/HHbV.csv", header=[0])
-standard_LHbT = pd.read_csv(f"{LHC_DATA_PREFIX}/LHbT.csv", header=[0])
-standard_LHbV = pd.read_csv(f"{LHC_DATA_PREFIX}/LHbV.csv", header=[0])
-standard_ee = pd.read_csv(f"{LHC_DATA_PREFIX}/dielectron.csv", header=[0])
-standard_mumu = pd.read_csv(f"{LHC_DATA_PREFIX}/dimuon.csv", header=[0])
-ND = [
-    standard_HHbT["ND"].to_numpy(),
-    standard_HHbV["ND"].to_numpy(),
-    standard_LHbT["ND"].to_numpy(),
-    standard_LHbV["ND"].to_numpy(),
-    standard_ee["ND"].to_numpy(),
-    standard_mumu["ND"].to_numpy(),
-]
-NSM = [
-    standard_HHbT["Standard Model"].to_numpy(),
-    standard_HHbV["Standard Model"].to_numpy(),
-    standard_LHbT["Standard Model"].to_numpy(),
-    standard_LHbV["Standard Model"].to_numpy(),
-    standard_ee["Standard Model"].to_numpy(),
-    standard_mumu["Standard Model"].to_numpy(),
-]
-
-
-k_factor_pair_production = 1.5
-k_factor_pureqcd = 1.5
-k_factor_single_production = 1.0
-k_factor_t_channel = 1.0
-k_factor_interference = 1.0
+# k-factor on the basis of proccess
+k_factor_U1_pair_production = 1.5
+k_factor_U1_pureqcd = 1.5
+k_factor_U1_single_production = 1.0
+k_factor_U1_t_channel = 1.0
+k_factor_U1_interference = 1.0

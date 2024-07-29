@@ -4,7 +4,6 @@ import sympy as sym
 
 from utilities.data_classes import LeptoquarkParameters
 from utilities.constants import chirality_index
-from typing import List
 
 
 def momentum(leptoquark_mass: float, quark_mass: float, lepton_mass: float):
@@ -37,11 +36,10 @@ def S1DecayWidthMassFactor(leptoquark_mass: float, mass_dictionary: List[float])
 
 
 # Calculate branching fraction using decay_width
-def getBranchingFraction(leptoquark_parameters: LeptoquarkParameters, symbolic_couplings: List[sym.Symbol], mass_dictionary: Dict[str, List[List[str]]]) -> Dict[str, sym.Symbol]:
-    coupling_to_branching_fraction_map: Dict[str, sym.Symbol]
+def getBranchingFraction(leptoquark_parameters: LeptoquarkParameters, symbolic_couplings: List[sym.Symbol], mass_dictionary: Dict[str, List[List[str]]]) -> sym.Symbol:
+    numerator: sym.Symbol = 0
+    denominator: sym.Symbol = leptoquark_parameters.decay_width_constant
     for coupling, symbolic_coupling in zip(leptoquark_parameters.sorted_couplings, symbolic_couplings):
-        denominator = leptoquark_parameters.decay_width_constant
-        numerator = 0
         if leptoquark_parameters.leptoquark_model == "U1":
             denominator += symbolic_coupling ** 2 * U1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][0])
             numerator += symbolic_coupling ** 2 * U1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][0])
@@ -52,8 +50,5 @@ def getBranchingFraction(leptoquark_parameters: LeptoquarkParameters, symbolic_c
             numerator += symbolic_coupling ** 2 * S1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][0])
             if coupling[chirality_index] == 'L':
                 denominator += symbolic_coupling ** 2 * S1DecayWidthMassFactor(leptoquark_parameters.leptoquark_mass, mass_dictionary[coupling][1])
-
-        coupling_to_branching_fraction_map[coupling] = numerator/denominator
     
-    return coupling_to_branching_fraction_map
-    
+    return numerator/denominator
