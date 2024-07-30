@@ -124,12 +124,12 @@ def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_valu
         chi_square_value = numpy_chi_square_symbolic(*flatten(coupling_values))
         delta_chi_square.append(chi_square_value - chi_square_minima)
         if leptoquark_parameters.significance == 1:
-            if chi_square_value - chi_square_minima <= chi_sq_limits_1(len(leptoquark_parameters.sorted_couplings)-1):
+            if chi_square_value - chi_square_minima <= chi_sq_limits_1[len(leptoquark_parameters.sorted_couplings)-1]:
                 validity_list.append("Yes")
             else:
                 validity_list.append("No")
         elif leptoquark_parameters.significance == 2:
-            if chi_square_value - chi_square_minima <= chi_sq_limits_2(len(leptoquark_parameters.sorted_couplings)-1):
+            if chi_square_value - chi_square_minima <= chi_sq_limits_2[len(leptoquark_parameters.sorted_couplings)-1]:
                 validity_list.append("Yes")
             else:
                 validity_list.append("No")

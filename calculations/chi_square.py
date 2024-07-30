@@ -325,13 +325,14 @@ def getChiSquareSymbolic(leptoquark_parameters: LeptoquarkParameters, branching_
             if leptoquark_parameters.sorted_couplings[i][quark_index] == leptoquark_parameters.sorted_couplings[j][quark_index]:
                 cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
                 if coupling[quark_index] == '3':
-                    chi_square = sym.Add(chi_square, calculateCouplingContributionTauTau(
+                    chi_square = sym.Add(chi_square, calculateCouplingContributionTauTauCrossTerms(
                         leptoquark_parameters, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], symbolic_couplings[i], symbolic_couplings[j], coupling_to_process_cross_section_map[cross_terms_coupling], coupling_to_process_efficiencies_map[cross_terms_coupling]
                     ))
                 else:
-                    chi_square = sym.Add(chi_square, calculateCouplingContribution(
+                    chi_square = sym.Add(chi_square, calculateCouplingContributionCrossTerms(
                         leptoquark_parameters, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], symbolic_couplings[i], symbolic_couplings[j], coupling_to_process_cross_section_map[cross_terms_coupling], coupling_to_process_efficiencies_map[cross_terms_coupling]
                     ))
                 print(f"{cross_terms_coupling} contributions calculated!!")
 
     return sym.simplify(chi_square)
+

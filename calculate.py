@@ -97,7 +97,7 @@ def calculate(
     no_list = [i for i in range(len(validity_list)) if validity_list[i] == "No"]
 
     # printing & outputting yes values
-    print("\nYes List:\n")
+    print("\nYes List:")
     with open(non_interactive_input_parameters.output_yes_path, "w", encoding="utf8") as yes_file:
         for coupling in leptoquark_parameters.sorted_couplings:
             print(coupling, end="\t")
@@ -105,14 +105,14 @@ def calculate(
         print("Delta_chisquare")
         print("Delta_chisquare", file=yes_file)
         for i in yes_list:
-            for coupling in leptoquark_parameters.sorted_couplings[i]:
-                print(coupling, end="\t")
-                print(coupling, end=",", file=yes_file)
+            for value in leptoquark_parameters.sorted_couplings_values[i]:
+                print(value, end="\t")
+                print(value, end=",", file=yes_file)
             print(delta_chi_square[i])
             print(delta_chi_square[i], file=yes_file)
 
     # printing & outputting no values
-    print("\nNo List:\n")
+    print("\nNo List:")
     with open(non_interactive_input_parameters.output_no_path, "w", encoding="utf8") as no_file:
         for coupling in leptoquark_parameters.sorted_couplings:
             print(coupling, end="\t")
@@ -120,9 +120,9 @@ def calculate(
         print("Delta_chisquare")
         print("Delta_chisquare", file=no_file)
         for i in no_list:
-            for coupling in leptoquark_parameters.sorted_couplings[i]:
-                print(coupling, end="\t")
-                print(coupling, end=",", file=no_file)
+            for value in leptoquark_parameters.sorted_couplings_values[i]:
+                print(value, end="\t")
+                print(value, end=",", file=no_file)
             print(delta_chi_square[i])
             print(delta_chi_square[i], file=no_file)
     print(f"Output files {non_interactive_input_parameters.output_yes_path} and {non_interactive_input_parameters.output_no_path} written")

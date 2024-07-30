@@ -61,7 +61,7 @@ def validateInputData(
             raise ValueError("The 6th character of {couplings_list[i]} should be '['. For valid format, refer to README")
         if (leptoquark_model in scalar_leptoquark_models and couplings_list[i][6] not in ["1", "2"]) or (leptoquark_model in vector_leptoquark_models and couplings_list[i][6] not in ["1", "2", "3"]):
             raise ValueError("The 7th character of {couplings_list[i]} should be a valid lepton generation. For valid format, refer to README")
-        if couplings_list[i][7] != '[':
+        if couplings_list[i][7] != ',':
             raise ValueError("The 8th character of {couplings_list[i]} should be ','. For valid format, refer to README")
         if couplings_list[i][8] not in ["1", "2", "3"]:
             raise ValueError("The 9th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")

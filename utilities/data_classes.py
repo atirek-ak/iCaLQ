@@ -5,22 +5,19 @@ class LeptoquarkParameters:
     """
     class for all parameters required for calculation. This class will have all the values that are user-inputted
     """
-    def __init__(self):
-        pass
-    
     def __init__(
         self,
-        leptoquark_model: str,
-        leptoquark_mass: float,
-        ignore_single_pair_processes: bool,
-        significance: int,
-        systematic_error: float,
-        decay_width_constant: float,
-        luminosity: float,
-        couplings: list,
-        couplings_values: list = [],
-        sorted_couplings: list = [],
-        sorted_couplings_values: list = [],
+        leptoquark_model: str = '',
+        leptoquark_mass: float = 0.0,
+        ignore_single_pair_processes: bool = False,
+        significance: int = 0,
+        systematic_error: float = 0.0,
+        decay_width_constant: float = 0.0,
+        luminosity: float = 0.0,
+        couplings: List[str] = [],
+        couplings_values: List[List[float]] = [],
+        sorted_couplings: List[str] = [],
+        sorted_couplings_values: List[List[float]] = [],
     ):
         self.leptoquark_model = leptoquark_model
         self.leptoquark_mass = leptoquark_mass
@@ -44,15 +41,12 @@ class NonInteractiveInputParameters:
     :param output_yes_path: File path of the output file (allowed values)
     :param output_no_path: File path of the output file (disallowed values)
     """
-    def __init__(self):
-        pass
-
     def __init__(
         self,
-        input_card_path: str,
-        input_values_path: str,
-        output_yes_path: str,
-        output_no_path: str,
+        input_card_path: str = "",
+        input_values_path: str = "",
+        output_yes_path: str = "",
+        output_no_path: str = "",
     ):
         self.input_card_path = input_card_path
         self.input_values_path = input_values_path

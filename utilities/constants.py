@@ -5,7 +5,7 @@ from enum import Enum
 # coupling input params
 lepton_index = 6
 quark_index = 8
-chirality_index = 6
+chirality_index = 4
 
 # input modes
 class InputMode(Enum):

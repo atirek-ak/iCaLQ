@@ -26,7 +26,7 @@ def initiateNonInteractive(non_interactive_input_parameters: NonInteractiveInput
     # read & validate the card data. Then parse it into LeptoquarkParameters object
     leptoquark_parameters, random_points = readCardData(non_interactive_input_parameters)
     # update random points in input vals file if required
-    updateRandomPoints(random_points, leptoquark_parameters, leptoquark_parameters)
+    updateRandomPoints(random_points, non_interactive_input_parameters, leptoquark_parameters)
     # read input coupling values
     readInputCouplingValues(non_interactive_input_parameters, leptoquark_parameters)
     
@@ -77,12 +77,11 @@ def readInputCouplingValues(non_interactive_input_parameters: NonInteractiveInpu
     """
     with open(non_interactive_input_parameters.input_values_path) as v:
         leptoquark_parameters.couplings_values = v.readlines()
-
         # parse the coupling values data
         coupling_values = []
         for coupling_value in leptoquark_parameters.couplings_values:
             coupling_value = coupling_value.strip('\n').strip().split(' ')
+            coupling_value = [float(value) for value in coupling_value]
             coupling_values.append(coupling_value)
         leptoquark_parameters.couplings_values = coupling_values
-
     sortCouplingsAndValues(leptoquark_parameters)
