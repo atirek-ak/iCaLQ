@@ -48,6 +48,7 @@ def home(
     numpy_chisq = lambdify(flatten(lam), chisq_symb, modules="numpy")
     startLambda = 0.5
     startLambdas = np.array([startLambda for _ in range(num_lam)])
+    # bounds = [(0, 1) for _ in startLambdas]
     print("Minimizing...")
     minima = optimize.minimize(
         lambda x: numpy_chisq(*flatten(x)),
@@ -64,6 +65,22 @@ def home(
         )
         for randarr in np.random.rand(6, num_lam)
     ]
+    # minima = optimize.minimize(
+    #     lambda x: numpy_chisq(*flatten(x)),
+    #     startLambdas,
+    #     method="SLSQP",
+    #     bounds=bounds,
+    #     options={"ftol": 0.0001}
+    # )
+    # minima_list_1 = [
+    #     optimize.minimize(
+    #         lambda x: numpy_chisq(*flatten(x)),
+    #         randarr,
+    #         method="Nelder-Mead",
+    #         options={"fatol": 0.0001},
+    #     )
+    #     for randarr in np.random.rand(6, num_lam)
+    # ]
     # minima_list_2 = [
     #     optimize.minimize(lambda x: numpy_chisq(*flatten(x)), randarr)
     #     for randarr in np.random.rand(3, num_lam)
@@ -75,6 +92,8 @@ def home(
             print(f"Lambda: {m.x}")
             minima = m
     chisq_min = minima.fun
+    with open("minima.txt", 'a') as f:
+        f.write(f"{mass} {chisq_min} {minima.x}\n")
     opt_lambda_list = minima.x
     print("Minimum Chi Square at values:", end="")
     print(*[f"\n{lambdastring[i]} : {opt_lambda_list[i]}" for i in range(num_lam)])

@@ -55,7 +55,7 @@ mass_leptons = {"1": [0.511, 0.0022], "2": [105.7, 0.17], "3": [1777, 15.5]}
 for gen in mass_leptons:
     mass_leptons[gen] = [x * mev2gev for x in mass_leptons[gen]]
 
-data_mass_list = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
+data_mass_list = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000,5500, 6000]
 luminosity_tau = 139 * 1000
 luminosity_e_mu = 140 * 1000
 
@@ -139,3 +139,8 @@ k_factor_pureqcd = 1.5
 k_factor_single_production = 1.0
 k_factor_t_channel = 1.0
 k_factor_interference = 1.0
+
+# tau mass in GeV
+mass_tau = 1.7768
+mass_bottom_quark = 4.18
+mass_top_quark = 172.44
