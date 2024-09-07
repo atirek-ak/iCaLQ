@@ -98,6 +98,13 @@ def calculate(
 
     # printing & outputting yes values
     print("\nYes List:")
+    with open(f"values/{leptoquark_parameters.sorted_couplings[0]}.csv", 'a') as temp_file:
+        for index in range(len(delta_chi_square)):
+            if index in yes_list:
+                # for x in original_lam_vals[i]:
+                print(f"{leptoquark_parameters.leptoquark_mass}\t{leptoquark_parameters.sorted_couplings_values[index]}\t{chi_square_minima}\t{chi_square_minima+delta_chi_square[index]}\t1", file=temp_file)
+            else:
+                print(f"{leptoquark_parameters.leptoquark_mass}\t{leptoquark_parameters.sorted_couplings_values[index]}\t{chi_square_minima}\t{chi_square_minima+delta_chi_square[index]}\t2", file=temp_file)
     with open(non_interactive_input_parameters.output_yes_path, "w", encoding="utf8") as yes_file:
         for coupling in leptoquark_parameters.sorted_couplings:
             print(coupling, end="\t")

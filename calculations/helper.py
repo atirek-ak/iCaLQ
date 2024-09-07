@@ -123,6 +123,10 @@ def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_valu
     for coupling_values in coupling_values_list:
         chi_square_value = numpy_chi_square_symbolic(*flatten(coupling_values))
         delta_chi_square.append(chi_square_value - chi_square_minima)
+        file_path = f"plots/data/{leptoquark_parameters.sorted_couplings[0]}.csv"
+        with open(file_path, "a") as f:
+            f.write(f"{leptoquark_parameters.leptoquark_mass},{round(float(chi_square_minima),5)},{round(float(chi_square_value),5)},{round(float(coupling_values[0]),3)}\n")
+
         if leptoquark_parameters.significance == 1:
             if chi_square_value - chi_square_minima <= chi_sq_limits_1[len(leptoquark_parameters.sorted_couplings)-1]:
                 validity_list.append("Yes")
