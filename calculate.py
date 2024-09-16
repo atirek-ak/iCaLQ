@@ -134,13 +134,16 @@ def home(
     no_list = [i for i in range(len(validity_list)) if validity_list[i] == "No"]
     # TODO: temporary changes for plotting
     print("\nYes List:")
-    with open(f"values/{original_lambdastring[0]}.csv", "a") as f:
+    # with open(f"values/{original_lambdastring[0]}.csv", "a") as f:
+    with open(f"values/{original_lambdastring[0]}_{original_lambdastring[1]}.csv", "a") as f:
         # f.write("Mass\tLambda\tMin chi sq.\tChi Sq\tSigma \n")
         for i in yes_list:
             # for x in original_lam_vals[i]:
-            print(f"{mass}\t{original_lam_vals[i][0]}\t{chisq_min}\t{chisq_min+delta_chisq[i]}\t1", file=f)
+            # print(f"{mass}\t{original_lam_vals[i][0]}\t{chisq_min}\t{chisq_min+delta_chisq[i]}\t1", file=f)
+            print(f"{mass}\t{original_lam_vals[i][0]}\t{original_lam_vals[i][1]}\t{chisq_min}\t{chisq_min+delta_chisq[i]}\t1", file=f)
         for i in no_list:
-            print(f"{mass}\t{original_lam_vals[i][0]}\t{chisq_min}\t{chisq_min+delta_chisq[i]}\t2", file=f)
+            # print(f"{mass}\t{original_lam_vals[i][0]}\t{chisq_min}\t{chisq_min+delta_chisq[i]}\t2", file=f)
+            print(f"{mass}\t{original_lam_vals[i][0]}\t{original_lam_vals[i][1]}\t{chisq_min}\t{chisq_min+delta_chisq[i]}\t2", file=f)
     with open(output_yes, "w", encoding="utf8") as f:
         print("Mass", end='\t')
         print("Mass", end='\t', file=f)

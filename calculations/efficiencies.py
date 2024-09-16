@@ -11,7 +11,6 @@ def read_and_interpolate_csv(path_list, mass, data_mass_list):
     if any(any(inner_list) for inner_list in path_list) == False:
         return path_list
     interpolated_values = []
-    print(path_list)
     for path in path_list:
         for index in range(len(path)):
             # Read data from CSV files for each mass in data_mass_list
@@ -26,6 +25,8 @@ def read_and_interpolate_csv(path_list, mass, data_mass_list):
             # print(values)
             # Perform interpolation for each column
             # interp_func = InterpolatedUnivariateSpline(data_mass_list, values, k=1)
+            # print(data_mass_list)
+            # print([values[:, i] for i in range(values.shape[1])])
             splines = [InterpolatedUnivariateSpline(data_mass_list, values[:, i], k=1) for i in range(values.shape[1])]
             interpolated_values.append([np.array([spline(mass) for spline in splines])])
     
@@ -271,7 +272,7 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
         path_pureqcd_ee, path_pair_ee, path_single_ee, path_interference_ee, path_tchannel_ee
     ]
     ee_eff_l = read_and_interpolate_csv(ee_eff_paths, mass, data_mass_list)
-
+    print(ee_eff_l)
 
     ee_eff_l = [
         [
@@ -416,7 +417,6 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
     ]
 
     tautau_eff_l = read_and_interpolate_csv_tautau(tautau_eff_paths, mass, data_mass_list)
-    print(tautau_eff_l)
 
     ee_eff_t_ct_temp = [
         [

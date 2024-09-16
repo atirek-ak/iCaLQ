@@ -1,6 +1,6 @@
 U1              # lepqtoquark model
-5000			# mass
-X10LL[1,3]      # couplings
+3000			# mass
+X10LL[3,2] X10RR[3,2]      # couplings
 no				# ignore single and pair
 2				# significance
 0.1				# systematic error

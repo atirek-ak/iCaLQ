@@ -382,9 +382,12 @@ def add_plot_data(chisq_min, lam_vals, numpy_chisq, mass, lambdastring):
         if not any(temp):
             temp = [0.00000001] * len(lam_val)
         chisq_given_vals = numpy_chisq(*flatten(temp))
-        file_path = f"plots/data/{lambdastring[0]}.csv"
-        with open(file_path, "a") as f:
-            f.write(f"{mass},{round(float(chisq_min),5)},{round(float(chisq_given_vals),5)},{round(float(lam_val[0]),3)}\n")
+        # file_path = f"plots/data/{lambdastring[0]}.csv"
+        file_path = f"plots/data/{lambdastring[0]}_{lambdastring[1]}.csv"
+        if round(float(chisq_given_vals),5) - round(float(chisq_min),5) <=4 :
+            with open(file_path, "a") as f:
+                # f.write(f"{mass},{round(float(chisq_min),5)},{round(float(chisq_given_vals),5)},{round(float(lam_val[0]),3)}\n")
+                f.write(f"{mass},{round(float(chisq_min),5)},{round(float(chisq_given_vals),5)},{round(float(lam_val[0]),3)},{round(float(lam_val[1]),3)}\n")
 
 
 
