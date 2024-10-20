@@ -115,9 +115,6 @@ chi_sq_limits_2 = [
 scalar_leptoquark_models = ["S1"]
 vector_leptoquark_models = ["U1"]
 
-# mass limits supported
-minimum_leptoquark_mass_supported = 1000
-maximum_leptoquark_mass_supported = 5000
 
 # default luminosity values
 luminosity_tau = 139 * 1000

@@ -2,7 +2,7 @@ import os
 from typing import Tuple, List
 
 from utilities.colour import prRed
-from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models, minimum_leptoquark_mass_supported, maximum_leptoquark_mass_supported
+from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models
 from utilities.data_classes import LeptoquarkParameters
 
 def checkIfFilesExist(files: List[str]):
@@ -35,8 +35,6 @@ def validateInputData(
         leptoquark_mass = float(leptoquark_mass)
     except:
         raise ValueError("Leptoquark mass should be a valid number")
-    if leptoquark_mass < minimum_leptoquark_mass_supported or leptoquark_mass > maximum_leptoquark_mass_supported:
-        raise ValueError(f"Leptoquark mass should range from {minimum_leptoquark_mass_supported} to {maximum_leptoquark_mass_supported} MeV")
 
 
     # validate couplings

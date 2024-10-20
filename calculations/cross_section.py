@@ -68,6 +68,6 @@ def interpolateLinearCrossSection(df, couplings) -> Callable[[float], List[float
     Returns a function for linear interpolate of cross-section for all masses
     """
     return lambda mass: [
-        interp1d(df["Mass"], df[coupling], kind="slinear")(mass)
+        interp1d(df["Mass"], df[coupling], kind="slinear", fill_value="extrapolate")(mass)
         for coupling in couplings
     ]

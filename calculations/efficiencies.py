@@ -90,7 +90,7 @@ def readAndInterpolateEfficiency(path_list: List[List[str]], leptoquark_paramete
         interpolated_mass_values = []
         # start interpolation
         for bin_values in transposed_mass_values:
-            interpolation_function = lambda m: interp1d(data_mass_list, bin_values, kind="slinear")(m)
+            interpolation_function = lambda m: interp1d(data_mass_list, bin_values, kind="slinear", fill_value="extrapolate")(m)
             interpolated_mass_values.append(interpolation_function(leptoquark_parameters.leptoquark_mass))
         if cross_terms:
             cross_terms_interpolated_values = []
@@ -152,7 +152,7 @@ def readAndInterpolateEfficiencyTauTau(path_list: List[List[str]], leptoquark_pa
             interpolated_mass_values = []
             # start interpolation
             for bin_values in transposed_mass_values:
-                interpolation_function = lambda m: interp1d(data_mass_list, bin_values, kind="slinear")(m)
+                interpolation_function = lambda m: interp1d(data_mass_list, bin_values, kind="slinear", fill_value="extrapolate")(m)
                 interpolated_mass_values.append(interpolation_function(leptoquark_parameters.leptoquark_mass))
             if cross_terms:
                 cross_terms_interpolated_values = []
