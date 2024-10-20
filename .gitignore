@@ -163,3 +163,5 @@ cython_debug/
 pyvenv.cfg
 bin/
 share/
+values/
+plots/
