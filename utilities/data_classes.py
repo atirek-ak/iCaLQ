@@ -69,6 +69,15 @@ class SingleCouplingCrossSections:
         self.cross_section_interference = cross_section_interference
         self.cross_section_tchannel = cross_section_tchannel
 
+    def __str__(self):
+        return (
+            f"Cross Section Pure QCD: {self.cross_section_pureqcd}\n"
+            f"Cross Section Pair Production: {self.cross_section_pair_production}\n"
+            f"Cross Section Single Production: {self.cross_section_single_production}\n"
+            f"Cross Section Interference: {self.cross_section_interference}\n"
+            f"Cross Section T-Channel: {self.cross_section_tchannel}"
+        )
+
 class CrossTermsCrossSections:
     def __init__(
         self,
@@ -93,6 +102,15 @@ class SingleCouplingEfficiency:
         self.efficiency_single_production = efficiency_single_production
         self.efficiency_interference = efficiency_interference
         self.efficiency_tchannel = efficiency_tchannel
+
+    def __str__(self):
+        return (
+            f"Efficiency Pure QCD: {self.efficiency_pureqcd}\n"
+            f"Efficiency Pair Production: {self.efficiency_pair_production}\n"
+            f"Efficiency Single Production: {self.efficiency_single_production}\n"
+            f"Efficiency Interference: {self.efficiency_interference}\n"
+            f"Efficiency T-Channel: {self.efficiency_tchannel}"
+        )
 
 class CrossTermsEfficiency:
     # This will only have t channel for now
