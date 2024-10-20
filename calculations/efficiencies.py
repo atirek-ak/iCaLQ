@@ -185,7 +185,7 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
         + "i/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        # + str(closest_mass)
+        + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -194,7 +194,7 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
         + "p/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        # + str(closest_mass)
+        + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -203,7 +203,7 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
         + "s/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        # + str(closest_mass)
+        + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -212,7 +212,7 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
         + "t/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        # + str(closest_mass)
+        + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -221,7 +221,7 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
         + "q/"
         + str(coupling[6] + coupling[8] + coupling[4])
         + "/"
-        # + str(closest_mass)
+        + str(closest_mass)
         for coupling in lambdastring
         if coupling[8] == "3"
     ]
@@ -272,7 +272,7 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
         path_pureqcd_ee, path_pair_ee, path_single_ee, path_interference_ee, path_tchannel_ee
     ]
     ee_eff_l = read_and_interpolate_csv(ee_eff_paths, mass, data_mass_list)
-    print(ee_eff_l)
+    # print(ee_eff_l)
 
     ee_eff_l = [
         [
@@ -325,7 +325,7 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
     ]
     
     mumu_eff_l = read_and_interpolate_csv(mumu_eff_paths, mass, data_mass_list)
-    print(mumu_eff_l)
+    # print(mumu_eff_l)
     mumu_eff_l = [
         [
             [
@@ -373,50 +373,51 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
             for i in range(len(path_pureqcd_mumu))
         ],
     ]
-    # tautau_eff_l = [
-    #     [
-    #         [
-    #             pd.read_csv(path_pureqcd_tautau[i] + j, header=[0]).to_numpy()[:, 2]
-    #             for j in tagnames
-    #         ]
-    #         for i in range(len(path_pureqcd_tautau))
-    #     ],
-    #     [
-    #         [
-    #             pd.read_csv(path_pair_tautau[i] + j, header=[0]).to_numpy()[:, 2]
-    #             for j in tagnames
-    #         ]
-    #         for i in range(len(path_pureqcd_tautau))
-    #     ],
-    #     [
-    #         [
-    #             pd.read_csv(path_single_tautau[i] + j, header=[0]).to_numpy()[:, 2]
-    #             for j in tagnames
-    #         ]
-    #         for i in range(len(path_pureqcd_tautau))
-    #     ],
-    #     [
-    #         [
-    #             pd.read_csv(path_interference_tautau[i] + j, header=[0]).to_numpy()[
-    #                 :, 2
-    #             ]
-    #             for j in tagnames
-    #         ]
-    #         for i in range(len(path_pureqcd_tautau))
-    #     ],
-    #     [
-    #         [
-    #             pd.read_csv(path_tchannel_tautau[i] + j, header=[0]).to_numpy()[:, 2]
-    #             for j in tagnames
-    #         ]
-    #         for i in range(len(path_pureqcd_tautau))
-    #     ],
-    # ]
-    tautau_eff_paths = [
-        path_pureqcd_tautau, path_pair_tautau, path_single_tautau, path_interference_tautau, path_tchannel_tautau
+    tautau_eff_l = [
+        [
+            [
+                pd.read_csv(path_pureqcd_tautau[i] + j, header=[0]).to_numpy()[:, 2]
+                for j in tagnames
+            ]
+            for i in range(len(path_pureqcd_tautau))
+        ],
+        [
+            [
+                pd.read_csv(path_pair_tautau[i] + j, header=[0]).to_numpy()[:, 2]
+                for j in tagnames
+            ]
+            for i in range(len(path_pureqcd_tautau))
+        ],
+        [
+            [
+                pd.read_csv(path_single_tautau[i] + j, header=[0]).to_numpy()[:, 2]
+                for j in tagnames
+            ]
+            for i in range(len(path_pureqcd_tautau))
+        ],
+        [
+            [
+                pd.read_csv(path_interference_tautau[i] + j, header=[0]).to_numpy()[
+                    :, 2
+                ]
+                for j in tagnames
+            ]
+            for i in range(len(path_pureqcd_tautau))
+        ],
+        [
+            [
+                pd.read_csv(path_tchannel_tautau[i] + j, header=[0]).to_numpy()[:, 2]
+                for j in tagnames
+            ]
+            for i in range(len(path_pureqcd_tautau))
+        ],
     ]
-
-    tautau_eff_l = read_and_interpolate_csv_tautau(tautau_eff_paths, mass, data_mass_list)
+    # tautau_eff_paths = [
+    #     path_pureqcd_tautau, path_pair_tautau, path_single_tautau, path_interference_tautau, path_tchannel_tautau
+    # ]
+    # print(tautau_eff_paths)
+    # tautau_eff_l = read_and_interpolate_csv_tautau(tautau_eff_paths, mass, data_mass_list)
+    # print(tautau_eff_l)
 
     ee_eff_t_ct_temp = [
         [
@@ -471,8 +472,8 @@ def get_efficiencies(mass, closest_mass, lambdastring, num_lam, cs_list, leptoqu
                 tautau_eff_t_ct[tautau_cntr][tag_num] = (
                     tautau_eff_t_ct_temp[tautau_cntr][tag_num]
                     * cs_tautau_t_ct_temp[tautau_cntr]
-                    - tautau_eff_l[4][i][tag_num] * tautau_cs[4][i]
-                    - tautau_eff_l[4][j][tag_num] * tautau_cs[4][j]
+                    - tautau_eff_l[4][0][i][tag_num] * tautau_cs[4][i]
+                    - tautau_eff_l[4][0][j][tag_num] * tautau_cs[4][j]
                 ) / cs_tautau_t_ct[tautau_cntr]
             tautau_cntr += 1
     ee_lambdas_len = len(path_pureqcd_ee)

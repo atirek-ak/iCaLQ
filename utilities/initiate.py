@@ -4,7 +4,7 @@ import random
 from utilities.constants import (
     chi_sq_limits_1,
     chi_sq_limits_2,
-    luminosity_tau
+    luminosity
 )
 from utilities.validate import ready_to_initiate
 from utilities.parse import parse
@@ -29,7 +29,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
             c_lines = c.readlines()
     except OSError:
         sys.exit(f"Card file {card} does not exist. Exiting.")
-    if len(c_lines) < 9:
+    if len(c_lines) < 8:
         sys.exit(f"Number of lines in file: {len(c_lines)}, expected 8. Exiting.")
 
     # extract data
@@ -39,9 +39,8 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     ignore_f = c_lines[3].split("#")[0].strip()
     sigma_f = c_lines[4].split("#")[0].strip()
     margin_f = c_lines[5].split("#")[0].strip()
-    width_constant = c_lines[6].split("#")[0].strip()
-    luminosity = c_lines[7].split("#")[0].strip()
-    random_points = int(c_lines[8].split("#")[0].strip())
+    extra_width = c_lines[6].split("#")[0].strip()
+    random_points = int(c_lines[7].split("#")[0].strip())
     # validate data
     if sigma_f == "1":
         chi_sq_limits = chi_sq_limits_1
@@ -54,7 +53,7 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
     if not (ready_to_initiate(mass_f, lambdas_f, ignore_f, margin_f, leptoquark_model)):
         sys.exit("[Input Error]: Syntax Error encountered in input card. Exiting.")
 
-    width_constant = float(width_constant)
+    extra_width = float(extra_width)
 
     # update vals file value with random points if needed
     if random_points > 0:
@@ -78,11 +77,10 @@ def initiate_with_files(card: str, vals: str, output_yes: str, output_no: str):
             margin_f,
             v_lines,
             leptoquark_model,
-            luminosity,
         ),
         False,
         chi_sq_limits,
-        width_constant,
+        extra_width,
         output_yes,
         output_no,
     )
@@ -100,10 +98,9 @@ def initiate_interactive():
     margin_f = "0.1"
     lam_values_f = []
     leptoquark_model = ""
-    width_constant = 0
-    luminosity = luminosity_tau
+    extra_width = 0
     print_initiate_message(
-        "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, status, initiate, help\n",
+        "import_model=, mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), extra_width=, status, initiate, help\n",
         "",
         "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: X10LL[1,1],X10LL[3,2],X10RR[1,1]",
     )
@@ -111,8 +108,7 @@ def initiate_interactive():
     print(f"ignore_single_pair = {ignore_f}")
     print(f"significance = {sigma_limit}")
     print(f"systematic_error = {margin_f}")
-    print(f"width_constant = {width_constant}")
-    print(f"luminosity = {luminosity}")
+    print(f"extra_width = {extra_width}")
 
     while True:
         prCyan("calq > ")
@@ -130,10 +126,8 @@ def initiate_interactive():
             margin_f = s[1].strip()
         elif s[0].strip() == "import_model" and slen == 2:
             leptoquark_model = s[1].strip()
-        elif s[0].strip() == "width_constant" and slen == 2:
-            width_constant = float(s[1].strip())
-        elif s[0].strip() == "luminosity" and slen == 2:
-            luminosity = float(s[1].strip())
+        elif s[0].strip() == "extra_width" and slen == 2:
+            extra_width = float(s[1].strip())
         elif s[0].strip() == "significance" and slen == 2:
             if s[1].strip() == "1":
                 sigma_limit = 1
@@ -145,11 +139,11 @@ def initiate_interactive():
                 prRed("Allowed values of 'significance': 1 or 2\n")
         elif s[0].strip() == "status":
             print(
-                f"Mass: {mass_f}\nCouplings: {lambdas_f}\nIgnore Single & Pair = {ignore_f}\nSignificance = {sigma_limit}\nSystematic-Error = {margin_f}\nModel = {leptoquark_model}\nWidth constant = {width_constant}\nLuminosity = {luminosity}"
+                f"Mass: {mass_f}\nCouplings: {lambdas_f}\nIgnore Single & Pair = {ignore_f}\nSignificance = {sigma_limit}\nSystematic-Error = {margin_f}\nModel = {leptoquark_model}\nWidth constant = {extra_width}"
             )
         elif s[0].strip() == "help":
             print_initiate_message(
-                "mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), import_model=, width_constant=, luminosity=, status, initiate, help\n",
+                "import_model=, mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), extra_width=, status, initiate, help\n",
                 "Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: X10LL[1,1],X10LL[3,2],X10RR[1,1]",
                 "commands with '=' expect appropriate value. Read README.md for more info on individual commands.\n",
             )
@@ -171,11 +165,10 @@ def initiate_interactive():
                     margin_f,
                     lam_values_f,
                     leptoquark_model,
-                    luminosity,
                 ),
                 True,
                 chi_sq_limits,
-                width_constant,
+                extra_width,
             )
         elif s[0].strip() in ["exit", "q", "exit()", ".exit"]:
             return

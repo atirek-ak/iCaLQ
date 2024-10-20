@@ -11,5 +11,5 @@
                                   \▓▓▓  ║
        Calculator for LHC limits        ║
            on leptoquarks               ║
-          * Alpha Version *             ║
+          * Version 1.0.0 *             ║
                               ══════════╝

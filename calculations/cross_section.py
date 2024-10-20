@@ -16,7 +16,7 @@ from utilities.constants import (
 
 def interpolate_cs_func(df, ls):
     return lambda mass: [
-        InterpolatedUnivariateSpline(data_mass_list, df[coupling][:9], k=1)([mass])[0]
+        InterpolatedUnivariateSpline(data_mass_list, df[coupling][:5], k=1)([mass])[0]
         for coupling in ls
     ]
 
@@ -46,7 +46,7 @@ def interpolate_cs_ct_func(df):
     Interpolating cross-section of t-channel's cross terms
     """
     return lambda mass: [
-        interp1d(data_mass_list, df[ij][:9], kind=interpolation_type)([mass])[0]
+        interp1d(data_mass_list, df[ij][:5], kind=interpolation_type)([mass])[0]
         for ij in range(len(df))
     ]
 

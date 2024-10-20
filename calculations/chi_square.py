@@ -8,12 +8,13 @@ from utilities.constants import (
     k_factor_pureqcd,
     k_factor_single_production,
     k_factor_t_channel,
-    k_factor_interference
+    k_factor_interference,
+    luminosity
 )
 
 
 def get_chisq_ind(
-    tag, mass, all_lam, cs_list, eff_list, b_frac, ignorePairSingle, margin, leptoquark_model, luminosity,
+tag, mass, all_lam, cs_list, eff_list, b_frac, ignorePairSingle, margin, leptoquark_model,
 ):
     """
     Calculate a partial polynomial
@@ -60,16 +61,14 @@ def get_chisq_ind(
     nt = [0.0] * num_bin
     ntc = [0.0] * num_bin
     nsm = NSM[tag]
-    # nsm = [x*luminosity/139000 for x in nsm]
     nd = ND[tag]
-    # nd = [x*luminosity/139000 for x in nd]
     denominator = [
         nd[bin_no] + margin * margin * nd[bin_no] ** 2 for bin_no in range(num_bin)
     ]
     if tag < 4:
         nq = [
             nq[bin_no]
-            + tautau_cs[0][0] * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0)
+            + tautau_cs[0][0] * 1000 * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0)
             * tautau_eff_l[0][0][tag][bin_no]
             * b_frac**2
             * luminosity
@@ -78,7 +77,7 @@ def get_chisq_ind(
         for i in range(tautau_lambdas_len):
             np = [
                 np[bin_no]
-                + tautau_cs[1][i] * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
+                + tautau_cs[1][i] * 1000 * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
                 * tautau_eff_l[1][i][tag][bin_no]
                 * tautau_lam[i] ** 4
                 * b_frac**2
@@ -87,7 +86,7 @@ def get_chisq_ind(
             ] if mass <=6000 else np
             ns = [
                 ns[bin_no]
-                + tautau_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
+                + tautau_cs[2][i] * 1000 * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
                 * tautau_eff_l[2][i][tag][bin_no]
                 * tautau_lam[i] ** 2
                 * b_frac
@@ -96,7 +95,7 @@ def get_chisq_ind(
             ]
             ni = [
                 ni[bin_no]
-                + tautau_cs[3][i] * (k_factor_interference if leptoquark_model == "S1" else 1.0)
+                + tautau_cs[3][i] * 1000 * (k_factor_interference if leptoquark_model == "S1" else 1.0)
                 * tautau_eff_l[3][i][tag][bin_no]
                 * tautau_lam[i] ** 2
                 * luminosity
@@ -104,7 +103,7 @@ def get_chisq_ind(
             ]
             nt = [
                 nt[bin_no] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
-                + tautau_cs[4][i]
+                + tautau_cs[4][i] * 1000
                 * tautau_eff_l[4][i][tag][bin_no]
                 * tautau_lam[i] ** 4
                 * luminosity
@@ -116,7 +115,7 @@ def get_chisq_ind(
                 "use cross-terms"
                 ntc = [
                     ntc[bin_no]
-                    + cs_tautau_t_ct[ntc_cntr] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
+                    + cs_tautau_t_ct[ntc_cntr] * 1000 * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
                     * tautau_eff_t_ct[ntc_cntr][tag][bin_no]
                     * tautau_lam[i] ** 2
                     * tautau_lam[j] ** 2
@@ -127,13 +126,13 @@ def get_chisq_ind(
     elif tag == 4:
         nq = [
             nq[bin_no]
-            + ee_cs[0][0] * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0) * ee_eff_l[0][0][0][bin_no] * b_frac**2 * luminosity
+            + ee_cs[0][0] * 1000 * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0) * ee_eff_l[0][0][0][bin_no] * b_frac**2 * luminosity
             for bin_no in range(num_bin)
         ] if mass <=6000 else nq
         for i in range(ee_lambdas_len):
             np = [
                 np[bin_no]
-                + ee_cs[1][i] * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
+                + ee_cs[1][i] * 1000 * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
                 * ee_eff_l[1][i][0][bin_no]
                 * ee_lam[i] ** 4
                 * b_frac**2
@@ -142,7 +141,7 @@ def get_chisq_ind(
             ] if mass <=6000 else np
             ns = [
                 ns[bin_no]
-                + ee_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
+                + ee_cs[2][i] * 1000 * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
                 * ee_eff_l[2][i][0][bin_no]
                 * ee_lam[i] ** 2
                 * b_frac
@@ -151,7 +150,7 @@ def get_chisq_ind(
             ]
             ni = [
                 ni[bin_no]
-                + ee_cs[3][i] * (k_factor_interference if leptoquark_model == "S1" else 1.0)
+                + ee_cs[3][i] * 1000 * (k_factor_interference if leptoquark_model == "S1" else 1.0)
                 * ee_eff_l[3][i][0][bin_no]
                 * ee_lam[i] ** 2
                 * luminosity
@@ -159,7 +158,7 @@ def get_chisq_ind(
             ]
             nt = [
                 nt[bin_no]
-                + ee_cs[4][i] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
+                + ee_cs[4][i] * 1000 * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
                 * ee_eff_l[4][i][0][bin_no]
                 * ee_lam[i] ** 4
                 * luminosity
@@ -171,7 +170,7 @@ def get_chisq_ind(
                 "use cross-terms"
                 ntc = [
                     ntc[bin_no]
-                    + cs_ee_t_ct[ntc_cntr] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
+                    + cs_ee_t_ct[ntc_cntr] * 1000 * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
                     * ee_eff_t_ct[ntc_cntr][0][bin_no]
                     * ee_lam[i] ** 2
                     * ee_lam[j] ** 2
@@ -182,7 +181,7 @@ def get_chisq_ind(
     elif tag == 5:
         nq = [
             nq[bin_no]
-            + mumu_cs[0][0] * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0)
+            + mumu_cs[0][0] * 1000 * (k_factor_pureqcd if leptoquark_model == "S1" else 1.0)
             * mumu_eff_l[0][0][0][bin_no]
             * b_frac**2
             * luminosity
@@ -191,7 +190,7 @@ def get_chisq_ind(
         for i in range(mumu_lambdas_len):
             np = [
                 np[bin_no]
-                + mumu_cs[1][i] * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
+                + mumu_cs[1][i] * 1000 * (k_factor_pair_production if leptoquark_model == "S1" else 1.0)
                 * mumu_eff_l[1][i][0][bin_no]
                 * mumu_lam[i] ** 4
                 * b_frac**2
@@ -200,7 +199,7 @@ def get_chisq_ind(
             ] if mass <=6000 else np
             ns = [
                 ns[bin_no]
-                + mumu_cs[2][i] * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
+                + mumu_cs[2][i] * 1000 * (k_factor_single_production if leptoquark_model == "S1" else 1.0)
                 * mumu_eff_l[2][i][0][bin_no]
                 * mumu_lam[i] ** 2
                 * b_frac
@@ -209,7 +208,7 @@ def get_chisq_ind(
             ]
             ni = [
                 ni[bin_no]
-                + mumu_cs[3][i] * (k_factor_interference if leptoquark_model == "S1" else 1.0)
+                + mumu_cs[3][i] * 1000 * (k_factor_interference if leptoquark_model == "S1" else 1.0)
                 * mumu_eff_l[3][i][0][bin_no]
                 * mumu_lam[i] ** 2
                 * luminosity
@@ -217,7 +216,7 @@ def get_chisq_ind(
             ]
             nt = [
                 nt[bin_no]
-                + mumu_cs[4][i] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
+                + mumu_cs[4][i] * 1000 * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
                 * mumu_eff_l[4][i][0][bin_no]
                 * mumu_lam[i] ** 4
                 * luminosity
@@ -229,7 +228,7 @@ def get_chisq_ind(
                 "use cross-terms"
                 ntc = [
                     ntc[bin_no]
-                    + cs_mumu_t_ct[ntc_cntr] * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
+                    + cs_mumu_t_ct[ntc_cntr] * 1000 * (k_factor_t_channel if leptoquark_model == "S1" else 1.0)
                     * mumu_eff_t_ct[ntc_cntr][0][bin_no]
                     * mumu_lam[i] ** 2
                     * mumu_lam[j] ** 2
@@ -270,7 +269,7 @@ def get_chisq_ind(
 
 
 def get_chi_square_symb(
-    mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model, luminosity
+    mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model
 ):
     """
     Compute the polynomial by getting partial polynomials
@@ -293,7 +292,6 @@ def get_chi_square_symb(
                 ignorePairSingle,
                 margin,
                 leptoquark_model,
-                luminosity,
             )
         )
         print("Dielectron contributions computed.")
@@ -309,7 +307,6 @@ def get_chi_square_symb(
                 ignorePairSingle,
                 margin,
                 leptoquark_model,
-                luminosity,
             )
         )
         print("Dimuon contributions computed.")
@@ -325,7 +322,6 @@ def get_chi_square_symb(
                 ignorePairSingle,
                 margin,
                 leptoquark_model,
-                luminosity,
             )
         )
         print("Ditau: HHbT contributions computed.")
@@ -340,7 +336,6 @@ def get_chi_square_symb(
                 ignorePairSingle,
                 margin,
                 leptoquark_model,
-                luminosity,
             )
         )
         print("Ditau: HHbV contributions computed.")
@@ -355,7 +350,6 @@ def get_chi_square_symb(
                 ignorePairSingle,
                 margin,
                 leptoquark_model,
-                luminosity,
             )
         )
         print("Ditau: LHbT contributions computed.")
@@ -370,7 +364,6 @@ def get_chi_square_symb(
                 ignorePairSingle,
                 margin,
                 leptoquark_model,
-                luminosity,
             )
         )
         print("Ditau: LHbV contributions computed.")
@@ -387,8 +380,11 @@ def add_plot_data(chisq_min, lam_vals, numpy_chisq, mass, lambdastring):
         if round(float(chisq_given_vals),5) - round(float(chisq_min),5) <=4 :
             with open(file_path, "a") as f:
                 # f.write(f"{mass},{round(float(chisq_min),5)},{round(float(chisq_given_vals),5)},{round(float(lam_val[0]),3)}\n")
-                f.write(f"{mass},{round(float(chisq_min),5)},{round(float(chisq_given_vals),5)},{round(float(lam_val[0]),3)},{round(float(lam_val[1]),3)}\n")
-
+                f.write(f"{round(float(lam_val[0]),3)},{round(float(lam_val[1]),3)},{round(float(chisq_min),5)},{round(float(chisq_given_vals),5)}, 1\n")
+        else:
+            with open(file_path, "a") as f:
+                # f.write(f"{mass},{round(float(chisq_min),5)},{round(float(chisq_given_vals),5)},{round(float(lam_val[0]),3)}\n")
+                f.write(f"{round(float(lam_val[0]),3)},{round(float(lam_val[1]),3)},{round(float(chisq_min),5)},{round(float(chisq_given_vals),5)}, 2\n")
 
 
 def get_delta_chisq(

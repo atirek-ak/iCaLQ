@@ -24,10 +24,9 @@ def home(
     original_lam_vals,
     margin,
     leptoquark_model,
-    luminosity,
     interactive,
     chi_sq_limits,
-    width_constant: float,
+    extra_width: float,
     output_yes="calq_yes.csv",
     output_no="calq_no.csv",
 ):
@@ -40,9 +39,9 @@ def home(
     )
     mass_dict = make_mass_dict(lambdastring, num_lam)
     all_lam, all_ls = get_lam_separate(lam)
-    br_frac = branching_fraction(leptoquark_model, all_ls, all_lam, mass_dict, mass, width_constant)
+    br_frac = branching_fraction(leptoquark_model, all_ls, all_lam, mass_dict, mass, extra_width)
     chisq_symb = get_chi_square_symb(
-        mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model, luminosity
+        mass, all_lam, cs_list, eff_list, br_frac, ignorePairSingle, margin, leptoquark_model
     )
     # print("Lambdifying...")
     numpy_chisq = lambdify(flatten(lam), chisq_symb, modules="numpy")

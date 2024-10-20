@@ -25,7 +25,6 @@ def parse(
     margin_f: str,
     lam_values_f: List[str],
     leptoquark_model: str,
-    luminosity: str,
 ):
     """
     Parsing string input to their appropriate format. Outputs to be used by home function.
@@ -39,7 +38,6 @@ def parse(
     # convert to correct data types
     mass = float(mass_f)
     margin = float(margin_f)
-    luminosity=float(luminosity)
     original_lambdastring = lambdas_f.strip().split()
     ignorePairSingle = ignore_f.strip().lower() in {"yes", "y"}
     original_lam_vals = []
@@ -78,7 +76,6 @@ def parse(
         original_lam_vals,
         margin,
         leptoquark_model,
-        luminosity,
     )
 
 

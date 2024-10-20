@@ -13,13 +13,15 @@ def plot_data(filename):
             # double coupling
             data = line.strip().split(',')
             if len(data) == 5:
-                x = float(data[3])
-                y = float(data[4])
-                difference = float(data[2]) - float(data[1])
-                if difference < 1:
+                x = float(data[0])
+                y = float(data[1])
+                # difference = float(data[2]) - float(data[1])
+                # print(data[5])
+                # print(type(data[5]))
+                if data[4].strip() == "1":
                     plt.plot(x, y, 'o', color=colors['blue'])
-                elif difference < 4:
-                    plt.plot(x, y, 'o', color=colors['brown'])
+                # elif data[5].strip() == "2":
+                #     plt.plot(x, y, 'o', color=colors['brown'])
             # single coupling
             if  len(data) == 4:
                 x = float(data[0])
