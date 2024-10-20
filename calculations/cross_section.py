@@ -55,7 +55,7 @@ def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> Dict[str, U
             if leptoquark_parameters.sorted_couplings[i][quark_index] == leptoquark_parameters.sorted_couplings[j][quark_index]:
                 cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
                 cross_terms_cross_section_tchannel_interpolation_function = interpolateLinearCrossSection(cross_terms_cross_section_tchannel_df, [cross_terms_coupling])
-                cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel_interpolation_function(leptoquark_parameters.leptoquark_mass)
+                cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel_interpolation_function(leptoquark_parameters.leptoquark_mass)[0]
                 coupling_to_process_cross_section_map[cross_terms_coupling] = CrossTermsCrossSections(
                     cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel - cross_sections_tchannel[i] - cross_sections_tchannel[j],
                     actual_cross_section_tchannel = cross_terms_cross_section_tchannel,

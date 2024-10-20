@@ -309,13 +309,13 @@ def getChiSquareSymbolic(leptoquark_parameters: LeptoquarkParameters, branching_
     # calculate single coupling contribution
     for coupling, symbolic_coupling, in zip(leptoquark_parameters.sorted_couplings, symbolic_couplings):
         if coupling[quark_index] == '3':
-            chi_square = sym.Add(chi_square, calculateCouplingContributionTauTau(
+            chi_square = chi_square + calculateCouplingContributionTauTau(
                 leptoquark_parameters, coupling, symbolic_coupling, branching_fraction, coupling_to_process_cross_section_map[coupling], coupling_to_process_efficiencies_map[coupling]
-            ))
+            )
         else:
-            chi_square = sym.Add(chi_square, calculateCouplingContribution(
+            chi_square = chi_square + calculateCouplingContribution(
                 leptoquark_parameters, coupling, symbolic_coupling, branching_fraction, coupling_to_process_cross_section_map[coupling], coupling_to_process_efficiencies_map[coupling]
-            ))
+            )
         print(f"{coupling} contributions calculated!!")
     
     # calculate cross-terms contribution
@@ -325,13 +325,13 @@ def getChiSquareSymbolic(leptoquark_parameters: LeptoquarkParameters, branching_
             if leptoquark_parameters.sorted_couplings[i][quark_index] == leptoquark_parameters.sorted_couplings[j][quark_index]:
                 cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
                 if coupling[quark_index] == '3':
-                    chi_square = sym.Add(chi_square, calculateCouplingContributionTauTauCrossTerms(
+                    chi_square = chi_square + calculateCouplingContributionTauTauCrossTerms(
                         leptoquark_parameters, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], symbolic_couplings[i], symbolic_couplings[j], coupling_to_process_cross_section_map[cross_terms_coupling], coupling_to_process_efficiencies_map[cross_terms_coupling]
-                    ))
+                    )
                 else:
-                    chi_square = sym.Add(chi_square, calculateCouplingContributionCrossTerms(
+                    chi_square = chi_square + calculateCouplingContributionCrossTerms(
                         leptoquark_parameters, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], symbolic_couplings[i], symbolic_couplings[j], coupling_to_process_cross_section_map[cross_terms_coupling], coupling_to_process_efficiencies_map[cross_terms_coupling]
-                    ))
+                    )
                 print(f"{cross_terms_coupling} contributions calculated!!")
 
     return sym.simplify(chi_square)

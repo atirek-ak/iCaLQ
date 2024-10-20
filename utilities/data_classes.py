@@ -87,6 +87,12 @@ class CrossTermsCrossSections:
         self.cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel
         self.actual_cross_section_tchannel = actual_cross_section_tchannel
 
+    def __str__(self):
+        return (
+            f"Cross-Terms Cross Section T-Channel: {self.cross_terms_cross_section_tchannel}\n"
+            f"Actual Cross Section T-Channel: {self.actual_cross_section_tchannel}"
+        )
+
 
 class SingleCouplingEfficiency:
     def __init__(
