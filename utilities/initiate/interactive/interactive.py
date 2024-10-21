@@ -75,6 +75,10 @@ def initiateInteractive():
 
 
 def printDefaultValues(ignore_single_pair_processes: str, significance: int, systematic_error: str, extra_width: int):
+    # also print initial message here
+    print("Commands available: \n import_model=, mass=, couplings=, systematic_error=, ignore_single_pair=(yes/no), significance=(1/2), extra_width=, status, initiate, help\n")
+    print("Couplings available: \n S1 Leptoquark examples: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n U1 Leptoquark examples: X10LL[1,1],X10LL[3,2],X10RR[1,1]\n")
+
     print("Default values:")
     print(f"ignore_single_pair = {ignore_single_pair_processes}")
     print(f"significance = {significance}")

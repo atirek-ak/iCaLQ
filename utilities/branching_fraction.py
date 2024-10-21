@@ -37,9 +37,6 @@ def S1DecayWidthMassFactor(leptoquark_mass: float, mass_dictionary: List[float])
 
 # Calculate branching fraction using decay_width
 def getBranchingFraction(leptoquark_parameters: LeptoquarkParameters, symbolic_couplings: List[sym.Symbol], mass_dictionary: Dict[str, List[List[str]]]) -> sym.Symbol:
-    print(leptoquark_parameters)
-    print(symbolic_couplings)
-    print(mass_dictionary)
     numerator: sym.Symbol = 0
     denominator: sym.Symbol = leptoquark_parameters.extra_width
     for coupling, symbolic_coupling in zip(leptoquark_parameters.sorted_couplings, symbolic_couplings):
