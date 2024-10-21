@@ -13,13 +13,13 @@ class InputMode(Enum):
     NONINTERACTIVE = "noninteractive"
 
 # non-interactive card params
-input_card_number_of_lines = 9
+input_card_number_of_lines = 8
 
 # interactive mode default values
 default_ignore_single_pair_processes = "no"
 default_significane = 2
 default_systematic_error = "0.1"
-default_decay_width_constant = 0
+default_extra_width = 0
 
 # FILES
 DATA_PREFIX = "data"
@@ -117,8 +117,7 @@ vector_leptoquark_models = ["U1"]
 
 
 # default luminosity values
-luminosity_tau = 139 * 1000
-luminosity_e_mu = 140 * 1000
+luminosity = 139
 
 # k-factor on the basis of proccess
 k_factor_U1_pair_production = 1.5

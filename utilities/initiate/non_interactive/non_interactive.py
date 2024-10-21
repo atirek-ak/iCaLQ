@@ -6,6 +6,7 @@ from utilities.constants import (
     min_coupling_value_limit,
     max_coupling_value_limit,
     input_card_number_of_lines,
+    luminosity,
     InputMode
 )
 from utilities.data_classes import NonInteractiveInputParameters, LeptoquarkParameters
@@ -51,13 +52,12 @@ def readCardData(non_interactive_input_parameters: NonInteractiveInputParameters
     ignore_single_pair_processes = input_card_lines[3].split("#")[0].strip()
     significance = input_card_lines[4].split("#")[0].strip()
     systematic_error = input_card_lines[5].split("#")[0].strip()
-    decay_width_constant = input_card_lines[6].split("#")[0].strip()
-    luminosity = input_card_lines[7].split("#")[0].strip()
-    random_points = input_card_lines[8].split("#")[0].strip()
+    extra_width = input_card_lines[6].split("#")[0].strip()
+    random_points = input_card_lines[7].split("#")[0].strip()
 
     # Create the leptoquarkParameters class instance
     # From here on, this will be used for referencing to any input data and has all information
-    return validateInputData(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, decay_width_constant, luminosity, random_points)
+    return validateInputData(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, extra_width, luminosity, random_points)
 
 def updateRandomPoints(random_points: int, non_interactive_input_parameters: NonInteractiveInputParameters, leptoquark_parameters: LeptoquarkParameters):
     """

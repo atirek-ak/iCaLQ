@@ -11,5 +11,5 @@
                                        \▓▓▓  ║
         Indirect LHC-Limits Calculator       ║
              for Leptoquark models           ║
-               * Alpha Version *             ║
+               * Version 1.0.0 *             ║
                                    ══════════╝

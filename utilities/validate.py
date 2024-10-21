@@ -18,7 +18,7 @@ def validateInputData(
     ignore_single_pair_processes: str, 
     significance: str, 
     systematic_error: str,
-    decay_width_constant: str,
+    extra_width: str,
     luminosity: str,
     random_points: str = "0",
 ) -> Tuple[LeptoquarkParameters, int]:
@@ -91,11 +91,11 @@ def validateInputData(
     except:
         raise ValueError("[Systematic error should be a valid number from 0 to 1.")
     
-    # validate decay with constant
+    # validate extra width
     try:
-        decay_width_constant = float(decay_width_constant)
+        extra_width = float(extra_width)
     except:
-        raise ValueError("Decay Width constant should be a valid number")
+        raise ValueError("Extra Width constant should be a valid number")
 
     # validate luminosity
     try:
@@ -119,7 +119,7 @@ def validateInputData(
         ignore_single_pair_processes=ignore_single_pair_processes,
         significance=significance,
         systematic_error=systematic_error,
-        decay_width_constant=decay_width_constant,
+        extra_width=extra_width,
         luminosity=luminosity,
     )
 

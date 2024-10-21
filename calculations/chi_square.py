@@ -65,12 +65,12 @@ def calculateCouplingContribution(leptoquark_parameters: LeptoquarkParameters, c
     for bin_number in range(number_of_bins):
         # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
         if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
-            pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
+            pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity * 1000 
         # pair production
-        pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
-        interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
-        tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
-        single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+        pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+        interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity * 1000
+        tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity * 1000
+        single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity * 1000
 
     # calculate total contribution
     total_contribution = 0.0
@@ -117,7 +117,7 @@ def calculateCouplingContributionCrossTerms(leptoquark_parameters: LeptoquarkPar
 
     # process wise contributions
     for bin_number in range(number_of_bins):
-        cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+        cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity * 1000
 
     # calculate total contribution
     total_contribution = 0.0
@@ -191,35 +191,35 @@ def calculateCouplingContributionTauTau(leptoquark_parameters: LeptoquarkParamet
             if tag_name == "HHbT.csv":
                 # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
                 if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
-                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.hhbt[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
-                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.hhbt[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
-                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.hhbt[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
-                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.hhbt[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
-                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.hhbt[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.hhbt[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.hhbt[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.hhbt[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity * 1000
+                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.hhbt[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity * 1000
+                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.hhbt[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity * 1000
             elif tag_name == "HHbV.csv":
                 # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
                 if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
-                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.hhbv[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
-                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.hhbv[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
-                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.hhbv[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
-                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.hhbv[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
-                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.hhbv[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.hhbv[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.hhbv[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.hhbv[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity * 1000
+                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.hhbv[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity * 1000
+                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.hhbv[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity * 1000
             elif tag_name == "LHbT.csv":
                 # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
                 if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
-                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.lhbt[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
-                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.lhbt[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
-                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.lhbt[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
-                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.lhbt[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
-                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.lhbt[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.lhbt[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.lhbt[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.lhbt[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity * 1000
+                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.lhbt[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity * 1000
+                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.lhbt[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity * 1000
             elif tag_name == "LHbV.csv":
                 # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
                 if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
-                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.lhbv[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity
-                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.lhbv[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity
-                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.lhbv[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity
-                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.lhbv[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity
-                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.lhbv[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity
+                    pureqcd_contribution[bin_number] += k_factor_pureqcd * cross_section.cross_section_pureqcd * efficiencies.efficiency_pureqcd.lhbv[bin_number] * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+                pair_production_contribution[bin_number] += k_factor_pair_production * cross_section.cross_section_pair_production * efficiencies.efficiency_pair_production.lhbv[bin_number] * symbolic_coupling**4 * branching_fraction**2 * leptoquark_parameters.luminosity * 1000
+                interference_contribution[bin_number] += k_factor_interference * cross_section.cross_section_interference * efficiencies.efficiency_interference.lhbv[bin_number] * symbolic_coupling**2 * leptoquark_parameters.luminosity * 1000
+                tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_section_tchannel * efficiencies.efficiency_tchannel.lhbv[bin_number] * symbolic_coupling**4 * leptoquark_parameters.luminosity * 1000
+                single_production_contribution[bin_number] += k_factor_single_production * cross_section.cross_section_single_production * efficiencies.efficiency_single_production.lhbv[bin_number] * symbolic_coupling**2 * branching_fraction * leptoquark_parameters.luminosity * 1000
 
         # calculate total contribution
         for bin_number in range(number_of_bins):
@@ -283,13 +283,13 @@ def calculateCouplingContributionTauTauCrossTerms(leptoquark_parameters: Leptoqu
         # process wise contributions
         for bin_number in range(number_of_bins):
             if tag_name == "HHbT.csv":
-                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.hhbt[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.hhbt[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity * 1000
             elif tag_name == "HHbV.csv":
-                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.hhbv[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.hhbv[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity * 1000
             elif tag_name == "LHbT.csv":
-                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.lhbt[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.lhbt[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity * 1000
             elif tag_name == "LHbV.csv":
-                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.lhbv[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity
+                cross_terms_tchannel_contribution[bin_number] += k_factor_tchannel * cross_section.cross_terms_cross_section_tchannel * efficiencies.efficiency_tchannel.lhbv[bin_number] * symbolic_coupling1**2 * symbolic_coupling2**2 * leptoquark_parameters.luminosity * 1000
 
         # calculate total contribution
         for bin_number in range(number_of_bins):

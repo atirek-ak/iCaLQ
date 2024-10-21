@@ -86,7 +86,7 @@ def calculate(
                 print("Type 'done' or 'exit' to continue to calq prompt.")
                 continue
             coupling_values_interactive = [float(value) for value in coupling_values_input_interactive.strip().split()]
-            delta_chi_square, _ = getDeltaChiSquare(leptoquark_parameters, [coupling_values_interactive], chi_square_minima, numpy_chi_square_symbolic)
+            delta_chi_square, validity_list = getDeltaChiSquare(leptoquark_parameters, [coupling_values_interactive], chi_square_minima, numpy_chi_square_symbolic)
             print(f"Delta Chi Square: {delta_chi_square[0]}\nAllowed: {validity_list[0]}")
             if delta_chi_square[0] < 0:
                 print("A negative value should imply precision less than 1e-4 while calculating minima and can be considered equal to 0. Try initiating again to randomize minimization.")
