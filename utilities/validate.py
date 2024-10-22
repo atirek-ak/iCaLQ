@@ -8,7 +8,9 @@ from utilities.data_classes import LeptoquarkParameters
 def checkIfFilesExist(files: List[str]):
     for file in files:
         if not os.path.isfile(file):
-            raise Exception(f"File {file} could not be found. Please check if the input path is correct")
+            # create file if it does not exist
+            with open(file, 'w') as file:
+                pass
 
 
 def validateInputData(

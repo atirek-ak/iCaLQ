@@ -125,3 +125,6 @@ k_factor_U1_pureqcd = 1.5
 k_factor_U1_single_production = 1.0
 k_factor_U1_t_channel = 1.0
 k_factor_U1_interference = 1.0
+
+# default value of input file path
+default_input_file_path = "sample/sample_1.vals"

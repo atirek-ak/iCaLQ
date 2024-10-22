@@ -7,7 +7,7 @@ from utilities.constants import (
     InputMode
 )
 from utilities.data_classes import NonInteractiveInputParameters
-from utilities.validate import validateInputData, checkIfFilesExist
+from utilities.validate import validateInputData
 from utilities.parse import sortCouplingsAndValuesInteractive
 from utilities.colour import prCyan, prRed, prCyanNoNewLine
 from calculate import calculate

@@ -6,6 +6,7 @@ from utilities.data_classes import NonInteractiveInputParameters
 from utilities.welcome import printBanner
 from utilities.initiate.non_interactive.non_interactive import initiateNonInteractive
 from utilities.initiate.interactive.interactive import  initiateInteractive
+from utilities.constants import default_input_file_path
 
 # calq execution starts here
 def main():
@@ -85,9 +86,14 @@ def nonInteractiveMessage(
             "[Card Error]: Input Card file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
         )
     if not non_interactive_input_parameters.input_values_path:
-        sys.exit(
-            "[Values Error]: Input Values file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
-        )
+        non_interactive_input_parameters.input_values_path = default_input_file_path
+        with open(non_interactive_input_parameters.input_card_path, encoding="utf8") as c:
+            input_card_lines = c.readlines()
+            random_points = input_card_lines[7].split("#")[0].strip()
+            if random_points == '0':
+                sys.exit(
+                    "[Values Error]: Input Values file not specified & random points is set to zero. Exiting.\n"
+                )
     print(f"Input Card file: {non_interactive_input_parameters.input_card_path}")
     print(f"Input Values file: {non_interactive_input_parameters.input_values_path}")
     print(f"Output Yes file: {non_interactive_input_parameters.output_yes_path}")
