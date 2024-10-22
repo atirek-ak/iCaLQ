@@ -1,6 +1,6 @@
 import sys
 import random
-from typing import Tuple, List
+from typing import Tuple
 
 from utilities.constants import (
     min_coupling_value_limit,
@@ -12,7 +12,6 @@ from utilities.constants import (
 from utilities.data_classes import NonInteractiveInputParameters, LeptoquarkParameters
 from utilities.validate import validateInputData
 from utilities.parse import sortCouplingsAndValues
-from utilities.colour import prCyan, prRed, prCyanNoNewLine
 from utilities.initiate.non_interactive.validate import validateNonInteractiveInput
 from calculate import calculate
 

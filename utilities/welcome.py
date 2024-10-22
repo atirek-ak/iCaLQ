@@ -1,8 +1,8 @@
 def printBanner():
     try:
-        with open("banner.txt", encoding="utf8") as f:
+        with open("banner", encoding="utf8") as f:
             contents = f.read()
             print(f"{contents}")
     except OSError:
-        print("CaLQ: Indirect LHC-Limits Calculator for Leptoquark models")
-        print("Alpha version")
+        print("CaLQ: Calculator for LHC limits on leptoquarks")
+        print("Version 1.0.0")
