@@ -43,25 +43,25 @@ def validateLeptoQuarkCouplings(
             prRed(f"The second and third characters of {couplings_list[i]} should be '10'. For valid format, refer to README")
             return False
         if couplings_list[i][3] not in ["L", "R"]:
-            prRed("The 4th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
+            prRed(f"The 4th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
             return False
         if couplings_list[i][4] not in ["L", "R"]:
-            prRed("The 5th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
+            prRed(f"The 5th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
             return False
         if couplings_list[i][5] != '[':
-            prRed("The 6th character of {couplings_list[i]} should be '['. For valid format, refer to README")
+            prRed(f"The 6th character of {couplings_list[i]} should be '['. For valid format, refer to README")
             return False
         if (leptoquark_model in scalar_leptoquark_models and couplings_list[i][6] not in ["1", "2"]) or (leptoquark_model in vector_leptoquark_models and couplings_list[i][6] not in ["1", "2", "3"]):
-            prRed("The 7th character of {couplings_list[i]} should be a valid lepton generation. For valid format, refer to README")
+            prRed(f"The 7th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")
             return False
         if couplings_list[i][7] != ',':
-            prRed("The 8th character of {couplings_list[i]} should be ','. For valid format, refer to README")
+            prRed(f"The 8th character of {couplings_list[i]} should be ','. For valid format, refer to README")
             return False
         if couplings_list[i][8] not in ["1", "2", "3"]:
-            prRed("The 9th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")
+            prRed(f"The 9th character of {couplings_list[i]} should be a valid lepton generation. For valid format, refer to README")
             return False
         if couplings_list[i][9] != ']':
-            prRed("The 10th character of {couplings_list[i]} should be ']'. For valid format, refer to README")
+            prRed(f"The 10th character of {couplings_list[i]} should be ']'. For valid format, refer to README")
             return False
     return True
 

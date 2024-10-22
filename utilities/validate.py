@@ -54,19 +54,19 @@ def validateInputData(
         if couplings_list[i][1:3] != "10":
             raise ValueError(f"The second and third characters of {couplings_list[i]} should be '10'. For valid format, refer to README")
         if couplings_list[i][3] not in ["L", "R"]:
-            raise ValueError("The 4th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
+            raise ValueError(f"The 4th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
         if couplings_list[i][4] not in ["L", "R"]:
-            raise ValueError("The 5th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
+            raise ValueError(f"The 5th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
         if couplings_list[i][5] != '[':
-            raise ValueError("The 6th character of {couplings_list[i]} should be '['. For valid format, refer to README")
+            raise ValueError(f"The 6th character of {couplings_list[i]} should be '['. For valid format, refer to README")
         if (leptoquark_model in scalar_leptoquark_models and couplings_list[i][6] not in ["1", "2"]) or (leptoquark_model in vector_leptoquark_models and couplings_list[i][6] not in ["1", "2", "3"]):
-            raise ValueError("The 7th character of {couplings_list[i]} should be a valid lepton generation. For valid format, refer to README")
+            raise ValueError("The 7th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")
         if couplings_list[i][7] != ',':
-            raise ValueError("The 8th character of {couplings_list[i]} should be ','. For valid format, refer to README")
+            raise ValueError(f"The 8th character of {couplings_list[i]} should be ','. For valid format, refer to README")
         if couplings_list[i][8] not in ["1", "2", "3"]:
-            raise ValueError("The 9th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")
+            raise ValueError(f"The 9th character of {couplings_list[i]} should be a valid lepton generation. For valid format, refer to README")
         if couplings_list[i][9] != ']':
-            raise ValueError("The 10th character of {couplings_list[i]} should be ']'. For valid format, refer to README")
+            raise ValueError(f"The 10th character of {couplings_list[i]} should be ']'. For valid format, refer to README")
     couplings = couplings_list
 
     # validate Ignore single and pair production
