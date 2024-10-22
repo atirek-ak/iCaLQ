@@ -6,9 +6,18 @@ from utilities.constants import (
     default_extra_width,
     InputMode,
 )
-from utilities.initiate.interactive.validate import validateInteractiveInputData
+from utilities.initiate.interactive.validate import (
+    validateLeptoQuarkModel, 
+    validateLeptoQuarkMass,
+    validateLeptoQuarkCouplings,
+    validateIgnoreSinglePairProduction,
+    validateSignificance,
+    validateSystematicError,
+    validateExtraWidth
+)
 from utilities.parse import sortCouplingsAndValuesInteractive
 from utilities.colour import prRed, prBlueNoNewLine, prBlue
+from utilities.validate import validateInputData
 from calculate import calculate
 
 
@@ -29,37 +38,30 @@ def initiateInteractive():
 
     # loop to input values. we will have to add validations here only
     while True:
-        validateInteractiveInputData(
-            leptoquark_model=leptoquark_model,
-            leptoquark_mass=leptoquark_mass,
-            couplings=couplings,
-            ignore_single_pair_processes=ignore_single_pair_processes,
-            significance=significance,
-            systematic_error=systematic_error,
-            extra_width=extra_width,
-        )
         prBlueNoNewLine("calq > ")
         s = input().split("=")
         slen = len(s)
         if s[0].strip() == "import_model" and slen == 2:
-            leptoquark_model = s[1].strip()
+            if validateLeptoQuarkModel(s[1].strip()):
+                leptoquark_model = s[1].strip()
         elif s[0].strip() == "mass" and slen == 2:
-            leptoquark_mass = s[1].strip()
+            if validateLeptoQuarkMass(s[1].strip()):
+                leptoquark_mass = s[1].strip()
         elif s[0].strip() == "couplings" and slen > 1:
-            couplings = s[1].strip()
+            if validateLeptoQuarkCouplings(s[1].strip(), leptoquark_model):
+                couplings = s[1].strip()
         elif s[0].strip() == "ignore_single_pair" and slen == 2:
-            ignore_single_pair_processes = s[1].strip()
+            if validateIgnoreSinglePairProduction(s[1].strip()):
+                ignore_single_pair_processes = s[1].strip()
         elif s[0].strip() == "significance" and slen == 2:
-            if s[1].strip() == "1":
-                significance = 1
-            elif s[1].strip() == "2":
-                significance = 2
-            else:
-                prRed("Allowed values of 'significance': 1 or 2")
+            if validateSignificance(s[1].strip()):
+                significance = int(s[1].strip())
         elif s[0].strip() == "systematic_error" and slen == 2:
-            systematic_error = s[1].strip()
+            if validateSystematicError(s[1].strip()):
+                systematic_error = s[1].strip()
         elif s[0].strip() == "extra_width" and slen == 2:
-            extra_width = float(s[1].strip())
+            if validateExtraWidth(s[1].strip()):
+                extra_width = float(s[1].strip())
         elif s[0].strip() == "status":
             print(f" Leptoquark model = {leptoquark_model}")
             print(f" Leptoquark mass = {leptoquark_mass}")
@@ -67,6 +69,7 @@ def initiateInteractive():
             print(f" Extra width = {extra_width}")
             print(f" Ignore single & pair processes = {ignore_single_pair_processes}")
             print(f" Significance = {significance}")
+            print(f" Systematic Error = {systematic_error}")
         elif s[0].strip() == "help":
             printHelp()
         elif s[0].strip() == "initiate":
