@@ -108,7 +108,7 @@ def calculate(
     with open(non_interactive_input_parameters.output_yes_path, "w", encoding="utf8") as yes_file:
         for coupling in leptoquark_parameters.sorted_couplings:
             print(coupling, end="\t")
-            print(coupling, end=",", file=yes_file)
+            print(f"\"{coupling}\"", end=",", file=yes_file)
         print("Delta_chisquare")
         print("Delta_chisquare", file=yes_file)
         for i in yes_list:
@@ -123,7 +123,7 @@ def calculate(
     with open(non_interactive_input_parameters.output_no_path, "w", encoding="utf8") as no_file:
         for coupling in leptoquark_parameters.sorted_couplings:
             print(coupling, end="\t")
-            print(coupling, end=",", file=no_file)
+            print(f"\"{coupling}\"", end=",", file=no_file)
         print("Delta_chisquare")
         print("Delta_chisquare", file=no_file)
         for i in no_list:
