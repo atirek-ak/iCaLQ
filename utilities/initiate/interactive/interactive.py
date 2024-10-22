@@ -4,9 +4,9 @@ from utilities.constants import (
     default_significane,
     default_systematic_error,
     default_extra_width,
-    InputMode
+    InputMode,
 )
-from utilities.validate import validateInputData
+from utilities.initiate.interactive.validate import validateInteractiveInputData
 from utilities.parse import sortCouplingsAndValuesInteractive
 from utilities.colour import prRed, prBlueNoNewLine, prBlue
 from calculate import calculate
@@ -29,6 +29,15 @@ def initiateInteractive():
 
     # loop to input values. we will have to add validations here only
     while True:
+        validateInteractiveInputData(
+            leptoquark_model=leptoquark_model,
+            leptoquark_mass=leptoquark_mass,
+            couplings=couplings,
+            ignore_single_pair_processes=ignore_single_pair_processes,
+            significance=significance,
+            systematic_error=systematic_error,
+            extra_width=extra_width,
+        )
         prBlueNoNewLine("calq > ")
         s = input().split("=")
         slen = len(s)

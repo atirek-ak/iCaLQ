@@ -30,7 +30,7 @@ def validateInputData(
     """
     # validate leptoquark model
     if leptoquark_model not in scalar_leptoquark_models and leptoquark_model not in vector_leptoquark_models:
-        raise ValueError(f"Not a valid lepqtoquark model. Allowed models: {scalar_leptoquark_models.append(vector_leptoquark_models)}")
+        raise ValueError(f"Not a valid lepqtoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}")
 
     # validate leptoquark mass
     try:
