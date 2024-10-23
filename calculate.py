@@ -133,3 +133,17 @@ def calculate(
             print(delta_chi_square[i])
             print(delta_chi_square[i], file=no_file)
     print(f"Output files {non_interactive_input_parameters.output_yes_path} and {non_interactive_input_parameters.output_no_path} written")
+
+    # print common list 
+    with open(non_interactive_input_parameters.output_common_path, "w", encoding="utf8") as common_file:
+        for coupling in leptoquark_parameters.sorted_couplings:
+            print(f"\"{coupling}\"", end=",", file=common_file)
+        print("Delta_chisquare, Allowed", file=common_file)
+        for i in yes_list:
+            for value in leptoquark_parameters.sorted_couplings_values[i]:
+                print(value, end=",", file=common_file)
+            print(f"{delta_chi_square[i]}" + ", yes", file=common_file)
+        for i in no_list:
+            for value in leptoquark_parameters.sorted_couplings_values[i]:
+                print(value, end=",", file=common_file)
+            print(f"{delta_chi_square[i]}" + ", no", file=common_file)

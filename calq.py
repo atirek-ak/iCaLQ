@@ -51,6 +51,12 @@ def main():
         default="calq_no.csv",
         help="[filename]: Specify the name of output file (disallowed values) (overwrites the existing file). Default: calq_no.csv",
     )
+    parser.add_argument(
+        "--output-common",
+        type=str,
+        default="calq_common.csv",
+        help="[filename]: Specify the name of output file (overwrites the existing file). Default: calq_common.csv",
+    )
 
     # parse args
     args = parser.parse_args()
@@ -64,6 +70,7 @@ def main():
             input_values_path = args.input_values, 
             output_yes_path = args.output_yes, 
             output_no_path = args.output_no, 
+            output_common_path=args.output_common,
         )
         nonInteractiveMessage(
             non_interactive_input_parameters
@@ -98,6 +105,7 @@ def nonInteractiveMessage(
     print(f"Input Values file: {non_interactive_input_parameters.input_values_path}")
     print(f"Output Yes file: {non_interactive_input_parameters.output_yes_path}")
     print(f"Output No file: {non_interactive_input_parameters.output_no_path}")
+    print(f"Output Common file: {non_interactive_input_parameters.output_common_path}")
 
 
 try:

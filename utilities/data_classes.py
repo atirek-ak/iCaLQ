@@ -62,11 +62,13 @@ class NonInteractiveInputParameters:
         input_values_path: str = "",
         output_yes_path: str = "",
         output_no_path: str = "",
+        output_common_path: str = "",
     ):
         self.input_card_path = input_card_path
         self.input_values_path = input_values_path
         self.output_yes_path = output_yes_path
         self.output_no_path = output_no_path
+        self.output_common_path = output_common_path
 
 
 class SingleCouplingCrossSections:
