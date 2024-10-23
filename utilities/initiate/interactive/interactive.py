@@ -69,7 +69,7 @@ def initiateInteractive():
             print(f" Extra width = {extra_width}")
             print(f" Ignore single & pair processes = {ignore_single_pair_processes}")
             print(f" Significance = {significance}")
-            print(f" Systematic Error = {systematic_error}")
+            print(f" Systematic error = {systematic_error}")
         elif s[0].strip() == "help":
             printHelp()
         elif s[0].strip() == "initiate":
@@ -92,7 +92,7 @@ def printDefaultValues(ignore_single_pair_processes: str, significance: int, sys
     print(" import_model=, mass=, couplings=, extra_width=,\n ignore_single_pair=(yes/no), significance=(1/2),\n systematic_error=, status, initiate, help")     
 
     prBlue("Couplings available:")
-    print(" Examples for S1: Y10LL[1,1],Y10LL[2,2],Y10RR[3,1]\n Examples for U1: X10LL[1,1],X10LL[3,2],X10RR[1,1]")
+    print(" Examples for S1: Y10LL[1,1] Y10RR[3,1] [...]\n Examples for U1: X10LL[3,2] X10RR[1,1] [...]")
 
     prBlue("Default values:")
     print(f" import_model = U1")

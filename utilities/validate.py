@@ -30,45 +30,45 @@ def validateInputData(
     """
     # validate leptoquark model
     if leptoquark_model not in scalar_leptoquark_models and leptoquark_model not in vector_leptoquark_models:
-        raise ValueError(f"Not a valid leptoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}")
+        raise ValueError(f"[Model Error]: Not a valid leptoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}")
 
     # validate leptoquark mass
     try:
         leptoquark_mass = float(leptoquark_mass)
     except:
-        raise ValueError("Leptoquark mass should be a valid number")
+        raise ValueError("[Mass error]: Leptoquark mass should be a valid number")
     if leptoquark_mass < minimum_leptoquark_mass or leptoquark_mass > maximum_leptoquark_mass:
-            raise ValueError(f"Leptoquark mass should be from {minimum_leptoquark_mass} to {maximum_leptoquark_mass} GeV")
+            raise ValueError(f"[Mass error]: Leptoquark mass should be from {minimum_leptoquark_mass} to {maximum_leptoquark_mass} GeV")
 
 
     # validate couplings
     couplings_list = couplings.strip().split(' ')
     if not len(couplings_list):
-        raise ValueError("Couplings cannot be empty. For valid format, refer to README")
+        raise ValueError("[Couplings error]: Couplings cannot be empty. For valid format, refer to README")
     for i in range(len(couplings_list)):
         if len(couplings_list[i]) != 10:
-            raise ValueError(f"The couplings input {couplings_list[i]} is not 10 characters. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The couplings input {couplings_list[i]} is not 10 characters. For valid format, refer to README")
         if not (
             (couplings_list[i][0] == 'Y' and leptoquark_model in scalar_leptoquark_models)
             or (couplings_list[i][0] == 'X' and leptoquark_model in vector_leptoquark_models)
         ):
-            raise ValueError("For scalar leptoquarks, the first letter should be Y & for vector leptoquarks it should be X. For valid format, refer to README")
+            raise ValueError("[Couplings error]: For scalar leptoquarks, the first letter should be Y & for vector leptoquarks it should be X. For valid format, refer to README")
         if couplings_list[i][1:3] != "10":
-            raise ValueError(f"The second and third characters of {couplings_list[i]} should be '10'. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The second and third characters of {couplings_list[i]} should be '10'. For valid format, refer to README")
         if couplings_list[i][3] not in ["L", "R"]:
-            raise ValueError(f"The 4th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The 4th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
         if couplings_list[i][4] not in ["L", "R"]:
-            raise ValueError(f"The 5th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The 5th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. For valid format, refer to README")
         if couplings_list[i][5] != '[':
-            raise ValueError(f"The 6th character of {couplings_list[i]} should be '['. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The 6th character of {couplings_list[i]} should be '['. For valid format, refer to README")
         if (leptoquark_model in scalar_leptoquark_models and couplings_list[i][6] not in ["1", "2"]) or (leptoquark_model in vector_leptoquark_models and couplings_list[i][6] not in ["1", "2", "3"]):
-            raise ValueError("The 7th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")
+            raise ValueError("[Couplings error]: The 7th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")
         if couplings_list[i][7] != ',':
-            raise ValueError(f"The 8th character of {couplings_list[i]} should be ','. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The 8th character of {couplings_list[i]} should be ','. For valid format, refer to README")
         if couplings_list[i][8] not in ["1", "2", "3"]:
-            raise ValueError(f"The 9th character of {couplings_list[i]} should be a valid lepton generation. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The 9th character of {couplings_list[i]} should be a valid lepton generation. For valid format, refer to README")
         if couplings_list[i][9] != ']':
-            raise ValueError(f"The 10th character of {couplings_list[i]} should be ']'. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The 10th character of {couplings_list[i]} should be ']'. For valid format, refer to README")
     couplings = couplings_list
 
     # validate Ignore single and pair production
@@ -77,29 +77,29 @@ def validateInputData(
     elif ignore_single_pair_processes.lower() in {"no", "n"}:
         ignore_single_pair_processes = False
     else:
-        raise ValueError("ignore_single_pair takes input either 'yes'/'y' or 'no'/'n'")
+        raise ValueError("[Ignore single pair production error]: ignore_single_pair takes input either 'yes'/'y' or 'no'/'n'")
 
     # validate significance
     try:
         significance = int(significance)
-        if significance != 1 and significance != 2:
-            raise ValueError("Significance should be a valid number: either 1 or 2")
     except:
-        raise ValueError("Significance should be a valid number: either 1 or 2")
+        raise ValueError("[Significance error]: Significance should be a valid number: either 1 or 2")
+    if significance != 1 and significance != 2:
+        raise ValueError("[Significance error]: Significance should be a valid number: either 1 or 2")
 
     # validate Systematic error
     try:
         systematic_error = float(systematic_error)
         if systematic_error < 0 or systematic_error > 1:
-            raise ValueError("[Systematic error should be a valid number from 0 to 1.")
+            raise ValueError("[Systematic error]: [Systematic error should be a valid number from 0 to 1.")
     except:
-        raise ValueError("[Systematic error should be a valid number from 0 to 1.")
+        raise ValueError("[Systematic error]: [Systematic error should be a valid number from 0 to 1.")
     
     # validate extra width
     try:
         extra_width = float(extra_width)
     except:
-        raise ValueError("Extra Width constant should be a valid number")
+        raise ValueError("[Extra width error]: Extra Width constant should be a valid number")
 
     # validate luminosity
     try:
