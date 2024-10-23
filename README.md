@@ -1,24 +1,15 @@
 # CaLQ
 
 #### _LHC Dileption Limits Calculator_
-Alpha version
+Version 1.0.0
 
 ## Introduction
-This is a dilepton limits calculator. LHC data is taken from [here](https://www.hepdata.net/record/ins1782650). The FeynRules models of the leptoquarks considered can be found in the repository. The alpha version includes only the U1 & S1 leptoquark models. Physics details and implementation details can be found in this [paper].
+This is a dilepton limits calculator. It supports the U1 & S1 leptoquark models. The calculator can be used in two modes: [interactive](#interactive-mode) and [non-interactive](#non-interactive-mode) to find limits for leptoquark couplings.
 
-The calculator can be used in two modes: [interactive](#interactive-mode) and [non-interactive](#non-interactive-mode).
-
+Theory and implementation details can be found in this [paper]. LHC data is taken from [here](https://www.hepdata.net/record/ins1782650).
 
 ## Setting Up
-
-The calculator is written in python3 and only needs the following packages: numpy, pandas, scipy and sympy. The steps involving virtual environment might not be necessary for most people.
-
-Making sure packages requirements are met:
-```sh
-pip install numpy sympy scipy pandas
-```
-
-If you wish to use a virtual environment, do the following:
+The calculator is written in python3 and only needs the packages mentioned in _requirements.txt_. To install those, set up a virtual environment & install the dependencies.
 ```sh
 cd <calq-direcory>
 python3 -m venv venv
@@ -32,26 +23,28 @@ To use the calculator in interactive mode,
 ```sh
 python3 calq.py
 ```
-You will be greeted with CaLQ art and a list of available commands. The prompt will be `calq > `. Example commands include:
+You will be greeted with CaLQ banner and a list of available commands. The prompt will be `calq > `. Example commands include:
 ```
+calq > import_model = U1
 calq > mass = 1234
 calq > couplings = LM23L LM33R
 calq > significance = 1
 calq > ignore_single_pair = no
 calq > systematic_error = 0.1
-calq > import_model = U1
 calq > status
 calq > help
 calq > initiate
 ```
-The first 4 commands set the input parameters as `<command> = <value>`. The rest do not take any argument.
+The list of valid commands are:
 
+- `import_model` to specify which leptoquark model to use.
 - `mass` should be an integer between 1000 and 3000 (inclusive).
 - `couplings` should list couplings in the format _LMxyL_ or _LMxyR_ where _x_ is the quark number and _y_ is the lepton number and the last _L_ or _R_ denote left or right handedness respectively.
 - `significance` takes values 1 or 2.
+- `extra_width` take any positive value. In case of an additional
+decay mode, you can input extra width
 - `ignore_single_pair` takes values _yes_ or _no_. Input _yes_ means that the single and pair productions will be ignored and this will speed up calculations.
 - `systematic_error` denotes the systematic error margin. Default is 10%.
-- `import_model` to specify which leptoquark model to use.
 - `status` displayes the current values of input parameters.
 - `help` displays the list of commands available.
 - `initiate` will compute the chi-square polynomial and its minima corresponding to the current values of input parameters.
@@ -94,4 +87,4 @@ Options:
 
 ## Caveats
 
-The calculator is in its alpha version and will undergo extensive testing. Currently only U1 & S1 leptoquark models are used, more leptoquark models will be added later. Any comments regarding the calculator can be emailed to [us](mailto:yash.chaurasia@research.iiit.ac.in).
+The calculator is in its version 1.0.0 and will undergo extensive testing. Currently only U1 & S1 leptoquark models are used, more leptoquark models will be added later. Any comments regarding the calculator can be emailed to [us](mailto:atirek.kumar@research.iiit.ac.in).
