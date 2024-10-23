@@ -74,7 +74,7 @@ def calculate(
 
     # in case of interactive mode, input coupling values
     if input_mode == InputMode.INTERACTIVE:
-        print("Input cooupling values in the following order: ", end="\t")
+        print("Input coupling values in the following order: ", end="\t")
         for coupling in leptoquark_parameters.sorted_couplings:
             print(coupling, end="\t")
         while True:

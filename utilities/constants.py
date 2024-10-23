@@ -128,3 +128,7 @@ k_factor_U1_interference = 1.0
 
 # default value of input file path
 default_input_file_path = "sample/sample_1.vals"
+
+# minimum & maximum leptoquark mass allowed
+minimum_leptoquark_mass = 1000.0
+maximum_leptoquark_mass = 5000.0

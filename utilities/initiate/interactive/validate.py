@@ -1,4 +1,4 @@
-from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models
+from utilities.constants import scalar_leptoquark_models, vector_leptoquark_models, minimum_leptoquark_mass, maximum_leptoquark_mass
 from utilities.colour import prRed
 
 
@@ -16,6 +16,9 @@ def validateLeptoQuarkMass(
 ) -> bool:
     try:
         leptoquark_mass = float(leptoquark_mass)
+        if leptoquark_mass < minimum_leptoquark_mass or leptoquark_mass > maximum_leptoquark_mass:
+            prRed(f"Leptoquark mass should be from {minimum_leptoquark_mass} to {maximum_leptoquark_mass} GeV")
+            return False
     except:
         prRed("Leptoquark mass should be a valid number")
         return False
