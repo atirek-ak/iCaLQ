@@ -62,7 +62,7 @@ def validateInputData(
         if couplings_list[i][5] != '[':
             raise ValueError(f"[Couplings error]: The 6th character of {couplings_list[i]} should be '['. For valid format, refer to README")
         if (leptoquark_model in scalar_leptoquark_models and couplings_list[i][6] not in ["1", "2"]) or (leptoquark_model in vector_leptoquark_models and couplings_list[i][6] not in ["1", "2", "3"]):
-            raise ValueError("[Couplings error]: The 7th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")
+            raise ValueError(f"[Couplings error]: The 7th character of {couplings_list[i]} should be a valid quark generation. For valid format, refer to README")
         if couplings_list[i][7] != ',':
             raise ValueError(f"[Couplings error]: The 8th character of {couplings_list[i]} should be ','. For valid format, refer to README")
         if couplings_list[i][8] not in ["1", "2", "3"]:
@@ -144,6 +144,6 @@ def validateInteractiveInputCouplingValues(coupling_values_input_interactive: st
         for i in range(couplings_length):
             _ = float(coupling_values[i])
     except ValueError:
-        prRed(f"[Query Error]: Please input numerical values as input")
+        prRed(f"[Query Error]: Please enter numerical values as input")
         return False
     return True

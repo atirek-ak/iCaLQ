@@ -111,7 +111,7 @@ def printHelp():
     prBlue("Commands with '=' expect a value. Read README.md for more info on individual commands.")
     prBlue("Value input commands: ")
     print(" import_model= [Leptoquark model]")
-    print(" mass= [Leptoquark mass] (should be between 1000 and 8000)")
+    print(" mass= [Leptoquark mass] (should be between 1000 and 5000)")
     print(" couplings= [Couplings. For the format, refer to README.md]")
     print(" ignore_single_pair= [If true, the single & pair production contributions are ignored]")
     print(" significance= [Significance of the limit in standard deviations. Possible values=1,2]")

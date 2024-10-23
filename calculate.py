@@ -142,8 +142,8 @@ def calculate(
         for i in yes_list:
             for value in leptoquark_parameters.sorted_couplings_values[i]:
                 print(value, end=",", file=common_file)
-            print(f"{delta_chi_square[i]}" + ", yes", file=common_file)
+            print(f"{delta_chi_square[i]}" + ", 1", file=common_file)
         for i in no_list:
             for value in leptoquark_parameters.sorted_couplings_values[i]:
                 print(value, end=",", file=common_file)
-            print(f"{delta_chi_square[i]}" + ", no", file=common_file)
+            print(f"{delta_chi_square[i]}" + ", 0", file=common_file)
