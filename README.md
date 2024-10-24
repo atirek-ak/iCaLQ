@@ -70,7 +70,7 @@ calq > exit
 
 To use the calculator in non-interactive mode, use the tag `-ni` or `--non-interactive`. Note that input cards and query values must be provided in this mode. An example of usage in this mode:
 ```sh
-python3 calq.py --non-interactive --no-banner --input-card=card.txt --input-values=values.txt --output-yes=yes.csv --output-no=no.csv
+python3 calq.py -ni --input-card sample/sample_1.card --input-values sample/sample_1.vals --output-yes sample/sample_1_yes.csv --output-no sample/sample_1_no.csv --output-common sample/sample_1_common.csv
 ```
 
 ```sh

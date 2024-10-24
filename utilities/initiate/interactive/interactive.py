@@ -42,14 +42,14 @@ def initiateInteractive():
         s = input().split("=")
         slen = len(s)
         if s[0].strip() == "import_model" and slen == 2:
-            if validateLeptoQuarkModel(s[1].strip()):
-                leptoquark_model = s[1].strip()
+            if validateLeptoQuarkModel(s[1].strip().upper()):
+                leptoquark_model = s[1].strip().upper()
         elif s[0].strip() == "mass" and slen == 2:
             if validateLeptoQuarkMass(s[1].strip()):
                 leptoquark_mass = s[1].strip()
         elif s[0].strip() == "couplings" and slen > 1:
-            if validateLeptoQuarkCouplings(s[1].strip(), leptoquark_model):
-                couplings = s[1].strip()
+            if validateLeptoQuarkCouplings(s[1].strip().upper(), leptoquark_model):
+                couplings = s[1].strip().upper()
         elif s[0].strip() == "ignore_single_pair" and slen == 2:
             if validateIgnoreSinglePairProduction(s[1].strip()):
                 ignore_single_pair_processes = s[1].strip()
@@ -77,7 +77,7 @@ def initiateInteractive():
             leptoquark_parameters.couplings_values = [" ".join(["0"] * len(couplings))]
             sortCouplingsAndValuesInteractive(leptoquark_parameters)
             calculate(leptoquark_parameters, InputMode.INTERACTIVE)
-        elif s[0].strip().lower() in ["exit", "q", "exit()", ".exit"]:
+        elif s[0].strip().lower() in ["exit", "q", "quit", "exit()", ".exit"]:
             return
         elif s[0].strip() == "":
             continue

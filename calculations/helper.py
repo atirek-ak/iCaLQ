@@ -113,6 +113,14 @@ def getEfficienciesFromProcessAndTagNameTauTau(process_path: str, tagName: str, 
 
     return []
 
+def checkAndReplaceZeros(lst: List[float]):
+    epsilon = 1e-10
+
+    # Check if all elements in the list are zero
+    if all(x == 0.0 for x in lst):
+        # Replace all elements with epsilon
+        lst = [epsilon] * len(lst)
+    return lst
 
 def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_values_list: List[List[float]], chi_square_minima: float, numpy_chi_square_symbolic: sym.Symbol):
     """
@@ -121,14 +129,15 @@ def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_valu
     validity_list = []
     delta_chi_square = []
     for coupling_values in coupling_values_list:
-        chi_square_value = numpy_chi_square_symbolic(*flatten(coupling_values))
+        cur_coupling_values = checkAndReplaceZeros(coupling_values.copy())
+        chi_square_value = numpy_chi_square_symbolic(*flatten(cur_coupling_values))
         delta_chi_square.append(chi_square_value - chi_square_minima)
         file_path = f"plots/data/{leptoquark_parameters.sorted_couplings[0]}.csv"
         with open(file_path, "a") as f:
             if chi_square_value - chi_square_minima <= 1:
-                f.write(f"{leptoquark_parameters.leptoquark_mass},{round(float(chi_square_minima),5)},{round(float(chi_square_value),5)},{round(float(coupling_values[0]),3)}, 1\n")
+                f.write(f"{leptoquark_parameters.leptoquark_mass},{round(float(chi_square_minima),5)},{round(float(chi_square_value),5)},{round(float(cur_coupling_values[0]),3)}, 1\n")
             elif chi_square_value - chi_square_minima <= 4:
-                f.write(f"{leptoquark_parameters.leptoquark_mass},{round(float(chi_square_minima),5)},{round(float(chi_square_value),5)},{round(float(coupling_values[0]),3)}, 2\n")
+                f.write(f"{leptoquark_parameters.leptoquark_mass},{round(float(chi_square_minima),5)},{round(float(chi_square_value),5)},{round(float(cur_coupling_values[0]),3)}, 2\n")
 
         if leptoquark_parameters.significance == 1:
             if chi_square_value - chi_square_minima <= chi_sq_limits_1[len(leptoquark_parameters.sorted_couplings)-1]:

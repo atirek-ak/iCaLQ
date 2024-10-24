@@ -43,6 +43,14 @@ def validateInputData(
 
     # validate couplings
     couplings_list = couplings.strip().split(' ')
+
+    # Count frequency of each element
+    frequency = {}
+    for item in couplings_list:
+        if item in frequency:
+            raise ValueError(f"[Couplings error]: Coupling {item} is repeated. A coupling can only be inputted once")
+        else:
+            frequency[item] = 1
     if not len(couplings_list):
         raise ValueError("[Couplings error]: Couplings cannot be empty. For valid format, refer to README")
     for i in range(len(couplings_list)):
