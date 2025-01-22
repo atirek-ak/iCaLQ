@@ -6,7 +6,7 @@ def validateLeptoQuarkModel(
     leptoquark_model: str,
 ) -> bool:
     if leptoquark_model not in scalar_leptoquark_models and leptoquark_model not in vector_leptoquark_models:
-        prRed(f"[Model Error]: Not a valid lepqtoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}")
+        prRed(f"[Model error]: Not a valid lepqtoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}")
         return False
     return True
 
@@ -82,7 +82,7 @@ def validateLeptoQuarkCouplings(
 def validateIgnoreSinglePairProduction(
     ignore_single_pair_processes: str, 
 ) -> bool:
-    if ignore_single_pair_processes.lower() in {"yes", "y", "no", "n"}:
+    if ignore_single_pair_processes.lower() in {"yes", "y", "true", "t", "1", "no", "n", "false", "f", "0"}:
         return True
     prRed("[Ignore single pair production error]: ignore_single_pair takes input 'yes'/'y' or 'no'/'n'")
     return False

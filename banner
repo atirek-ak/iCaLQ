@@ -8,10 +8,13 @@
      ║    ▓▓       \▓▓▓▓▓▓\ ▓▓     | ▓▓  | ▓▓
           ▓▓   __ /      ▓▓ ▓▓     | ▓▓ _| ▓▓
           ▓▓__/  \  ▓▓▓▓▓▓▓ ▓▓_____| ▓▓/ \ ▓▓
-         \▓▓    ▓▓\▓▓    ▓▓ ▓▓     \\▓▓ ▓▓ ▓▓
+         \▓▓    ▓▓\▓▓    ▓▓ ▓▓     \\▓▓ ▓▓ ▓▓  ║
          \▓▓▓▓▓▓  \▓▓▓▓▓▓▓\▓▓▓▓▓▓▓▓ \▓▓▓▓▓▓\   ║
                                         \▓▓▓   ║
              Calculator for LHC limits         ║
                  on leptoquarks                ║
-                * Version 1.0.0 *              ║
                                      ══════════╝
+                * Version 1.0.0 *              
+Authors: (alphabetically) Arvind Bhaskar, Arijit Das, 
+         Atirek Kumar, Rachit Sharma, Subhadip Mitra, 
+         Tanumoy Mandal, and Yash Chaurasia

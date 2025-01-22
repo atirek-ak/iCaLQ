@@ -1,4 +1,5 @@
 import os
+import warnings
 import sympy as sym
 from typing import Dict, Union, List
 from sympy.utilities.iterables import flatten
@@ -6,6 +7,8 @@ from sympy.utilities.iterables import flatten
 from utilities.data_classes import SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau, TagsTauTau, SingleCouplingCrossSections, CrossTermsCrossSections
 from utilities.data_classes import LeptoquarkParameters 
 from utilities.constants import chi_sq_limits_1, chi_sq_limits_2
+
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 def getNumbersFromCsvFiles(directory):
     """
@@ -113,32 +116,30 @@ def getEfficienciesFromProcessAndTagNameTauTau(process_path: str, tagName: str, 
 
     return []
 
-def checkAndReplaceZeros(lst: List[float]):
-    epsilon = 1e-10
 
-    # Check if all elements in the list are zero
-    if all(x == 0.0 for x in lst):
-        # Replace all elements with epsilon
-        lst = [epsilon] * len(lst)
-    return lst
-
-def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_values_list: List[List[float]], chi_square_minima: float, numpy_chi_square_symbolic: sym.Symbol):
+def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_values_list: List[List[float]], chi_square_minima: float, numpy_chi_square_symbolic: sym.Symbol, numpy_chi_square_symbolic_zero_coupling: sym.Symbol, branching_fraction: sym.Symbol):
     """
-    Use the lambdified function (numpy_chi_square_symbolic) to calculate chi square for the given query input
+    Use the lambdified function (numpy_chi_square_symbolic) to calculate chi-square for the given query input
     """
     validity_list = []
     delta_chi_square = []
     for coupling_values in coupling_values_list:
-        cur_coupling_values = checkAndReplaceZeros(coupling_values.copy())
-        chi_square_value = numpy_chi_square_symbolic(*flatten(cur_coupling_values))
+        try:
+            # substitue values in branching fraction to check for zero division error
+            # for single couplings the branching_fraction will be a float
+            if len(coupling_values) > 1:
+                flat_values = flatten(coupling_values)
+                _ = branching_fraction.subs(dict(zip(flat_values[::2], flat_values[1::2])))
+            chi_square_value = numpy_chi_square_symbolic(*flatten(coupling_values))
+        except ZeroDivisionError:
+            chi_square_value = numpy_chi_square_symbolic_zero_coupling(*flatten(coupling_values))
         delta_chi_square.append(chi_square_value - chi_square_minima)
-        file_path = f"plots/data/{leptoquark_parameters.sorted_couplings[0]}.csv"
+        file_path = f"plots/double_coupling_data/{leptoquark_parameters.sorted_couplings[0]}_{leptoquark_parameters.sorted_couplings[1]}.csv"
         with open(file_path, "a") as f:
-            if chi_square_value - chi_square_minima <= 1:
-                f.write(f"{leptoquark_parameters.leptoquark_mass},{round(float(chi_square_minima),5)},{round(float(chi_square_value),5)},{round(float(cur_coupling_values[0]),3)}, 1\n")
-            elif chi_square_value - chi_square_minima <= 4:
-                f.write(f"{leptoquark_parameters.leptoquark_mass},{round(float(chi_square_minima),5)},{round(float(chi_square_value),5)},{round(float(cur_coupling_values[0]),3)}, 2\n")
-
+            if chi_square_value - chi_square_minima <= 4:
+                f.write(f"{round(float(coupling_values[0]),3)}\t{round(float(coupling_values[1]),3)}\t{round(float(chi_square_minima),5)}\t{round(float(chi_square_value),5)}\t1\n")
+            else:
+                f.write(f"{round(float(coupling_values[0]),3)}\t{round(float(coupling_values[1]),3)}\t{round(float(chi_square_minima),5)}\t{round(float(chi_square_value),5)}\t2\n")
         if leptoquark_parameters.significance == 1:
             if chi_square_value - chi_square_minima <= chi_sq_limits_1[len(leptoquark_parameters.sorted_couplings)-1]:
                 validity_list.append("Yes")

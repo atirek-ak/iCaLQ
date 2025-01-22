@@ -54,7 +54,7 @@ def calculateCouplingContribution(leptoquark_parameters: LeptoquarkParameters, c
     k_factor_interference = 1
     k_factor_tchannel = 1
     k_factor_single_production = 1
-    if leptoquark_parameters.leptoquark_model == "U1":
+    if leptoquark_parameters.leptoquark_model == "S1":
         k_factor_pureqcd = k_factor_U1_pureqcd
         k_factor_pair_production =  k_factor_U1_pair_production
         k_factor_interference = k_factor_U1_interference
@@ -300,7 +300,7 @@ def calculateCouplingContributionTauTauCrossTerms(leptoquark_parameters: Leptoqu
     
     return sym.simplify(total_contribution)
 
-def getChiSquareSymbolic(leptoquark_parameters: LeptoquarkParameters, branching_fraction: sym.Symbol, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]], coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], symbolic_couplings: List[sym.Symbol]) -> sym.Symbol:
+def getChiSquareSymbolic(leptoquark_parameters: LeptoquarkParameters, branching_fraction: sym.Symbol, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]], coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], symbolic_couplings: List[sym.Symbol], print_output: bool) -> sym.Symbol:
     """
     Compute the chi-square polynomial
     """
@@ -316,7 +316,8 @@ def getChiSquareSymbolic(leptoquark_parameters: LeptoquarkParameters, branching_
             chi_square = chi_square + calculateCouplingContribution(
                 leptoquark_parameters, coupling, symbolic_coupling, branching_fraction, coupling_to_process_cross_section_map[coupling], coupling_to_process_efficiencies_map[coupling]
             )
-        print(f"{coupling} contributions calculated!!")
+        if print_output:
+            print(f"{coupling} contributions calculated!!")
     
     # calculate cross-terms contribution
     for i in range(len(leptoquark_parameters.sorted_couplings)):
@@ -332,7 +333,8 @@ def getChiSquareSymbolic(leptoquark_parameters: LeptoquarkParameters, branching_
                     chi_square = chi_square + calculateCouplingContributionCrossTerms(
                         leptoquark_parameters, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], symbolic_couplings[i], symbolic_couplings[j], coupling_to_process_cross_section_map[cross_terms_coupling], coupling_to_process_efficiencies_map[cross_terms_coupling]
                     )
-                print(f"{cross_terms_coupling} contributions calculated!!")
+                if print_output:
+                    print(f"{cross_terms_coupling} contributions calculated!!")
 
     return sym.simplify(chi_square)
 

@@ -37,7 +37,7 @@ class LeptoquarkParameters:
             f"Leptoquark Mass: {self.leptoquark_mass} GeV\n"
             f"Ignore Single/Pair Processes: {self.ignore_single_pair_processes}\n"
             f"Significance: {self.significance}\n"
-            f"Systematic Error: {self.systematic_error * 100:.2f}%\n"
+            f"Systematic error: {self.systematic_error * 100:.2f}%\n"
             f"Extra Width: {self.extra_width} GeV\n"
             f"Luminosity: {self.luminosity} fb^-1\n"
             f"Couplings: {self.couplings}\n"

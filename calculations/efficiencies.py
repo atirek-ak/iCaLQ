@@ -3,7 +3,7 @@ from typing import Dict, Union, List
 from scipy.interpolate import interp1d
 
 from calculations.helper import getNumbersFromCsvFiles, transposeMatrix, getImmediateSubdirectories, getCrossSectionFromProcess, getEfficienciesFromProcess, getEfficienciesFromProcessAndTagNameTauTau
-from utilities.constants import get_efficiency_prefix, tag_names, lepton_index, quark_index, chirality_index
+from utilities.constants import get_efficiency_prefix, tag_names, lepton_index, quark_index, chirality_index, global_data_precision
 from utilities.data_classes import LeptoquarkParameters, SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau, TagsTauTau, SingleCouplingCrossSections, CrossTermsCrossSections
 
 
@@ -61,7 +61,7 @@ def getEfficiencies(
             if leptoquark_parameters.sorted_couplings[i][quark_index] == leptoquark_parameters.sorted_couplings[j][quark_index]:
                 cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
                 cross_terms_directory_path = f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/t/{leptoquark_parameters.sorted_couplings[i][lepton_index]}{leptoquark_parameters.sorted_couplings[i][quark_index]}{leptoquark_parameters.sorted_couplings[i][chirality_index]}_{leptoquark_parameters.sorted_couplings[j][lepton_index]}{leptoquark_parameters.sorted_couplings[j][quark_index]}{leptoquark_parameters.sorted_couplings[j][chirality_index]}/"
-                if coupling[quark_index] == '3':
+                if leptoquark_parameters.sorted_couplings[i][quark_index] == '3':
                     coupling_to_process_efficiencies_map[cross_terms_coupling] = readAndInterpolateEfficiencyTauTau([cross_terms_directory_path], leptoquark_parameters, coupling_to_process_cross_section_map, coupling_to_process_efficiencies_map, cross_terms_coupling, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], cross_terms= True)
                 else:
                     coupling_to_process_efficiencies_map[cross_terms_coupling] = readAndInterpolateEfficiency([cross_terms_directory_path], leptoquark_parameters, coupling_to_process_cross_section_map, coupling_to_process_efficiencies_map, cross_terms_coupling, leptoquark_parameters.sorted_couplings[i], leptoquark_parameters.sorted_couplings[j], cross_terms= True)
@@ -103,11 +103,11 @@ def readAndInterpolateEfficiency(path_list: List[List[str]], leptoquark_paramete
             for interpolated_mass_value, coupling1_efficiency, coupling2_efficiency in zip(interpolated_mass_values, coupling1_efficiencies, coupling2_efficiencies):
             # we compute the cross-terms efficiency using the formula
             # CS1 * EFF1 + CS2 * EFF2 + cross-terms-CS *  cross-terms-EFF = 2-couplings-CS * 2-couplings-EFF
-                cross_terms_efficiency = (
+                cross_terms_efficiency = round(float((
                     coupling_to_process_cross_section_map[cross_terms_coupling].actual_cross_section_tchannel * interpolated_mass_value
                     - coupling1_cross_section * coupling1_efficiency
                     - coupling2_cross_section * coupling2_efficiency
-                ) / (coupling_to_process_cross_section_map[cross_terms_coupling].cross_terms_cross_section_tchannel)
+                ) / (coupling_to_process_cross_section_map[cross_terms_coupling].cross_terms_cross_section_tchannel)), global_data_precision)
                 cross_terms_interpolated_values.append(cross_terms_efficiency)
             process_values.append(cross_terms_interpolated_values)
         else:    
@@ -153,7 +153,7 @@ def readAndInterpolateEfficiencyTauTau(path_list: List[List[str]], leptoquark_pa
             # start interpolation
             for bin_values in transposed_mass_values:
                 interpolation_function = lambda m: interp1d(data_mass_list, bin_values, kind="slinear", fill_value="extrapolate")(m)
-                interpolated_mass_values.append(interpolation_function(leptoquark_parameters.leptoquark_mass))
+                interpolated_mass_values.append(round(float(interpolation_function(leptoquark_parameters.leptoquark_mass)), global_data_precision))
             if cross_terms:
                 cross_terms_interpolated_values = []
                 # get single couplings cross-sections
@@ -165,11 +165,11 @@ def readAndInterpolateEfficiencyTauTau(path_list: List[List[str]], leptoquark_pa
                 for interpolated_mass_value, coupling1_efficiency, coupling2_efficiency in zip(interpolated_mass_values, coupling1_efficiencies, coupling2_efficiencies):
                 # we compute the cross-terms efficiency using the formula
                 # CS1 * EFF1 + CS2 * EFF2 + cross-terms-CS *  cross-terms-EFF = 2-couplings-CS * 2-couplings-EFF
-                    cross_terms_efficiency = (
+                    cross_terms_efficiency = round(float((
                         coupling_to_process_cross_section_map[cross_terms_coupling].actual_cross_section_tchannel * interpolated_mass_value
                         - coupling1_cross_section * coupling1_efficiency
                         - coupling2_cross_section * coupling2_efficiency
-                    ) / (coupling_to_process_cross_section_map[cross_terms_coupling].cross_terms_cross_section_tchannel)
+                    ) / (coupling_to_process_cross_section_map[cross_terms_coupling].cross_terms_cross_section_tchannel)), global_data_precision)
                     cross_terms_interpolated_values.append(cross_terms_efficiency)
                 tag_values.append(cross_terms_interpolated_values)
             else:

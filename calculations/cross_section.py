@@ -9,7 +9,8 @@ from utilities.constants import (
     get_cross_sections_df_tchannel,
     get_cross_sections_df_pureqcd,
     get_cross_sections_df_cross_terms_tchannel,
-    quark_index
+    quark_index,
+    global_data_precision
 )
 
 def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]]:
@@ -39,11 +40,11 @@ def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> Dict[str, U
     # categorise them by particle and assign to ParticleCrossSections instance which will be used everywhere
     for sorted_coupling, cross_section_pureqcd, cross_section_pair_production, cross_section_single_production, cross_section_interference, cross_section_tchannel in zip(leptoquark_parameters.sorted_couplings, cross_sections_pureqcd, cross_sections_pair_production, cross_sections_single_production, cross_sections_interference, cross_sections_tchannel):
         coupling_to_process_cross_section_map[sorted_coupling] = SingleCouplingCrossSections(
-            cross_section_pureqcd = cross_section_pureqcd,
-            cross_section_pair_production = cross_section_pair_production,
-            cross_section_single_production = cross_section_single_production,
-            cross_section_interference = cross_section_interference,
-            cross_section_tchannel = cross_section_tchannel,
+            cross_section_pureqcd = round(float(cross_section_pureqcd), global_data_precision),
+            cross_section_pair_production = round(float(cross_section_pair_production), global_data_precision),
+            cross_section_single_production = round(float(cross_section_single_production), global_data_precision),
+            cross_section_interference = round(float(cross_section_interference), global_data_precision),
+            cross_section_tchannel = round(float(cross_section_tchannel), global_data_precision),
         )
         
     # cross terms
@@ -57,8 +58,8 @@ def getCrossSections(leptoquark_parameters: LeptoquarkParameters) -> Dict[str, U
                 cross_terms_cross_section_tchannel_interpolation_function = interpolateLinearCrossSection(cross_terms_cross_section_tchannel_df, [cross_terms_coupling])
                 cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel_interpolation_function(leptoquark_parameters.leptoquark_mass)[0]
                 coupling_to_process_cross_section_map[cross_terms_coupling] = CrossTermsCrossSections(
-                    cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel - cross_sections_tchannel[i] - cross_sections_tchannel[j],
-                    actual_cross_section_tchannel = cross_terms_cross_section_tchannel,
+                    cross_terms_cross_section_tchannel = round(float(cross_terms_cross_section_tchannel - cross_sections_tchannel[i] - cross_sections_tchannel[j]), global_data_precision),
+                    actual_cross_section_tchannel = round(float(cross_terms_cross_section_tchannel), global_data_precision),
                 )
     
     return coupling_to_process_cross_section_map

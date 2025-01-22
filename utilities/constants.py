@@ -69,7 +69,7 @@ mass_leptons = {'1': [0.000511, 2.2e-06], '2': [0.1057, 0.00017], '3': [1.777, 0
 # pureqcd contribution mass limit
 pureqcd_contribution_mass_limit = 6000
 
-# 1 sigma chi square limits
+# 1 sigma chi-square limits
 chi_sq_limits_1 = [
     1.00,
     2.295748928898636,
@@ -90,7 +90,7 @@ chi_sq_limits_1 = [
     19.197568537049687,
 ]
 
-# 2 sigma chi square limits
+# 2 sigma chi-square limits
 chi_sq_limits_2 = [
     4.00,
     6.180074306244173,
@@ -132,3 +132,9 @@ default_input_file_path = "sample/sample_1.vals"
 # minimum & maximum leptoquark mass allowed
 minimum_leptoquark_mass = 1000.0
 maximum_leptoquark_mass = 5000.0
+
+# global data decimal precision for efficiencies & cross-sections
+global_data_precision = 6
+
+# do not keep this value below 3
+number_of_minima_starting_points = 5

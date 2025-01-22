@@ -30,7 +30,7 @@ def validateInputData(
     """
     # validate leptoquark model
     if leptoquark_model not in scalar_leptoquark_models and leptoquark_model not in vector_leptoquark_models:
-        raise ValueError(f"[Model Error]: Not a valid leptoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}")
+        raise ValueError(f"[Model error]: Not a valid leptoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}")
 
     # validate leptoquark mass
     try:
@@ -54,7 +54,7 @@ def validateInputData(
     if not len(couplings_list):
         raise ValueError("[Couplings error]: Couplings cannot be empty. For valid format, refer to README")
     for i in range(len(couplings_list)):
-        if len(couplings_list[i]) != 10:
+        if len(couplings_list[i].strip()) != 10:
             raise ValueError(f"[Couplings error]: The couplings input {couplings_list[i]} is not 10 characters. For valid format, refer to README")
         if not (
             (couplings_list[i][0] == 'Y' and leptoquark_model in scalar_leptoquark_models)
@@ -80,9 +80,9 @@ def validateInputData(
     couplings = couplings_list
 
     # validate Ignore single and pair production
-    if ignore_single_pair_processes.lower() in {"yes", "y"}:
+    if ignore_single_pair_processes.lower() in {"yes", "y", "true", "t", "1"}:
         ignore_single_pair_processes = True
-    elif ignore_single_pair_processes.lower() in {"no", "n"}:
+    elif ignore_single_pair_processes.lower() in {"no", "n", "false", "f", "0"}:
         ignore_single_pair_processes = False
     else:
         raise ValueError("[Ignore single pair production error]: ignore_single_pair takes input either 'yes'/'y' or 'no'/'n'")
@@ -107,13 +107,13 @@ def validateInputData(
     try:
         extra_width = float(extra_width)
     except:
-        raise ValueError("[Extra width error]: Extra Width constant should be a valid number")
+        raise ValueError("[Extra width error]: Extra Width should be a valid number")
 
     # validate luminosity
     try:
         luminosity = float(luminosity)
     except:
-        raise ValueError("Luminsoity should be a valid number")
+        raise ValueError("Luminosity should be a valid number")
     
     # validate random points
     try:
@@ -146,12 +146,12 @@ def validateInteractiveInputCouplingValues(coupling_values_input_interactive: st
     """
     coupling_values = coupling_values_input_interactive.split()
     if len(coupling_values) != couplings_length:
-        prRed(f"[Query Error]: Please input {len(couplings_length)} couplings values input.")
+        prRed(f"[Query error]: Please input {couplings_length} couplings values input.")
         return False
     try:
         for i in range(couplings_length):
             _ = float(coupling_values[i])
     except ValueError:
-        prRed(f"[Query Error]: Please enter numerical values as input")
+        prRed(f"[Query error]: Please enter numerical values as input")
         return False
     return True

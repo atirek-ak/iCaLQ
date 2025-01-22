@@ -4,7 +4,7 @@ from sympy.utilities.iterables import flatten
 import scipy.optimize as optimize
 import numpy as np
 
-from utilities.constants import InputMode
+from utilities.constants import InputMode, number_of_minima_starting_points
 from utilities.branching_fraction import getBranchingFraction
 from utilities.data_classes import LeptoquarkParameters, NonInteractiveInputParameters
 from utilities.validate import validateInteractiveInputCouplingValues
@@ -35,9 +35,14 @@ def calculate(
     branching_fraction = getBranchingFraction(leptoquark_parameters, symbolic_couplings, mass_dictionary)
 
     # calcualte chi-square
-    chi_square_symbolic = getChiSquareSymbolic(leptoquark_parameters, branching_fraction, coupling_to_process_cross_section_map, coupling_to_process_efficiencies_map, symbolic_couplings)
+    chi_square_symbolic = getChiSquareSymbolic(leptoquark_parameters, branching_fraction, coupling_to_process_cross_section_map, coupling_to_process_efficiencies_map, symbolic_couplings, True)
     # convert chi-square symbolic to numpy as it has faster execution
     numpy_chi_square_symbolic = lambdify(flatten(symbolic_couplings), chi_square_symbolic, modules="numpy")
+
+    numpy_chi_square_symbolic_zero_coupling = 0.0
+    if len(leptoquark_parameters.sorted_couplings) > 1:
+        chi_square_symbolic_zero_coupling = getChiSquareSymbolic(leptoquark_parameters, 0.0, coupling_to_process_cross_section_map, coupling_to_process_efficiencies_map, symbolic_couplings, False)
+        numpy_chi_square_symbolic_zero_coupling = lambdify(flatten(symbolic_couplings), chi_square_symbolic_zero_coupling, modules="numpy")
 
     # find minimum lambda
     # start coupling value is the initial value we use for minimization
@@ -60,7 +65,7 @@ def calculate(
             method="Nelder-Mead",
             options={"fatol": 0.0001},
         )
-        for random_values_list in (np.random.rand(5, len(leptoquark_parameters.sorted_couplings)) * 5)
+        for random_values_list in (np.random.rand(5, len(leptoquark_parameters.sorted_couplings)) * number_of_minima_starting_points)
     ])
     minima = minima_values_list[0]
     for minima_value in minima_values_list:
@@ -69,7 +74,16 @@ def calculate(
             minima = minima_value
     chi_square_minima = minima.fun
     chi_square_minima_couplings = minima.x
-    print("Minimum Chi Square at values:", end="")
+
+    if len(leptoquark_parameters.sorted_couplings) > 1:
+        # check zero coupling value scenario for minima
+        all_zeros_coupling_values = [0.0 for x in leptoquark_parameters.sorted_couplings]
+        zero_minima = numpy_chi_square_symbolic_zero_coupling(*flatten(all_zeros_coupling_values))
+        if zero_minima < chi_square_minima:
+            chi_square_minima = zero_minima
+            chi_square_minima_couplings = all_zeros_coupling_values
+
+    print("Minimum chi-square at values:", end="")
     print(*[f"\n{leptoquark_parameters.sorted_couplings[i]} : {chi_square_minima_couplings[i]}" for i in range(len(leptoquark_parameters.sorted_couplings))])
 
     # in case of interactive mode, input coupling values
@@ -80,31 +94,24 @@ def calculate(
         while True:
             print("\n > ", end="")
             coupling_values_input_interactive = input()
-            if coupling_values_input_interactive.lower() in ["done", "exit"]:
+            if coupling_values_input_interactive.lower() in ["done", "d", "q", "quit","exit"]:
                 return
             if not validateInteractiveInputCouplingValues(coupling_values_input_interactive, len(leptoquark_parameters.sorted_couplings)):
                 print("Type 'done' or 'exit' to continue to calq prompt.")
                 continue
             coupling_values_interactive = [float(value) for value in coupling_values_input_interactive.strip().split()]
-            delta_chi_square, validity_list = getDeltaChiSquare(leptoquark_parameters, [coupling_values_interactive], chi_square_minima, numpy_chi_square_symbolic)
-            print(f"Delta Chi Square: {delta_chi_square[0]}\nAllowed: {validity_list[0]}")
+            delta_chi_square, validity_list = getDeltaChiSquare(leptoquark_parameters, [coupling_values_interactive], chi_square_minima, numpy_chi_square_symbolic, numpy_chi_square_symbolic_zero_coupling, branching_fraction)
+            print(f"Delta chi-square: {delta_chi_square[0]}\nAllowed: {validity_list[0]}")
             if delta_chi_square[0] < 0:
                 print("A negative value should imply precision less than 1e-4 while calculating minima and can be considered equal to 0. Try initiating again to randomize minimization.")
 
     # Get delta chi-square for non-interactive mode
-    delta_chi_square, validity_list = getDeltaChiSquare(leptoquark_parameters, leptoquark_parameters.sorted_couplings_values, chi_square_minima, numpy_chi_square_symbolic)
+    delta_chi_square, validity_list = getDeltaChiSquare(leptoquark_parameters, leptoquark_parameters.sorted_couplings_values, chi_square_minima, numpy_chi_square_symbolic, numpy_chi_square_symbolic_zero_coupling, branching_fraction)
     yes_list = [i for i in range(len(validity_list)) if validity_list[i] == "Yes"]
     no_list = [i for i in range(len(validity_list)) if validity_list[i] == "No"]
 
     # printing & outputting yes values
     print("\nYes List:")
-    with open(f"values/{leptoquark_parameters.sorted_couplings[0]}.csv", 'a') as temp_file:
-        for index in range(len(delta_chi_square)):
-            if index in yes_list:
-                # for x in original_lam_vals[i]:
-                print(f"{leptoquark_parameters.leptoquark_mass}\t{leptoquark_parameters.sorted_couplings_values[index]}\t{chi_square_minima}\t{chi_square_minima+delta_chi_square[index]}\t1", file=temp_file)
-            else:
-                print(f"{leptoquark_parameters.leptoquark_mass}\t{leptoquark_parameters.sorted_couplings_values[index]}\t{chi_square_minima}\t{chi_square_minima+delta_chi_square[index]}\t2", file=temp_file)
     with open(non_interactive_input_parameters.output_yes_path, "w", encoding="utf8") as yes_file:
         for coupling in leptoquark_parameters.sorted_couplings:
             print(coupling, end="\t")

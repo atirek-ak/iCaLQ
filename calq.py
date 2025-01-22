@@ -90,7 +90,7 @@ def nonInteractiveMessage(
     """
     if not non_interactive_input_parameters.input_card_path:
         sys.exit(
-            "[Card Error]: Input Card file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
+            "[Card error]: Input Card file not specified in the expected format (mandatory for non-interactive mode). Exiting.\n"
         )
     if not non_interactive_input_parameters.input_values_path:
         non_interactive_input_parameters.input_values_path = default_input_file_path
@@ -99,7 +99,7 @@ def nonInteractiveMessage(
             random_points = input_card_lines[7].split("#")[0].strip()
             if random_points == '0':
                 sys.exit(
-                    "[Values Error]: Input Values file not specified & random points is set to zero. Exiting.\n"
+                    "[Values error]: Input Values file not specified & random points is set to zero. Exiting.\n"
                 )
     print(f"Input Card file: {non_interactive_input_parameters.input_card_path}")
     print(f"Input Values file: {non_interactive_input_parameters.input_values_path}")
