@@ -1,5 +1,6 @@
-import pandas as pd
 from enum import Enum
+
+import pandas as pd
 
 # INFRA
 # coupling input params
@@ -7,10 +8,12 @@ lepton_index = 6
 quark_index = 8
 chirality_index = 4
 
+
 # input modes
 class InputMode(Enum):
     INTERACTIVE = "interactive"
     NONINTERACTIVE = "noninteractive"
+
 
 # non-interactive card params
 input_card_number_of_lines = 8
@@ -24,25 +27,53 @@ default_extra_width = 0
 # FILES
 DATA_PREFIX = "data"
 
+
 # cross-section
 def get_cross_sections_df_pair_production(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pair.csv", header=[0])
+    return pd.read_csv(
+        f"{DATA_PREFIX}/model/{model}/cross_section/pair.csv", header=[0]
+    )
+
+
 def get_cross_sections_df_single_production(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/single.csv", header=[0])
+    return pd.read_csv(
+        f"{DATA_PREFIX}/model/{model}/cross_section/single.csv", header=[0]
+    )
+
+
 def get_cross_sections_df_interference(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/interference.csv", header=[0])
+    return pd.read_csv(
+        f"{DATA_PREFIX}/model/{model}/cross_section/interference.csv", header=[0]
+    )
+
+
 def get_cross_sections_df_tchannel(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/tchannel.csv", header=[0])
+    return pd.read_csv(
+        f"{DATA_PREFIX}/model/{model}/cross_section/tchannel.csv", header=[0]
+    )
+
+
 def get_cross_sections_df_pureqcd(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/pureqcd.csv", header=[0])
+    return pd.read_csv(
+        f"{DATA_PREFIX}/model/{model}/cross_section/pureqcd.csv", header=[0]
+    )
+
+
 def get_cross_sections_df_cross_terms_tchannel(model: str):
-    return pd.read_csv(f"{DATA_PREFIX}/model/{model}/cross_section/tchannel_doublecoupling.csv",header=[0])
+    return pd.read_csv(
+        f"{DATA_PREFIX}/model/{model}/cross_section/tchannel_doublecoupling.csv",
+        header=[0],
+    )
+
 
 # efficiency
 def get_efficiency_prefix(model: str):
     return f"{DATA_PREFIX}/model/{model}/efficiency"
+
+
 def get_t_ct_prefix(model: str):
     return f"{DATA_PREFIX}/model/{model}/efficiency/t"
+
 
 # LHC data
 LHC_DATA_PREFIX = f"{DATA_PREFIX}/HEPdata"
@@ -63,8 +94,9 @@ min_coupling_value_limit = -3.5
 max_coupling_value_limit = 3.5
 
 # lepton & quark masses
-mass_quarks = {'1': [0.0023, 0.0048], '2': [1.275, 0.095], '3': [173.07, 4.18]}
-mass_leptons = {'1': [0.000511, 2.2e-06], '2': [0.1057, 0.00017], '3': [1.777, 0.0155]}
+mass_quarks = {"1": [0.0023, 0.0048], "2": [1.275, 0.095], "3": [173.07, 4.18]}
+mass_leptons = {"1": [0.000511, 2.2e-06],
+                "2": [0.1057, 0.00017], "3": [1.777, 0.0155]}
 
 # pureqcd contribution mass limit
 pureqcd_contribution_mass_limit = 6000

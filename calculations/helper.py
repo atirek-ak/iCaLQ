@@ -1,14 +1,21 @@
 import os
 import warnings
+from typing import Dict, List, Union
+
 import sympy as sym
-from typing import Dict, Union, List
 from sympy.utilities.iterables import flatten
 
-from utilities.data_classes import SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau, TagsTauTau, SingleCouplingCrossSections, CrossTermsCrossSections
-from utilities.data_classes import LeptoquarkParameters 
 from utilities.constants import chi_sq_limits_1, chi_sq_limits_2
+from utilities.data_classes import (CrossTermsCrossSections,
+                                    CrossTermsEfficiency,
+                                    CrossTermsEfficiencyTauTau,
+                                    LeptoquarkParameters,
+                                    SingleCouplingCrossSections,
+                                    SingleCouplingEfficiency,
+                                    SingleCouplingEfficiencyTauTau, TagsTauTau)
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
+
 
 def getNumbersFromCsvFiles(directory):
     """
@@ -16,17 +23,18 @@ def getNumbersFromCsvFiles(directory):
     """
     # List to store the numbers
     numbers = []
-    
+
     # Iterate over all files in the given directory
     for filename in os.listdir(directory):
         # Check if the file ends with .csv
-        if filename.endswith('.csv'):
+        if filename.endswith(".csv"):
             # Remove the .csv extension and convert to an integer
             number = int(filename[:-4])
             # Add the number to the list
             numbers.append(number)
-    
+
     return numbers
+
 
 def getImmediateSubdirectories(directory):
     """
@@ -34,7 +42,7 @@ def getImmediateSubdirectories(directory):
     """
     # List to store the names of subdirectories
     subdirectories = []
-    
+
     # Iterate over all entries in the given directory
     for entry in os.listdir(directory):
         # Create the full path
@@ -43,49 +51,84 @@ def getImmediateSubdirectories(directory):
         if os.path.isdir(full_path):
             # Add the directory name to the list
             subdirectories.append(int(entry))
-    
+
     return subdirectories
+
 
 def transposeMatrix(matrix):
     # Use zip to transpose the rows to columns and convert them to lists
     columns = [list(column) for column in zip(*matrix)]
     return columns
 
-def getCrossSectionFromProcess(process_path: str, coupling_to_process_cross_section_map: Dict[str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]], coupling: str) -> float:
+
+def getCrossSectionFromProcess(
+    process_path: str,
+    coupling_to_process_cross_section_map: Dict[
+        str, Union[SingleCouplingCrossSections, CrossTermsCrossSections]
+    ],
+    coupling: str,
+) -> float:
     singleCouplingCrossSection = coupling_to_process_cross_section_map[coupling]
     # Path: {DATA_PREFIX}/model/{model}/efficiency/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/
-    if process_path.split('/')[4] == 'q':
+    if process_path.split("/")[4] == "q":
         return singleCouplingCrossSection.cross_section_pureqcd
-    elif process_path.split('/')[4] == 'p':
+    elif process_path.split("/")[4] == "p":
         return singleCouplingCrossSection.cross_section_pair_production
-    elif process_path.split('/')[4] == 'i':
+    elif process_path.split("/")[4] == "i":
         return singleCouplingCrossSection.cross_section_interference
-    elif process_path.split('/')[4] == 't':
+    elif process_path.split("/")[4] == "t":
         return singleCouplingCrossSection.cross_section_tchannel
-    elif process_path.split('/')[4] == 's':
+    elif process_path.split("/")[4] == "s":
         return singleCouplingCrossSection.cross_section_single_production
     return 0
 
-def getEfficienciesFromProcess(process_path: str, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], coupling: str) -> List[float]:
+
+def getEfficienciesFromProcess(
+    process_path: str,
+    coupling_to_process_efficiencies_map: Dict[
+        str,
+        Union[
+            SingleCouplingEfficiency,
+            SingleCouplingEfficiencyTauTau,
+            CrossTermsEfficiency,
+            CrossTermsEfficiencyTauTau,
+        ],
+    ],
+    coupling: str,
+) -> List[float]:
     """
     return the correct efficiencies on the basis of process
     """
     efficienciesObject = coupling_to_process_efficiencies_map[coupling]
     # Path: {DATA_PREFIX}/model/{model}/efficiency/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/
-    if process_path.split('/')[4] == 'q':
+    if process_path.split("/")[4] == "q":
         return efficienciesObject.efficiency_pureqcd
-    elif process_path.split('/')[4] == 'p':
+    elif process_path.split("/")[4] == "p":
         return efficienciesObject.efficiency_pair_production
-    elif process_path.split('/')[4] == 'i':
+    elif process_path.split("/")[4] == "i":
         return efficienciesObject.efficiency_interference
-    elif process_path.split('/')[4] == 't':
+    elif process_path.split("/")[4] == "t":
         return efficienciesObject.efficiency_tchannel
-    elif process_path.split('/')[4] == 's':
+    elif process_path.split("/")[4] == "s":
         return efficienciesObject.efficiency_single_production
 
     return []
 
-def getEfficienciesFromProcessAndTagNameTauTau(process_path: str, tagName: str, coupling_to_process_efficiencies_map: Dict[str, Union[SingleCouplingEfficiency, SingleCouplingEfficiencyTauTau, CrossTermsEfficiency, CrossTermsEfficiencyTauTau]], coupling: str) -> List[float]:
+
+def getEfficienciesFromProcessAndTagNameTauTau(
+    process_path: str,
+    tagName: str,
+    coupling_to_process_efficiencies_map: Dict[
+        str,
+        Union[
+            SingleCouplingEfficiency,
+            SingleCouplingEfficiencyTauTau,
+            CrossTermsEfficiency,
+            CrossTermsEfficiencyTauTau,
+        ],
+    ],
+    coupling: str,
+) -> List[float]:
     """
     return the correct efficiencies for tautau on the basis of process & tag
     """
@@ -93,17 +136,17 @@ def getEfficienciesFromProcessAndTagNameTauTau(process_path: str, tagName: str, 
     # Path: {DATA_PREFIX}/model/{model}/efficiency/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/
     # get TagsTauTau object
     tagsTauTau: TagsTauTau
-    if process_path.split('/')[4] == 'q':
+    if process_path.split("/")[4] == "q":
         tagsTauTau = efficienciesObject.efficiency_pureqcd
-    elif process_path.split('/')[4] == 'p':
+    elif process_path.split("/")[4] == "p":
         tagsTauTau = efficienciesObject.efficiency_pair_production
-    elif process_path.split('/')[4] == 'i':
+    elif process_path.split("/")[4] == "i":
         tagsTauTau = efficienciesObject.efficiency_interference
-    elif process_path.split('/')[4] == 't':
+    elif process_path.split("/")[4] == "t":
         tagsTauTau = efficienciesObject.efficiency_tchannel
-    elif process_path.split('/')[4] == 's':
+    elif process_path.split("/")[4] == "s":
         tagsTauTau = efficienciesObject.efficiency_single_production
-    
+
     # from TagsTauTau object, we get the list of efficiencies
     if tagName == "HHbT.csv":
         return tagsTauTau.hhbt
@@ -117,7 +160,14 @@ def getEfficienciesFromProcessAndTagNameTauTau(process_path: str, tagName: str, 
     return []
 
 
-def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_values_list: List[List[float]], chi_square_minima: float, numpy_chi_square_symbolic: sym.Symbol, numpy_chi_square_symbolic_zero_coupling: sym.Symbol, branching_fraction: sym.Symbol):
+def getDeltaChiSquare(
+    leptoquark_parameters: LeptoquarkParameters,
+    coupling_values_list: List[List[float]],
+    chi_square_minima: float,
+    numpy_chi_square_symbolic: sym.Symbol,
+    numpy_chi_square_symbolic_zero_coupling: sym.Symbol,
+    branching_fraction: sym.Symbol,
+):
     """
     Use the lambdified function (numpy_chi_square_symbolic) to calculate chi-square for the given query input
     """
@@ -129,26 +179,41 @@ def getDeltaChiSquare(leptoquark_parameters: LeptoquarkParameters, coupling_valu
             # for single couplings the branching_fraction will be a float
             if len(coupling_values) > 1:
                 flat_values = flatten(coupling_values)
-                _ = branching_fraction.subs(dict(zip(flat_values[::2], flat_values[1::2])))
-            chi_square_value = numpy_chi_square_symbolic(*flatten(coupling_values))
+                _ = branching_fraction.subs(
+                    dict(zip(flat_values[::2], flat_values[1::2]))
+                )
+            chi_square_value = numpy_chi_square_symbolic(
+                *flatten(coupling_values))
         except ZeroDivisionError:
-            chi_square_value = numpy_chi_square_symbolic_zero_coupling(*flatten(coupling_values))
+            chi_square_value = numpy_chi_square_symbolic_zero_coupling(
+                *flatten(coupling_values)
+            )
         delta_chi_square.append(chi_square_value - chi_square_minima)
         file_path = f"plots/double_coupling_data/{leptoquark_parameters.sorted_couplings[0]}_{leptoquark_parameters.sorted_couplings[1]}.csv"
         with open(file_path, "a") as f:
             if chi_square_value - chi_square_minima <= 4:
-                f.write(f"{round(float(coupling_values[0]),3)}\t{round(float(coupling_values[1]),3)}\t{round(float(chi_square_minima),5)}\t{round(float(chi_square_value),5)}\t1\n")
+                f.write(
+                    f"{round(float(coupling_values[0]),3)}\t{round(float(coupling_values[1]),3)}\t{round(float(chi_square_minima),5)}\t{round(float(chi_square_value),5)}\t1\n"
+                )
             else:
-                f.write(f"{round(float(coupling_values[0]),3)}\t{round(float(coupling_values[1]),3)}\t{round(float(chi_square_minima),5)}\t{round(float(chi_square_value),5)}\t2\n")
+                f.write(
+                    f"{round(float(coupling_values[0]),3)}\t{round(float(coupling_values[1]),3)}\t{round(float(chi_square_minima),5)}\t{round(float(chi_square_value),5)}\t2\n"
+                )
         if leptoquark_parameters.significance == 1:
-            if chi_square_value - chi_square_minima <= chi_sq_limits_1[len(leptoquark_parameters.sorted_couplings)-1]:
+            if (
+                chi_square_value - chi_square_minima
+                <= chi_sq_limits_1[len(leptoquark_parameters.sorted_couplings) - 1]
+            ):
                 validity_list.append("Yes")
             else:
                 validity_list.append("No")
         elif leptoquark_parameters.significance == 2:
-            if chi_square_value - chi_square_minima <= chi_sq_limits_2[len(leptoquark_parameters.sorted_couplings)-1]:
+            if (
+                chi_square_value - chi_square_minima
+                <= chi_sq_limits_2[len(leptoquark_parameters.sorted_couplings) - 1]
+            ):
                 validity_list.append("Yes")
             else:
                 validity_list.append("No")
-    
+
     return delta_chi_square, validity_list

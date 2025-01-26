@@ -1,24 +1,15 @@
-from utilities.constants import (
-    luminosity,
-    default_ignore_single_pair_processes,
-    default_significane,
-    default_systematic_error,
-    default_extra_width,
-    InputMode,
-)
-from utilities.initiate.interactive.validate import (
-    validateLeptoQuarkModel, 
-    validateLeptoQuarkMass,
-    validateLeptoQuarkCouplings,
-    validateIgnoreSinglePairProduction,
-    validateSignificance,
-    validateSystematicError,
-    validateExtraWidth
-)
-from utilities.parse import sortCouplingsAndValuesInteractive
-from utilities.colour import prRed, prBlueNoNewLine, prBlue
-from utilities.validate import validateInputData
 from calculate import calculate
+from utilities.colour import prBlue, prBlueNoNewLine, prRed
+from utilities.constants import (InputMode, default_extra_width,
+                                 default_ignore_single_pair_processes,
+                                 default_significane, default_systematic_error,
+                                 luminosity)
+from utilities.initiate.interactive.validate import (
+    validateExtraWidth, validateIgnoreSinglePairProduction,
+    validateLeptoQuarkCouplings, validateLeptoQuarkMass,
+    validateLeptoQuarkModel, validateSignificance, validateSystematicError)
+from utilities.parse import sortCouplingsAndValuesInteractive
+from utilities.validate import validateInputData
 
 
 def initiateInteractive():
@@ -34,14 +25,16 @@ def initiateInteractive():
     systematic_error = default_systematic_error
     extra_width = default_extra_width
 
-    printDefaultValues(ignore_single_pair_processes, significance, systematic_error, extra_width) 
+    printDefaultValues(
+        ignore_single_pair_processes, significance, systematic_error, extra_width
+    )
 
     # loop to input values. we will have to add validations here only
     while True:
         prBlueNoNewLine("calq > ")
         inpt = input()
         s = inpt.split("=")
-        if (":" in inpt):
+        if ":" in inpt:
             s = inpt.split(":")
         slen = len(s)
         if s[0].strip() == "import_model" and slen == 2:
@@ -72,14 +65,25 @@ def initiateInteractive():
             print(f" Leptoquark mass = {leptoquark_mass}")
             print(f" Couplings: {couplings}")
             print(f" Extra width = {extra_width}")
-            print(f" Ignore single & pair processes: {ignore_single_pair_processes}")
+            print(
+                f" Ignore single & pair processes: {ignore_single_pair_processes}")
             print(f" Significance = {significance}")
             print(f" Systematic error = {systematic_error}")
         elif s[0].strip() == "help":
             printHelp()
         elif s[0].strip() == "initiate":
-            leptoquark_parameters, _ = validateInputData(leptoquark_model, leptoquark_mass, couplings, ignore_single_pair_processes, significance, systematic_error, extra_width, luminosity)
-            leptoquark_parameters.couplings_values = [" ".join(["0"] * len(couplings))]
+            leptoquark_parameters, _ = validateInputData(
+                leptoquark_model,
+                leptoquark_mass,
+                couplings,
+                ignore_single_pair_processes,
+                significance,
+                systematic_error,
+                extra_width,
+                luminosity,
+            )
+            leptoquark_parameters.couplings_values = [
+                " ".join(["0"] * len(couplings))]
             sortCouplingsAndValuesInteractive(leptoquark_parameters)
             calculate(leptoquark_parameters, InputMode.INTERACTIVE)
         elif s[0].strip().lower() in ["exit", "q", "quit", "exit()", ".exit"]:
@@ -87,17 +91,28 @@ def initiateInteractive():
         elif s[0].strip() == "":
             continue
         else:
-            prRed(f" Command {s[0]} not recognised. Please retry or enter 'q', 'quit' or 'exit' to exit.")
+            prRed(
+                f" Command {s[0]} not recognised. Please retry or enter 'q', 'quit' or 'exit' to exit."
+            )
 
 
-def printDefaultValues(ignore_single_pair_processes: str, significance: int, systematic_error: str, extra_width: int):
+def printDefaultValues(
+    ignore_single_pair_processes: str,
+    significance: int,
+    systematic_error: str,
+    extra_width: int,
+):
     # also print initial message here
     prBlue("========================================================")
     prBlue("Commands available:")
-    print(" import_model:, mass=, couplings: , extra_width=,\n ignore_single_pair: (yes/no), significance=(1/2),\n systematic_error=, status, initiate, help")     
+    print(
+        " import_model:, mass=, couplings: , extra_width=,\n ignore_single_pair: (yes/no), significance=(1/2),\n systematic_error=, status, initiate, help"
+    )
 
     prBlue("Couplings available:")
-    print(" Examples for S1: Y10LL[1,1] Y10RR[3,1] [...]\n Examples for U1: X10LL[3,2] X10RR[1,1] [...]")
+    print(
+        " Examples for S1: Y10LL[1,1] Y10RR[3,1] [...]\n Examples for U1: X10LL[3,2] X10RR[1,1] [...]"
+    )
 
     prBlue("Default values:")
     print(f" import_model: U1")
@@ -109,19 +124,29 @@ def printDefaultValues(ignore_single_pair_processes: str, significance: int, sys
     print(f" systematic_error = {systematic_error}")
     prBlue("========================================================")
 
+
 def printHelp():
     """
     Content to be printed when help is inputted
     """
-    prBlue("Commands with '=' expect a numerical value. Read README.md for more info on individual commands.")
+    prBlue(
+        "Commands with '=' expect a numerical value. Read README.md for more info on individual commands."
+    )
     prBlue("Value input commands: ")
     print(" import_model: [Leptoquark model]")
     print(" mass= [Leptoquark mass] (should be between 1000 and 5000)")
     print(" couplings: [Couplings. For the format, refer to README.md]")
-    print(" ignore_single_pair: [If true, the single & pair production contributions are ignored]")
-    print(" significance= [Significance of the limit in standard deviations. Possible values=1,2]")
-    print(" systematic_error= [Systematic error to be included in the calculations. Should be between 0 and 1]")
-    print(" extra_width= [extra width to account for additional unaccounted decays]")
+    print(
+        " ignore_single_pair: [If true, the single & pair production contributions are ignored]"
+    )
+    print(
+        " significance= [Significance of the limit in standard deviations. Possible values=1,2]"
+    )
+    print(
+        " systematic_error= [Systematic error to be included in the calculations. Should be between 0 and 1]"
+    )
+    print(
+        " extra_width= [extra width to account for additional unaccounted decays]")
     prBlue("Other commands:")
     print(" status [To print current values]")
     print(" initiate [To start the calcualation]")

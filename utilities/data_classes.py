@@ -5,9 +5,10 @@ class LeptoquarkParameters:
     """
     class for all parameters required for calculation. This class will have all the values that are user-inputted
     """
+
     def __init__(
         self,
-        leptoquark_model: str = '',
+        leptoquark_model: str = "",
         leptoquark_mass: float = 0.0,
         ignore_single_pair_processes: bool = False,
         significance: int = 0,
@@ -56,6 +57,7 @@ class NonInteractiveInputParameters:
     :param output_yes_path: File path of the output file (allowed values)
     :param output_no_path: File path of the output file (disallowed values)
     """
+
     def __init__(
         self,
         input_card_path: str = "",
@@ -95,11 +97,14 @@ class SingleCouplingCrossSections:
             f"Cross Section T-Channel: {self.cross_section_tchannel}"
         )
 
+
 class CrossTermsCrossSections:
     def __init__(
         self,
-        cross_terms_cross_section_tchannel: float, # the cross-section to be used for cross-terms
-        actual_cross_section_tchannel: float, # the cross-section when 2 couplings are switched on
+        # the cross-section to be used for cross-terms
+        cross_terms_cross_section_tchannel: float,
+        # the cross-section when 2 couplings are switched on
+        actual_cross_section_tchannel: float,
     ):
         self.cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel
         self.actual_cross_section_tchannel = actual_cross_section_tchannel
@@ -135,6 +140,7 @@ class SingleCouplingEfficiency:
             f"Efficiency T-Channel: {self.efficiency_tchannel}"
         )
 
+
 class CrossTermsEfficiency:
     # This will only have t channel for now
     def __init__(
@@ -142,7 +148,8 @@ class CrossTermsEfficiency:
         efficiency_tchannel: List[float],
     ):
         self.efficiency_tchannel = efficiency_tchannel
-        
+
+
 class TagsTauTau:
     def __init__(
         self,
@@ -155,6 +162,7 @@ class TagsTauTau:
         self.hhbv = hhbv
         self.lhbt = lhbt
         self.lhbv = lhbv
+
 
 class SingleCouplingEfficiencyTauTau:
     def __init__(
@@ -170,6 +178,7 @@ class SingleCouplingEfficiencyTauTau:
         self.efficiency_single_production = efficiency_single_production
         self.efficiency_interference = efficiency_interference
         self.efficiency_tchannel = efficiency_tchannel
+
 
 class CrossTermsEfficiencyTauTau:
     # This will only have t channel for now
