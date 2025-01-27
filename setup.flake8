@@ -1,3 +1,4 @@
 [flake8]
 exclude = .*,venv,__pycache__
 max-line-length = 88
+select = N801, N802, N803

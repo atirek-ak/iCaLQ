@@ -1,0 +1,8 @@
+{
+    "scalar_leptoquark_models": ["S1"],
+    "vector_leptoquark_models": ["U1"],
+    "minimum_leptoquark_mass": 1000.0,
+    "maximum_leptoquark_mass": 5000.0,
+    "minimum_coupling_value_limit": -3.5,
+    "maximum_coupling_value_limit": 3.5
+}

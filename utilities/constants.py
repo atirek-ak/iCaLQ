@@ -3,10 +3,6 @@ from enum import Enum
 import pandas as pd
 
 # INFRA
-# coupling input params
-lepton_index = 6
-quark_index = 8
-chirality_index = 4
 
 
 # input modes
@@ -88,10 +84,6 @@ lhc_data_mumu = pd.read_csv(f"{LHC_DATA_PREFIX}/dimuon.csv", header=[0])
 tag_names = ["HHbT.csv", "HHbV.csv", "LHbT.csv", "LHbV.csv"]
 
 # CALCUATION
-# coupling value limits
-# Currently being used for generating random coupling values
-min_coupling_value_limit = -3.5
-max_coupling_value_limit = 3.5
 
 # lepton & quark masses
 mass_quarks = {"1": [0.0023, 0.0048], "2": [1.275, 0.095], "3": [173.07, 4.18]}
@@ -143,10 +135,6 @@ chi_sq_limits_2 = [
     27.952164463248984,
 ]
 
-# leptoquark models
-scalar_leptoquark_models = ["S1"]
-vector_leptoquark_models = ["U1"]
-
 
 # default luminosity values
 luminosity = 139
@@ -157,13 +145,6 @@ k_factor_U1_pureqcd = 1.5
 k_factor_U1_single_production = 1.0
 k_factor_U1_t_channel = 1.0
 k_factor_U1_interference = 1.0
-
-# default value of input file path
-default_input_file_path = "sample/sample_1.vals"
-
-# minimum & maximum leptoquark mass allowed
-minimum_leptoquark_mass = 1000.0
-maximum_leptoquark_mass = 5000.0
 
 # global data decimal precision for efficiencies & cross-sections
 global_data_precision = 6

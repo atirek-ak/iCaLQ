@@ -11,15 +11,15 @@ from calculations.helper import getDeltaChiSquare
 from calculations.mass import makeLeptoquarkMassDictionary
 from utilities.branching_fraction import getBranchingFraction
 from utilities.constants import InputMode, number_of_minima_starting_points
-from utilities.data_classes import (LeptoquarkParameters,
-                                    NonInteractiveInputParameters)
+from classes.leptoquark_parameters import LeptoquarkParameters
+from classes.non_interactive_input_params import  NonInteractiveInputParameters
 from utilities.validate import validateInteractiveInputCouplingValues
 
 
 def calculate(
     leptoquark_parameters: LeptoquarkParameters,
     input_mode: InputMode,
-    non_interactive_input_parameters: NonInteractiveInputParameters = LeptoquarkParameters(),
+    non_interactive_input_parameters: NonInteractiveInputParameters = NonInteractiveInputParameters(),
 ):
     """
     main function for chi-square testing and asociated calculations

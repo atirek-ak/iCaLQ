@@ -1,4 +1,4 @@
-from utilities.colour import prRed
+from helper.output import pr_red
 from utilities.constants import (maximum_leptoquark_mass,
                                  minimum_leptoquark_mass,
                                  scalar_leptoquark_models,
@@ -12,7 +12,7 @@ def validateLeptoQuarkModel(
         leptoquark_model not in scalar_leptoquark_models
         and leptoquark_model not in vector_leptoquark_models
     ):
-        prRed(
+        pr_red(
             f"[Model error]: Not a valid lepqtoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}"
         )
         return False
@@ -28,12 +28,12 @@ def validateLeptoQuarkMass(
             leptoquark_mass < minimum_leptoquark_mass
             or leptoquark_mass > maximum_leptoquark_mass
         ):
-            prRed(
+            pr_red(
                 f"[Mass error]: Leptoquark mass should be between {minimum_leptoquark_mass} GeV and {maximum_leptoquark_mass} GeV"
             )
             return False
     except:
-        prRed("[Mass error]: Leptoquark mass should be a valid number")
+        pr_red("[Mass error]: Leptoquark mass should be a valid number")
         return False
     return True
 
@@ -48,7 +48,7 @@ def validateLeptoQuarkCouplings(
     frequency = {}
     for item in couplings_list:
         if item in frequency:
-            prRed(
+            pr_red(
                 f"[Couplings error]: Coupling {item} is repeated. A coupling can only be inputted once"
             )
             return False
@@ -56,13 +56,13 @@ def validateLeptoQuarkCouplings(
             frequency[item] = 1
 
     if not len(couplings_list):
-        prRed(
+        pr_red(
             "[Couplings error]: Couplings cannot be empty. Refer to README.md for valid format"
         )
         return False
     for i in range(len(couplings_list)):
         if len(couplings_list[i]) != 10:
-            prRed(
+            pr_red(
                 f"[Couplings error]: The couplings input {couplings_list[i]} is not 10 characters. Refer to README.md for valid format"
             )
             return False
@@ -76,27 +76,27 @@ def validateLeptoQuarkCouplings(
                 and leptoquark_model in vector_leptoquark_models
             )
         ):
-            prRed(
+            pr_red(
                 "[Couplings error]: For scalar leptoquarks, the first letter should be Y & for vector leptoquarks, it should be X. Refer to README.md for valid format"
             )
             return False
         if couplings_list[i][1:3] != "10":
-            prRed(
+            pr_red(
                 f"[Couplings error]: The second and third characters of {couplings_list[i]} should be '10'. Refer to README.md for valid format"
             )
             return False
         if couplings_list[i][3] not in ["L", "R"]:
-            prRed(
+            pr_red(
                 f"[Couplings error]: The 4th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. Refer to README.md for valid format"
             )
             return False
         if couplings_list[i][4] not in ["L", "R"]:
-            prRed(
+            pr_red(
                 f"[Couplings error]: The 5th character of {couplings_list[i]} should be either L or R for left-handed & right-handed couplings respectively. Refer to README.md for valid format"
             )
             return False
         if couplings_list[i][5] != "[":
-            prRed(
+            pr_red(
                 f"[Couplings error]: The 6th character of {couplings_list[i]} should be '['. Refer to README.md for valid format"
             )
             return False
@@ -107,22 +107,22 @@ def validateLeptoQuarkCouplings(
             leptoquark_model in vector_leptoquark_models
             and couplings_list[i][6] not in ["1", "2", "3"]
         ):
-            prRed(
+            pr_red(
                 f"[Couplings error]: The 7th character of {couplings_list[i]} should be a valid quark generation. Refer to README.md for valid format"
             )
             return False
         if couplings_list[i][7] != ",":
-            prRed(
+            pr_red(
                 f"[Couplings error]: The 8th character of {couplings_list[i]} should be ','. Refer to README.md for valid format"
             )
             return False
         if couplings_list[i][8] not in ["1", "2", "3"]:
-            prRed(
+            pr_red(
                 f"[Couplings error]: The 9th character of {couplings_list[i]} should be a valid lepton generation. Refer to README.md for valid format"
             )
             return False
         if couplings_list[i][9] != "]":
-            prRed(
+            pr_red(
                 f"[Couplings error]: The 10th character of {couplings_list[i]} should be ']'. Refer to README.md for valid format"
             )
             return False
@@ -145,7 +145,7 @@ def validateIgnoreSinglePairProduction(
         "0",
     }:
         return True
-    prRed(
+    pr_red(
         "[Ignore single pair production error]: ignore_single_pair takes input 'yes'/'y' or 'no'/'n'"
     )
     return False
@@ -157,10 +157,10 @@ def validateSignificance(
     try:
         significance = int(significance)
         if significance != 1 and significance != 2:
-            prRed("[Significance error]: Significance should be a valid number, 1 or 2")
+            pr_red("[Significance error]: Significance should be a valid number, 1 or 2")
             return False
     except:
-        prRed("[Significance error]: Significance should be a valid number, 1 or 2")
+        pr_red("[Significance error]: Significance should be a valid number, 1 or 2")
         return False
     return True
 
@@ -171,12 +171,12 @@ def validateSystematicError(
     try:
         systematic_error = float(systematic_error)
         if systematic_error < 0 or systematic_error > 1:
-            prRed(
+            pr_red(
                 "[Systematic error]: Systematic error should be a valid number between 0 and 1."
             )
             return False
     except:
-        prRed(
+        pr_red(
             "[Systematic error]: Systematic error should be a valid number between 0 and 1."
         )
         return False
@@ -187,9 +187,4 @@ def validateExtraWidth(
     extra_width: str,
 ):
     # validate extra width
-    try:
-        extra_width = float(extra_width)
-    except:
-        prRed("[Extra width error]: Extra width should be a valid number in GeV")
-        return False
-    return True
+    

@@ -1,0 +1,40 @@
+{
+    "non_interactive_input": {
+        "card": {
+            "number_of_lines": 8,
+            "leptoquark_model_index": 0,
+            "mass_index": 1,
+            "couplings_index": 2,
+            "ignore_single_and_pair_productions_index": 3,
+            "significance_index": 4,
+            "systematic_error_index": 5,
+            "width_constant_index": 6,
+            "number_of_random_points_index": 7
+        }
+    },
+    "coupling": {
+        "length": 10,
+        "scalar_leptoquark_0th_index_value": "Y",
+        "vector_leptoquark_0th_index_value": "X",
+        "2nd_and_3rd_index_values": "10",
+        "chirality_index_values": ["L", "R"],
+        "5th_index_value": "[",
+        "scalar_leptoquark_valid_quark_generations": ["1", "2"],
+        "vector_leptoquark_valid_quark_generations": ["1", "2", "3"],
+        "7th_index_value": ",",
+        "valid_lepton_genrations": ["1", "2", "3"],
+        "9th_index_value": "]",
+        "quark_index": 6,
+        "lepton_index": 8,
+        "chirality_index": 4
+
+    },
+    "leptoquark_parameters": {
+        "ignore_single_pair_processes_yes_values": ["yes", "y", "true", "t", "1"],
+        "ignore_single_pair_processes_no_values": ["no", "n", "false", "f", "0"],
+        "valid_significance_values": [1,2],
+        "systematic_error_lower_limit": 0,
+        "systematic_error_upper_limit": 1
+
+    }
+}
