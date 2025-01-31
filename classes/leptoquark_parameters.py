@@ -8,8 +8,8 @@ from helper.sort import compare_couplings
 class LeptoquarkParameters:
     def __init__(
         self,
-        leptoquark_model: str = "",
-        leptoquark_mass: float = 0,
+        model: str = "",
+        mass: float = 0,
         ignore_single_pair_processes: bool = False,
         significance: int = 0,
         systematic_error: float = 0,
@@ -20,8 +20,8 @@ class LeptoquarkParameters:
         sorted_couplings: List[str] = [],
         sorted_couplings_values: List[List[float]] = [],
     ):
-        self.leptoquark_model = leptoquark_model
-        self.leptoquark_mass = leptoquark_mass
+        self.model = model
+        self.mass = mass
         self.couplings = couplings
         self.ignore_single_pair_processes = ignore_single_pair_processes
         self.significance = significance
@@ -34,8 +34,8 @@ class LeptoquarkParameters:
 
     def __str__(self):
         return (
-            f"Leptoquark Model: {self.leptoquark_model}\n"
-            f"Leptoquark Mass: {self.leptoquark_mass} GeV\n"
+            f"Leptoquark Model: {self.model}\n"
+            f"Leptoquark Mass: {self.mass} GeV\n"
             f"Ignore Single/Pair Processes: {self.ignore_single_pair_processes}\n"
             f"Significance: {self.significance}\n"
             f"Systematic error: {self.systematic_error * 100:.2f}%\n"

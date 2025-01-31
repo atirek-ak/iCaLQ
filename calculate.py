@@ -5,16 +5,15 @@ from sympy.utilities.iterables import flatten
 from sympy.utilities.lambdify import lambdify
 
 from calculations.chi_square import getChiSquareSymbolic
-from calculations.cross_section import getCrossSections
 from calculations.efficiencies import getEfficiencies
 from calculations.helper import getDeltaChiSquare
 from calculations.mass import makeLeptoquarkMassDictionary
 from utilities.branching_fraction import getBranchingFraction
-from utilities.constants import InputMode, number_of_minima_starting_points
+from utilities.constants import number_of_minima_starting_points
 from classes.leptoquark_parameters import LeptoquarkParameters
 from classes.non_interactive_input_params import  NonInteractiveInputParameters
 from utilities.validate import validateInteractiveInputCouplingValues
-
+from classes.custom_datatypes import InputMode
 
 def calculate(
     leptoquark_parameters: LeptoquarkParameters,
@@ -22,7 +21,7 @@ def calculate(
     non_interactive_input_parameters: NonInteractiveInputParameters = NonInteractiveInputParameters(),
 ):
     """
-    main function for chi-square testing and asociated calculations
+    main function for chi-square testing and associated calculations
     """
     # fetch cross-section & efficiency after interpolation
     coupling_to_process_cross_section_map = getCrossSections(

@@ -3,7 +3,8 @@ import argparse
 from calculate import calculate
 from classes.non_interactive_input_params import NonInteractiveInputParameters
 from classes.leptoquark_parameters_string_input import LeptoquarkParametersStringInput
-from utilities.constants import InputMode
+from classes.custom_datatypes import InputMode
+from classes.calculator import Calculator
 from utilities.output import print_welcome_banner
 
 class CliArgumentParser:
@@ -60,6 +61,7 @@ class CliArgumentParser:
             print_welcome_banner()
 
         if args.non_interactive:
+            # parse non-interactive mode parameters
             non_interactive_input_parameters = NonInteractiveInputParameters(
                 input_card_path=args.input_card,
                 input_values_path=args.input_values,
@@ -73,17 +75,31 @@ class CliArgumentParser:
             non_interactive_input_parameters.card_data.validate()
             non_interactive_input_parameters.card_data.validate_and_write_random_points_to_input_values_file(non_interactive_input_parameters.input_values_path, len(leptoquark_parameters.couplings))
 
+            # parse leptoquark parameters from input card
             leptoquark_parameters = non_interactive_input_parameters.card_data.convert_data_to_leptoquark_model()
             leptoquark_parameters.read_non_interactive_input_coupling_values_from_file()
             leptoquark_parameters.sort_couplings_and_values()
 
+            # start calculator
             non_interactive_input_parameters.print_initial_message()
-            calculate(
+            calculator = Calculator(
                 leptoquark_parameters,
                 InputMode.NONINTERACTIVE,
                 non_interactive_input_parameters,
             )
+            calculator.initiate()
+            calculator.calculate_chi_square(True)
         else:
             leptoquark_parameters_string_input = LeptoquarkParametersStringInput()
             leptoquark_parameters_string_input.print_initial_message()
             leptoquark_parameters_string_input.interactive_input()
+            if leptoquark_parameters_string_input.start_calculation:
+                leptoquark_parameters = leptoquark_parameters_string_input.convert_data_to_leptoquark_model()
+                calculator = Calculator(
+                    leptoquark_parameters,
+                    InputMode.INTERACTIVE,
+                )
+                calculator.initiate()
+                calculator.calculate_chi_square(True)
+
+

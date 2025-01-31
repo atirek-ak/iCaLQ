@@ -1,46 +1,5 @@
-from typing import List
-
-class SingleCouplingCrossSections:
-    def __init__(
-        self,
-        cross_section_pureqcd: float,
-        cross_section_pair_production: float,
-        cross_section_single_production: float,
-        cross_section_interference: float,
-        cross_section_tchannel: float,
-    ):
-        self.cross_section_pureqcd = cross_section_pureqcd
-        self.cross_section_pair_production = cross_section_pair_production
-        self.cross_section_single_production = cross_section_single_production
-        self.cross_section_interference = cross_section_interference
-        self.cross_section_tchannel = cross_section_tchannel
-
-    def __str__(self):
-        return (
-            f"Cross Section Pure QCD: {self.cross_section_pureqcd}\n"
-            f"Cross Section Pair Production: {self.cross_section_pair_production}\n"
-            f"Cross Section Single Production: {self.cross_section_single_production}\n"
-            f"Cross Section Interference: {self.cross_section_interference}\n"
-            f"Cross Section T-Channel: {self.cross_section_tchannel}"
-        )
 
 
-class CrossTermsCrossSections:
-    def __init__(
-        self,
-        # the cross-section to be used for cross-terms
-        cross_terms_cross_section_tchannel: float,
-        # the cross-section when 2 couplings are switched on
-        actual_cross_section_tchannel: float,
-    ):
-        self.cross_terms_cross_section_tchannel = cross_terms_cross_section_tchannel
-        self.actual_cross_section_tchannel = actual_cross_section_tchannel
-
-    def __str__(self):
-        return (
-            f"Cross-Terms Cross Section T-Channel: {self.cross_terms_cross_section_tchannel}\n"
-            f"Actual Cross Section T-Channel: {self.actual_cross_section_tchannel}"
-        )
 
 
 class SingleCouplingEfficiency:

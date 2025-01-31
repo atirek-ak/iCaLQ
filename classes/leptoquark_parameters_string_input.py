@@ -6,7 +6,7 @@ from calculate import calculate
 from classes.config import physics_config, code_infra_config
 from classes.config import physics_config, code_infra_config
 from classes.leptoquark_parameters import LeptoquarkParameters
-from helper.miscellaneous import strip_comments_and_spaces
+from helper.strings import strip_comments_and_spaces
 from helper.output import raise_error_or_print_warning, pr_blue, pr_blue_no_new_line, pr_red, raise_error_or_print_warning
 from utilities.constants import InputMode
 
@@ -14,23 +14,26 @@ from utilities.constants import InputMode
 class LeptoquarkParametersStringInput:
     def __init__(
             self,
-            leptoquark_model: str = "U1",
-            leptoquark_mass: str = "1000.0",
+            model: str = "U1",
+            mass: str = "1000.0",
             ignore_single_pair_processes: str = "no",
             significance: str = "2",
             systematic_error: str = "0.1",
             couplings: str = "X10LL[3,3]",
             extra_width: str = "0.0",
             random_points: str = "0",
+            start_calculation: bool = False,
     ):
-        self.leptoquark_model = leptoquark_model
-        self.leptoquark_mass = leptoquark_mass
+        self.model = model
+        self.mass = mass
         self.couplings = couplings
         self.ignore_single_pair_processes = ignore_single_pair_processes
         self.significance = significance
         self.systematic_error = systematic_error
         self.extra_width = extra_width
         self.random_points = random_points
+        # used for interactive mode to start calculation or not
+        self.start_calculation = start_calculation
         
     def read_data_from_input_file(self, input_card_path: str = ""):
         if not os.path.isfile(input_card_path):
@@ -44,8 +47,8 @@ class LeptoquarkParametersStringInput:
                 f"Number of lines in file: {len(input_card_lines)}, expected {code_infra_config.get('non_interactive_input').get('card').get('number_of_lines')}. Please refer to README to check if all the data is present."
             )
 
-        self.leptoquark_model = strip_comments_and_spaces(input_card_lines[code_infra_config.get("non_interactive_input").get("card").get("leptoquark_model_index")])
-        self.leptoquark_mass = strip_comments_and_spaces(input_card_lines[code_infra_config.get("non_interactive_input").get("card").get("mass_index")])
+        self.model = strip_comments_and_spaces(input_card_lines[code_infra_config.get("non_interactive_input").get("card").get("leptoquark_model_index")])
+        self.mass = strip_comments_and_spaces(input_card_lines[code_infra_config.get("non_interactive_input").get("card").get("mass_index")])
         self.couplings = strip_comments_and_spaces(input_card_lines[code_infra_config.get("non_interactive_input").get("card").get("couplings_index")])
         self.ignore_single_pair_processes = strip_comments_and_spaces(input_card_lines[code_infra_config.get("non_interactive_input").get("card").get("ignore_single_and_pair_productions_index")])
         self.significance = strip_comments_and_spaces(input_card_lines[code_infra_config.get("non_interactive_input").get("card").get("significance_index")])
@@ -125,8 +128,8 @@ class LeptoquarkParametersStringInput:
         
     def validate_leptoquark_model(self, raise_error=False):
         if (
-            self.leptoquark_model not in physics_config.get('scalar_leptoquark_models')
-            and self.leptoquark_model not in physics_config.get('vector_leptoquark_models')
+            self.model not in physics_config.get('scalar_leptoquark_models')
+            and self.model not in physics_config.get('vector_leptoquark_models')
         ):
             raise_error_or_print_warning(
                 f"[Model error]: Not a valid leptoquark model. Allowed models: {physics_config.get('scalar_leptoquark_models') + physics_config.get('vector_leptoquark_models')}",
@@ -135,10 +138,10 @@ class LeptoquarkParametersStringInput:
         
     def validate_leptoquark_mass(self, raise_error=False):
         try:
-            leptoquark_mass = float(self.leptoquark_mass)
+            mass = float(self.mass)
             if (
-                leptoquark_mass < physics_config.get('minimum_leptoquark_mass')
-                or leptoquark_mass > physics_config.get('maximum_leptoquark_mass')
+                mass < physics_config.get('minimum_leptoquark_mass')
+                or mass > physics_config.get('maximum_leptoquark_mass')
             ):
                 raise_error_or_print_warning(
                     f"[Mass error]: Leptoquark mass should be from {physics_config.get('minimum_leptoquark_mass')} to {physics_config.get('maximum_leptoquark_mass')} GeV",
@@ -176,11 +179,11 @@ class LeptoquarkParametersStringInput:
             if not (
                 (
                     couplings_list[i][0] == code_infra_config.get("coupling").get("scalar_leptoquark_0th_index_value")
-                    and self.leptoquark_model in physics_config.get('scalar_leptoquark_models')
+                    and self.model in physics_config.get('scalar_leptoquark_models')
                 )
                 or (
                     couplings_list[i][0] == code_infra_config.get("coupling").get("vector_leptoquark_0th_index_value")
-                    and self.leptoquark_model in physics_config.get('vector_leptoquark_models')
+                    and self.model in physics_config.get('vector_leptoquark_models')
                 )
             ):
                 raise_error_or_print_warning(
@@ -208,10 +211,10 @@ class LeptoquarkParametersStringInput:
                     raise_error
                 )
             if (
-                self.leptoquark_model in physics_config.get('scalar_leptoquark_models')
+                self.model in physics_config.get('scalar_leptoquark_models')
                 and couplings_list[i][6] not in code_infra_config.get('coupling').get('scalar_leptoquark_valid_quark_generations')
             ) or (
-                self.leptoquark_model in physics_config.get('vector_leptoquark_models')
+                self.model in physics_config.get('vector_leptoquark_models')
                 and couplings_list[i][6] not in code_infra_config.get('coupling').get('vector_leptoquark_valid_quark_generations')
             ):
                 raise_error_or_print_warning(
@@ -223,7 +226,7 @@ class LeptoquarkParametersStringInput:
                     f"[Couplings error]: The 8th character of {couplings_list[i]} should be {code_infra_config.get('coupling').get('7th_index_value')}. For valid format, refer to README",
                     raise_error
                 )
-            if couplings_list[i][8] not in code_infra_config.get('coupling').get('valid_lepton_genrations'):
+            if couplings_list[i][8] not in code_infra_config.get('coupling').get('valid_lepton_generations'):
                 raise_error_or_print_warning(
                     f"[Couplings error]: The 9th character of {couplings_list[i]} should be a valid lepton generation. For valid format, refer to README",
                     raise_error
@@ -294,6 +297,7 @@ class LeptoquarkParametersStringInput:
         self.validate_significance(raise_error=True)
         self.validate_systematic_error(raise_error=True)
 
+    # returns whether to start calculation on input
     def interactive_input(self):
         while True:
             pr_blue_no_new_line("calq > ")
@@ -303,10 +307,10 @@ class LeptoquarkParametersStringInput:
                 s = inpt.split(":")
             slen = len(s)
             if s[0].strip() == "import_model" and slen == 2:
-                self.leptoquark_model = s[1].strip().upper()
+                self.model = s[1].strip().upper()
                 self.validate_leptoquark_model()
             elif s[0].strip() == "mass" and slen == 2:
-                self.leptoquark_mass = s[1].strip().upper()
+                self.mass = s[1].strip().upper()
                 self.validate_leptoquark_mass()
             elif s[0].strip() == "couplings" and slen > 1:
                 self.couplings = s[1].strip().upper()
@@ -324,8 +328,8 @@ class LeptoquarkParametersStringInput:
                 self.extra_width = s[1].strip()
                 self.validate_extra_width() 
             elif s[0].strip() == "status":
-                print(f" Leptoquark model: {self.leptoquark_model}")
-                print(f" Leptoquark mass = {self.leptoquark_mass}")
+                print(f" Leptoquark model: {self.model}")
+                print(f" Leptoquark mass = {self.mass}")
                 print(f" Couplings: {self.couplings}")
                 print(f" Extra width = {self.extra_width}")
                 print(
@@ -335,7 +339,8 @@ class LeptoquarkParametersStringInput:
             elif s[0].strip() == "help":
                 self.print_interactive_help()
             elif s[0].strip() == "initiate":
-                leptoquark_parameters = self.convert_data_to_leptoquark_model()
+                self.start_calculation = True
+                return
                 # leptoquark_parameters.couplings_values = [
                 #     " ".join(["0"] * len(leptoquark_parameters.couplings))]
                 leptoquark_parameters.sort_couplings_and_values()
@@ -349,12 +354,13 @@ class LeptoquarkParametersStringInput:
                     f" Command {s[0]} not recognised. Please retry or enter 'q', 'quit' or 'exit' to exit."
                 )
 
+
     # this function assumes data validation has been performed
     def convert_data_to_leptoquark_model(self) -> LeptoquarkParameters:
         leptoquark_parameters = LeptoquarkParameters()
 
-        leptoquark_parameters.leptoquark_model = self.leptoquark_model
-        leptoquark_parameters.leptoquark_mass = float(self.leptoquark_mass)
+        leptoquark_parameters.model = self.model
+        leptoquark_parameters.mass = float(self.mass)
         # convert couplings from string to list of strings
         leptoquark_parameters.couplings = self.couplings.strip().split(" ")
         # convert ignore_single_pair_processes

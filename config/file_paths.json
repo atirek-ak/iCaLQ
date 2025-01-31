@@ -3,5 +3,6 @@
     "default_coupling_values_input": "sample/sample_1.vals",
     "default_coupling_output_values_yes": "sample/sample_1_yes.csv",
     "default_coupling_output_values_no": "sample/sample_1_no.csv",
-    "default_coupling_output_values_common": "sample/sample_1_common.csv"
+    "default_coupling_output_values_common": "sample/sample_1_common.csv",
+    "data_prefix": "data"
 }

@@ -3,7 +3,7 @@ import sys
 
 from classes.config import file_paths_config, code_infra_config
 from classes.leptoquark_parameters_string_input import LeptoquarkParametersStringInput
-from helper.miscellaneous import strip_comments_and_spaces
+from helper.strings import strip_comments_and_spaces
         
 
 class NonInteractiveInputParameters:

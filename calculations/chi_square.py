@@ -69,7 +69,7 @@ def calculateCouplingContribution(
     k_factor_interference = 1
     k_factor_tchannel = 1
     k_factor_single_production = 1
-    if leptoquark_parameters.leptoquark_model == "S1":
+    if leptoquark_parameters.model == "S1":
         k_factor_pureqcd = k_factor_U1_pureqcd
         k_factor_pair_production = k_factor_U1_pair_production
         k_factor_interference = k_factor_U1_interference
@@ -79,7 +79,7 @@ def calculateCouplingContribution(
     # process wise contributions
     for bin_number in range(number_of_bins):
         # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
-        if leptoquark_parameters.leptoquark_mass <= pureqcd_contribution_mass_limit:
+        if leptoquark_parameters.mass <= pureqcd_contribution_mass_limit:
             pureqcd_contribution[bin_number] += (
                 k_factor_pureqcd
                 * cross_section.cross_section_pureqcd
@@ -192,7 +192,7 @@ def calculateCouplingContributionCrossTerms(
 
     # k-factors initialization with default values
     k_factor_tchannel = 1
-    if leptoquark_parameters.leptoquark_model == "U1":
+    if leptoquark_parameters.model == "U1":
         k_factor_tchannel = k_factor_U1_t_channel
 
     # process wise contributions
@@ -286,7 +286,7 @@ def calculateCouplingContributionTauTau(
         k_factor_interference = 1
         k_factor_tchannel = 1
         k_factor_single_production = 1
-        if leptoquark_parameters.leptoquark_model == "U1":
+        if leptoquark_parameters.model == "U1":
             k_factor_pureqcd = k_factor_U1_pureqcd
             k_factor_pair_production = k_factor_U1_pair_production
             k_factor_interference = k_factor_U1_interference
@@ -298,7 +298,7 @@ def calculateCouplingContributionTauTau(
             if tag_name == "HHbT.csv":
                 # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
                 if (
-                    leptoquark_parameters.leptoquark_mass
+                    leptoquark_parameters.mass
                     <= pureqcd_contribution_mass_limit
                 ):
                     pureqcd_contribution[bin_number] += (
@@ -346,7 +346,7 @@ def calculateCouplingContributionTauTau(
             elif tag_name == "HHbV.csv":
                 # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
                 if (
-                    leptoquark_parameters.leptoquark_mass
+                    leptoquark_parameters.mass
                     <= pureqcd_contribution_mass_limit
                 ):
                     pureqcd_contribution[bin_number] += (
@@ -394,7 +394,7 @@ def calculateCouplingContributionTauTau(
             elif tag_name == "LHbT.csv":
                 # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
                 if (
-                    leptoquark_parameters.leptoquark_mass
+                    leptoquark_parameters.mass
                     <= pureqcd_contribution_mass_limit
                 ):
                     pureqcd_contribution[bin_number] += (
@@ -442,7 +442,7 @@ def calculateCouplingContributionTauTau(
             elif tag_name == "LHbV.csv":
                 # pureqcd is to be included only under a mass limit as after that its contibution will be negligible
                 if (
-                    leptoquark_parameters.leptoquark_mass
+                    leptoquark_parameters.mass
                     <= pureqcd_contribution_mass_limit
                 ):
                     pureqcd_contribution[bin_number] += (
@@ -575,7 +575,7 @@ def calculateCouplingContributionTauTauCrossTerms(
 
         # k-factors initialization with default values
         k_factor_tchannel = 1
-        if leptoquark_parameters.leptoquark_model == "U1":
+        if leptoquark_parameters.model == "U1":
             k_factor_tchannel = k_factor_U1_t_channel
 
         # process wise contributions

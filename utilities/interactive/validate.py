@@ -6,11 +6,11 @@ from utilities.constants import (maximum_leptoquark_mass,
 
 
 def validateLeptoQuarkModel(
-    leptoquark_model: str,
+    model: str,
 ) -> bool:
     if (
-        leptoquark_model not in scalar_leptoquark_models
-        and leptoquark_model not in vector_leptoquark_models
+        model not in scalar_leptoquark_models
+        and model not in vector_leptoquark_models
     ):
         pr_red(
             f"[Model error]: Not a valid lepqtoquark model. Allowed models: {scalar_leptoquark_models + vector_leptoquark_models}"
@@ -20,13 +20,13 @@ def validateLeptoQuarkModel(
 
 
 def validateLeptoQuarkMass(
-    leptoquark_mass: str,
+    mass: str,
 ) -> bool:
     try:
-        leptoquark_mass = float(leptoquark_mass)
+        mass = float(mass)
         if (
-            leptoquark_mass < minimum_leptoquark_mass
-            or leptoquark_mass > maximum_leptoquark_mass
+            mass < minimum_leptoquark_mass
+            or mass > maximum_leptoquark_mass
         ):
             pr_red(
                 f"[Mass error]: Leptoquark mass should be between {minimum_leptoquark_mass} GeV and {maximum_leptoquark_mass} GeV"
@@ -40,7 +40,7 @@ def validateLeptoQuarkMass(
 
 def validateLeptoQuarkCouplings(
     couplings: str,
-    leptoquark_model: str,
+    model: str,
 ) -> bool:
     couplings_list = couplings.strip().split(" ")
 
@@ -69,11 +69,11 @@ def validateLeptoQuarkCouplings(
         if not (
             (
                 couplings_list[i][0] == "Y"
-                and leptoquark_model in scalar_leptoquark_models
+                and model in scalar_leptoquark_models
             )
             or (
                 couplings_list[i][0] == "X"
-                and leptoquark_model in vector_leptoquark_models
+                and model in vector_leptoquark_models
             )
         ):
             pr_red(
@@ -101,10 +101,10 @@ def validateLeptoQuarkCouplings(
             )
             return False
         if (
-            leptoquark_model in scalar_leptoquark_models
+            model in scalar_leptoquark_models
             and couplings_list[i][6] not in ["1", "2"]
         ) or (
-            leptoquark_model in vector_leptoquark_models
+            model in vector_leptoquark_models
             and couplings_list[i][6] not in ["1", "2", "3"]
         ):
             pr_red(

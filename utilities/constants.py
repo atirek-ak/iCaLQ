@@ -1,14 +1,7 @@
-from enum import Enum
 
 import pandas as pd
 
 # INFRA
-
-
-# input modes
-class InputMode(Enum):
-    INTERACTIVE = "interactive"
-    NONINTERACTIVE = "noninteractive"
 
 
 # non-interactive card params

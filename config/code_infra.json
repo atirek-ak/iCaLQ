@@ -22,7 +22,7 @@
         "scalar_leptoquark_valid_quark_generations": ["1", "2"],
         "vector_leptoquark_valid_quark_generations": ["1", "2", "3"],
         "7th_index_value": ",",
-        "valid_lepton_genrations": ["1", "2", "3"],
+        "valid_lepton_generations": ["1", "2", "3"],
         "9th_index_value": "]",
         "quark_index": 6,
         "lepton_index": 8,
@@ -35,6 +35,6 @@
         "valid_significance_values": [1,2],
         "systematic_error_lower_limit": 0,
         "systematic_error_upper_limit": 1
-
-    }
+    },
+    "global_data_precision": 6
 }

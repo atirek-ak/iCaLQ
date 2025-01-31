@@ -54,23 +54,23 @@ def getEfficiencies(
 
     # directory paths of efficiency files
     path_interference = [
-        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
+        f"{get_efficiency_prefix(leptoquark_parameters.model)}/i/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     path_pair = [
-        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/p/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
+        f"{get_efficiency_prefix(leptoquark_parameters.model)}/p/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     path_single = [
-        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/s/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
+        f"{get_efficiency_prefix(leptoquark_parameters.model)}/s/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     path_tchannel = [
-        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/t/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
+        f"{get_efficiency_prefix(leptoquark_parameters.model)}/t/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     path_pureqcd = [
-        f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/q/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
+        f"{get_efficiency_prefix(leptoquark_parameters.model)}/q/{coupling[lepton_index]}{coupling[quark_index]}{coupling[chirality_index]}/"
         for coupling in leptoquark_parameters.sorted_couplings
     ]
     # Order: qpits
@@ -114,7 +114,7 @@ def getEfficiencies(
                 == leptoquark_parameters.sorted_couplings[j][quark_index]
             ):
                 cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
-                cross_terms_directory_path = f"{get_efficiency_prefix(leptoquark_parameters.leptoquark_model)}/t/{leptoquark_parameters.sorted_couplings[i][lepton_index]}{leptoquark_parameters.sorted_couplings[i][quark_index]}{leptoquark_parameters.sorted_couplings[i][chirality_index]}_{leptoquark_parameters.sorted_couplings[j][lepton_index]}{leptoquark_parameters.sorted_couplings[j][quark_index]}{leptoquark_parameters.sorted_couplings[j][chirality_index]}/"
+                cross_terms_directory_path = f"{get_efficiency_prefix(leptoquark_parameters.model)}/t/{leptoquark_parameters.sorted_couplings[i][lepton_index]}{leptoquark_parameters.sorted_couplings[i][quark_index]}{leptoquark_parameters.sorted_couplings[i][chirality_index]}_{leptoquark_parameters.sorted_couplings[j][lepton_index]}{leptoquark_parameters.sorted_couplings[j][quark_index]}{leptoquark_parameters.sorted_couplings[j][chirality_index]}/"
                 if leptoquark_parameters.sorted_couplings[i][quark_index] == "3":
                     coupling_to_process_efficiencies_map[cross_terms_coupling] = (
                         readAndInterpolateEfficiencyTauTau(
@@ -189,7 +189,7 @@ def readAndInterpolateEfficiency(
                 data_mass_list, bin_values, kind="slinear", fill_value="extrapolate"
             )(m)
             interpolated_mass_values.append(
-                interpolation_function(leptoquark_parameters.leptoquark_mass)
+                interpolation_function(leptoquark_parameters.mass)
             )
         if cross_terms:
             cross_terms_interpolated_values = []
@@ -305,7 +305,7 @@ def readAndInterpolateEfficiencyTauTau(
                     round(
                         float(
                             interpolation_function(
-                                leptoquark_parameters.leptoquark_mass
+                                leptoquark_parameters.mass
                             )
                         ),
                         global_data_precision,
