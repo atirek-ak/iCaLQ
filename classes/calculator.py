@@ -215,7 +215,7 @@ class Calculator:
                     if decay_process != DecayProcess.T_CHANNEL:
                         continue
                     leptoquark_processes_contribution[bin_number][decay_process.value] = KFactor.dictionary[self.leptoquark_parameters.model][decay_process] \
-                                                                                         * self.cross_sections.coupling_to_cross_section_map[cross_terms_coupling][decay_process.value] \
+                                                                                         * self.cross_sections.coupling_to_cross_section_map[cross_terms_coupling][DecayProcess.T_CHANNEL_DOUBLE_COUPLING.value] \
                                                                                          * self.efficiencies.coupling_to_efficiency_map[decay_process.value][cross_terms_coupling][tag.value][bin_number] \
                                                                                          * Pow(self.symbolic_sorted_couplings[coupling_1_index], 2) \
                                                                                          * Pow(self.symbolic_sorted_couplings[coupling_2_index], 2) \
@@ -290,7 +290,7 @@ class Calculator:
         )
 
     def set_branching_fraction_to_zero(self):
-        self.branching_fraction.branching_fraction = 0.0
+        self.branching_fraction.branching_fraction = sym.Float(0.0)
 
     def set_chi_square_without_leptoquark(self):
         if len(self.leptoquark_parameters.sorted_couplings) > 1:

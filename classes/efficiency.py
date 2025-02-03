@@ -118,7 +118,7 @@ class Efficiencies:
                 ):
                     cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
                     if leptoquark_parameters.sorted_couplings[i][code_infra_config.get('coupling').get('lepton_index')] == str(Generation.TAU.value):
-                        tag_values = []
+                        tag_values: Dict[str, List[float]] = {}
                         for tag in Tag:
                             combined_efficiencies = Efficiencies.read_and_interpolate_and_extrapolate_linearly_for_single_coupling_with_tags(leptoquark_parameters, DecayProcess.T_CHANNEL, cross_terms_coupling)[tag.value]
                             coupling_1_efficiencies = self.coupling_to_efficiency_map[DecayProcess.T_CHANNEL.value][leptoquark_parameters.sorted_couplings[i]][tag.value]
@@ -130,11 +130,11 @@ class Efficiencies:
                                 coupling_2_efficiency,
                             ) in zip(combined_efficiencies, coupling_1_efficiencies, coupling_2_efficiencies):
                                 cross_terms_efficiency.append(round((
-                                    combined_efficiency * cross_sections[cross_terms_coupling][DecayProcess.T_CHANNEL.value]
+                                    combined_efficiency * cross_sections[cross_terms_coupling][DecayProcess.T_CHANNEL_COMBINED.value]
                                     - coupling_1_efficiency * cross_sections[leptoquark_parameters.sorted_couplings[i]][DecayProcess.T_CHANNEL.value]
                                     - coupling_2_efficiency * cross_sections[leptoquark_parameters.sorted_couplings[j]][DecayProcess.T_CHANNEL.value]
-                                ) / cross_sections[cross_terms_coupling][DecayProcess.T_CHANNEL_COMBINED.value], code_infra_config.get('global_data_precision')))
-                            tag_values.append(cross_terms_efficiency)
+                                ) / cross_sections[cross_terms_coupling][DecayProcess.T_CHANNEL_DOUBLE_COUPLING.value], code_infra_config.get('global_data_precision')))
+                            tag_values[tag.value] = cross_terms_efficiency
                         self.coupling_to_efficiency_map[DecayProcess.T_CHANNEL.value][cross_terms_coupling] = tag_values
                     else:
                         combined_efficiencies = Efficiencies.read_and_interpolate_and_extrapolate_linearly_for_single_coupling(leptoquark_parameters, DecayProcess.T_CHANNEL, cross_terms_coupling)
