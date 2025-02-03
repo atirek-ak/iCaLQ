@@ -44,10 +44,10 @@ class NonInteractiveInputParameters:
             f"Output Common file: {self.output_common_path}")
 
     def validate(self):
-        if not self.non_interactive_input_parameters.input_values_path:
-            self.non_interactive_input_parameters.input_values_path = file_paths_config.get("default_coupling_values_input")
+        if not self.input_values_path:
+            self.input_values_path = file_paths_config.get("default_coupling_values_input")
             with open(
-                self.non_interactive_input_parameters.input_card_path, encoding="utf8"
+                self.input_card_path, encoding="utf8"
             ) as c:
                 input_card_lines = c.readlines()
                 random_points = strip_comments_and_spaces(input_card_lines[code_infra_config.get("non_interactive_input").get("card").get("number_of_random_points_index")])
@@ -57,9 +57,9 @@ class NonInteractiveInputParameters:
                     )
 
     def create_output_files_if_not_present(self):
-        if not self.non_interactive_input_parameters.output_yes_path:
-            self.non_interactive_input_parameters.output_yes_path = file_paths_config.get("default_coupling_output_values_yes")
-        if not self.non_interactive_input_parameters.output_no_path:
-            self.non_interactive_input_parameters.output_no_path = file_paths_config.get("default_coupling_output_values_no")
-        if not self.non_interactive_input_parameters.output_common_path:
-            self.non_interactive_input_parameters.output_common_path = file_paths_config.get("default_coupling_output_values_common")
+        if not self.output_yes_path:
+            self.output_yes_path = file_paths_config.get("default_coupling_output_values_yes")
+        if not self.output_no_path:
+            self.output_no_path = file_paths_config.get("default_coupling_output_values_no")
+        if not self.output_common_path:
+            self.output_common_path = file_paths_config.get("default_coupling_output_values_common")

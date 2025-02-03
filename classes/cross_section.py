@@ -52,7 +52,7 @@ class CrossSections:
     def __init__(
             self,
             # Usage: coupling_to_cross_section_map[coupling][decay_process]
-            coupling_to_cross_section_map: Dict[str, Dict[str, float]] = None,
+            coupling_to_cross_section_map: Dict[str, Dict[str, float]] = {},
         ):
             self.coupling_to_cross_section_map = coupling_to_cross_section_map
 
@@ -72,11 +72,12 @@ class CrossSections:
         interpolation_function = lambda mass: interp1d(cross_section_data_frame["Mass"], cross_section_data_frame[coupling], kind="slinear", fill_value="extrapolate")(
                 mass
             )
-        return interpolation_function(leptoquark_parameters.mass)
+        return float(interpolation_function(leptoquark_parameters.mass))
 
     def fill_single_coupling_to_cross_section_map(self,leptoquark_parameters: LeptoquarkParameters):
         # read & interpolate for single coupling
         for sorted_coupling in leptoquark_parameters.sorted_couplings:
+            self.coupling_to_cross_section_map[sorted_coupling] = {}
             for decay_process in DecayProcess:
                 # ignore double coupling
                 if decay_process in [DecayProcess.T_CHANNEL_DOUBLE_COUPLING, DecayProcess.T_CHANNEL_COMBINED]:
@@ -88,10 +89,11 @@ class CrossSections:
         for i in range(len(leptoquark_parameters.sorted_couplings)):
             for j in range(i + 1, len(leptoquark_parameters.sorted_couplings)):
                 if (
-                    leptoquark_parameters.sorted_couplings[i][code_infra_config.get('lepton_index')]
-                    == leptoquark_parameters.sorted_couplings[j][code_infra_config.get('lepton_index')]
+                    leptoquark_parameters.sorted_couplings[i][code_infra_config.get('coupling').get('lepton_index')]
+                    == leptoquark_parameters.sorted_couplings[j][code_infra_config.get('coupling').get('lepton_index')]
                 ):
                     cross_terms_coupling = f"{leptoquark_parameters.sorted_couplings[i]}_{leptoquark_parameters.sorted_couplings[j]}"
+                    self.coupling_to_cross_section_map[cross_terms_coupling] = {}
                     cross_terms_data_frame = CrossSections.read_from_data_file(leptoquark_parameters, DecayProcess.T_CHANNEL_DOUBLE_COUPLING)
                     cross_terms_cross_section_tchannel = round(CrossSections.interpolate_and_extrapolate_linearly(leptoquark_parameters, cross_terms_data_frame, cross_terms_coupling), code_infra_config.get('global_data_precision'))
                     self.coupling_to_cross_section_map[cross_terms_coupling][DecayProcess.T_CHANNEL_COMBINED.value] = cross_terms_cross_section_tchannel

@@ -11,12 +11,12 @@ def get_immediate_sub_directories(directory) -> List[str]:
 
     return sub_directories
 
-def get_immediate_sub_directory_files(directory) -> List[str]:
+def get_immediate_sub_directory_csv_files(directory) -> List[str]:
     files = []
 
     for entry in os.listdir(directory):
         full_path = os.path.join(directory, entry)
-        if os.path.isfile(full_path):
+        if os.path.isfile(full_path) and full_path.endswith(".csv"):
             files.append(entry)
 
     return files

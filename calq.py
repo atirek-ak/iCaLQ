@@ -10,10 +10,10 @@ def main():
     """
     cli_argument_parser = CliArgumentParser()
     args = cli_argument_parser.parse_args()
-    cli_argument_parser.execute_args(args)
+    CliArgumentParser.execute_args(args)
 
 
 try:
     main()
 except KeyboardInterrupt:
-    sys.exit("\n\nKeyboardInterrupt recieved. Exiting.")
+    sys.exit("\n\nKeyboard Interrupt received. Exiting.")

@@ -1,3 +1,5 @@
+from classes.config import file_paths_config
+
 def pr_blue(text):
     print(f"\033[94m{text}\033[00m")
 
@@ -18,3 +20,12 @@ def raise_error_or_print_warning(error_msg: str, raise_error: bool):
         raise ValueError(error_msg)
     else:
         pr_red(error_msg)
+
+def print_welcome_banner():
+    try:
+        with open(file_paths_config.get("banner"), encoding="utf8") as f:
+            contents = f.read()
+            print(contents)
+    except OSError:
+        print("CaLQ: Calculator for LHC limits on leptoquarks")
+        print("Version 1.0.0")

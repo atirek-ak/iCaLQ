@@ -8,7 +8,7 @@ from classes.leptoquark_parameters import LeptoquarkParameters
 class LeptoquarkMassDictionary:
     def __init__(
             self,
-            dictionary: Dict[str, List[List[str]]] = None
+            dictionary: Dict[str, List[List[str]]] = {}
     ):
         self.dictionary = dictionary
 
@@ -36,7 +36,7 @@ class LeptoquarkMassDictionary:
 class BranchingFraction:
     def __init__(
             self,
-            mass_dictionary: LeptoquarkMassDictionary = None,
+            mass_dictionary: LeptoquarkMassDictionary = LeptoquarkMassDictionary(),
             branching_fraction: sym.Symbol = None,
     ):
         self.mass_dictionary = mass_dictionary
@@ -45,9 +45,10 @@ class BranchingFraction:
     def make_mass_dictionary(self, couplings: List[str]):
         self.mass_dictionary.make(couplings)
 
-    def s1_decay_width_mass_factor(self, leptoquark_mass: float):
-        quark_mass = self.mass_dictionary[0]
-        lepton_mass = self.mass_dictionary[1]
+    @staticmethod
+    def s1_decay_width_mass_factor(leptoquark_mass: float, mass_dictionary_coupling_element :list[float]):
+        quark_mass = mass_dictionary_coupling_element[0]
+        lepton_mass = mass_dictionary_coupling_element[1]
         return (
                 (math.pow(leptoquark_mass, 2) - math.pow(lepton_mass + quark_mass, 2))
                 * (
@@ -80,11 +81,12 @@ class BranchingFraction:
         )
 
 
-    def u1_decay_width_mass_factor(self, mass: float):
+    @staticmethod
+    def u1_decay_width_mass_factor( mass: float, mass_dictionary_coupling_element :list[float]):
         return (
-                BranchingFraction.momentum(mass, self.mass_dictionary[0], self.mass_dictionary[1])
+                BranchingFraction.momentum(mass, mass_dictionary_coupling_element[0], mass_dictionary_coupling_element[1])
                 * BranchingFraction.absolute_efficiency_coupling_mass_factor(
-            mass, self.mass_dictionary[0], self.mass_dictionary[1]
+            mass, mass_dictionary_coupling_element[0], mass_dictionary_coupling_element[1]
         )
                 / (8 * math.pow(math.pi, 2) * math.pow(mass, 2))
         )
@@ -93,33 +95,33 @@ class BranchingFraction:
             self,
             leptoquark_parameters: LeptoquarkParameters,
             symbolic_couplings: List[sym.Symbol],
-    ) -> sym.Symbol:
+    ):
         numerator: sym.Symbol = sym.Float(0)
         denominator: sym.Symbol = sym.Float(leptoquark_parameters.extra_width)
         for coupling, symbolic_coupling in zip(
                 leptoquark_parameters.sorted_couplings, symbolic_couplings
         ):
             if leptoquark_parameters.model == "U1":
-                denominator += symbolic_coupling**2 * self.u1_decay_width_mass_factor(
-                    leptoquark_parameters.mass
+                denominator += symbolic_coupling**2 * BranchingFraction.u1_decay_width_mass_factor(
+                    leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][0],
                 )
-                numerator += symbolic_coupling**2 * self.u1_decay_width_mass_factor(
-                    leptoquark_parameters.mass
+                numerator += symbolic_coupling**2 * BranchingFraction.u1_decay_width_mass_factor(
+                    leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][0]
                 )
                 if coupling[code_infra_config.get('coupling').get('chirality_index')] == "L":
-                    denominator += symbolic_coupling**2 * self.u1_decay_width_mass_factor(
-                        leptoquark_parameters.mass
+                    denominator += symbolic_coupling**2 * BranchingFraction.u1_decay_width_mass_factor(
+                        leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][1]
                     )
             elif leptoquark_parameters.model == "S1":
-                denominator += symbolic_coupling**2 * self.s1_decay_width_mass_factor(
-                    leptoquark_parameters.mass
+                denominator += symbolic_coupling**2 * BranchingFraction.s1_decay_width_mass_factor(
+                    leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][0]
                 )
-                numerator += symbolic_coupling**2 * self.s1_decay_width_mass_factor(
-                    leptoquark_parameters.mass
+                numerator += symbolic_coupling**2 * BranchingFraction.s1_decay_width_mass_factor(
+                    leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][0],
                 )
                 if coupling[code_infra_config.get('coupling').get('chirality_index')] == "L":
-                    denominator += symbolic_coupling**2 * self.s1_decay_width_mass_factor(
-                        leptoquark_parameters.mass,
+                    denominator += symbolic_coupling**2 * BranchingFraction.s1_decay_width_mass_factor(
+                        leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][2],
                     )
 
         self.branching_fraction = numerator / denominator

@@ -1,6 +1,6 @@
 # CaLQ
 
-#### _LHC Dileption Limits Calculator_
+#### _LHC Dilepton Limits Calculator_
 Version 1.0.0
 
 ## Introduction
@@ -45,7 +45,7 @@ The list of valid commands are:
 decay mode, you can input extra width
 - `ignore_single_pair` takes values _yes_ or _no_. Input _yes_ means that the single and pair productions will be ignored and this will speed up calculations.
 - `systematic_error` denotes the systematic error margin. Default is 10%.
-- `status` displayes the current values of input parameters.
+- `status` displays the current values of input parameters.
 - `help` displays the list of commands available.
 - `initiate` will compute the chi-square polynomial and its minima corresponding to the current values of input parameters.
 

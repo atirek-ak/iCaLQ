@@ -2,13 +2,10 @@ import os
 import random
 import sys
 
-from calculate import calculate
-from classes.config import physics_config, code_infra_config
 from classes.config import physics_config, code_infra_config
 from classes.leptoquark_parameters import LeptoquarkParameters
 from helper.strings import strip_comments_and_spaces
-from helper.output import raise_error_or_print_warning, pr_blue, pr_blue_no_new_line, pr_red, raise_error_or_print_warning
-from utilities.constants import InputMode
+from helper.output import pr_blue, pr_blue_no_new_line, pr_red, raise_error_or_print_warning
 
 
 class LeptoquarkParametersStringInput:
@@ -69,7 +66,7 @@ class LeptoquarkParametersStringInput:
         except:
             raise ValueError("Random points should be a valid number")
 
-        if self.random_points > 0:
+        if random_points > 0:
             f = open(input_values_path, "w")
             for _ in range(random_points):
                 coupling_values_list = [
@@ -102,7 +99,8 @@ class LeptoquarkParametersStringInput:
         print(f" systematic_error = {self.systematic_error}")
         pr_blue("========================================================")
 
-    def print_interactive_help(self):
+    @staticmethod
+    def print_interactive_help():
         pr_blue(
             "Commands with '=' expect a numerical value. Read README.md for more info on individual commands."
         )
@@ -123,7 +121,7 @@ class LeptoquarkParametersStringInput:
             " extra_width= [extra width to account for additional unaccounted decays]")
         pr_blue("Other commands:")
         print(" status [To print current values]")
-        print(" initiate [To start the calcualation]")
+        print(" initiate [To start the calculation]")
         print(" exit [To exit the calculator]")
         
     def validate_leptoquark_model(self, raise_error=False):
@@ -147,7 +145,7 @@ class LeptoquarkParametersStringInput:
                     f"[Mass error]: Leptoquark mass should be from {physics_config.get('minimum_leptoquark_mass')} to {physics_config.get('maximum_leptoquark_mass')} GeV",
                     raise_error
                 )
-        except:
+        except Exception:
             raise_error_or_print_warning(
                 "[Mass error]: Leptoquark mass should be a valid number",
                 raise_error
@@ -187,7 +185,7 @@ class LeptoquarkParametersStringInput:
                 )
             ):
                 raise_error_or_print_warning(
-                    f"[Couplings error]: For scalar leptoquarks, the first letter should be {code_infra_config.get('coupling').get('scalar_leptoquark_0th_index_value')} & for vector leptoquarks it should be {config.get('coupling').get('vector_leptoquark_0th_index_value')}. For valid format, refer to README",
+                    f"[Couplings error]: For scalar leptoquarks, the first letter should be {code_infra_config.get('coupling').get('scalar_leptoquark_0th_index_value')} & for vector leptoquarks it should be {code_infra_config.get('coupling').get('vector_leptoquark_0th_index_value')}. For valid format, refer to README",
                     raise_error
                 )
             if couplings_list[i][1:3] != code_infra_config.get('coupling').get('2nd_and_3rd_index_values'):
@@ -252,13 +250,12 @@ class LeptoquarkParametersStringInput:
                     f"[Significance error]: Significance should be a valid number in {code_infra_config.get('leptoquark_parameters').get('valid_significance_values')}",
                     raise_error
             )
-        except:
+        except Exception:
             raise_error_or_print_warning(
                 "[Significance error]: Significance should be a valid number: either 1 or 2",
                 raise_error
             )
-        
-    
+
     def validate_systematic_error(self, raise_error=False):
         try:
             systematic_error = float(self.systematic_error)
@@ -267,7 +264,7 @@ class LeptoquarkParametersStringInput:
                     f"[Systematic error]: [Systematic error should be a valid number from {code_infra_config.get('leptoquark_parameters').get('systematic_error_lower_limit')} to {code_infra_config.get('leptoquark_parameters').get('systematic_error_upper_limit')}.",
                     raise_error
                 )
-        except:
+        except Exception:
             raise_error_or_print_warning(
                 f"[Systematic error]: [Systematic error should be a valid number from {code_infra_config.get('leptoquark_parameters').get('systematic_error_lower_limit')} to {code_infra_config.get('leptoquark_parameters').get('systematic_error_upper_limit')}.",
                     raise_error
@@ -282,7 +279,7 @@ class LeptoquarkParametersStringInput:
                     "[Extra width error]: Extra Width should be a valid number",
                     raise_error
                 )
-        except:
+        except Exception:
             raise_error_or_print_warning(
                 "[Extra width error]: Extra Width should be a valid number",
                 raise_error
@@ -301,30 +298,30 @@ class LeptoquarkParametersStringInput:
     def interactive_input(self):
         while True:
             pr_blue_no_new_line("calq > ")
-            inpt = input()
-            s = inpt.split("=")
-            if ":" in inpt:
-                s = inpt.split(":")
-            slen = len(s)
-            if s[0].strip() == "import_model" and slen == 2:
+            input_string = input()
+            s = input_string.split("=")
+            if ":" in input_string:
+                s = input_string.split(":")
+            input_string_length = len(s)
+            if s[0].strip() == "import_model" and input_string_length == 2:
                 self.model = s[1].strip().upper()
                 self.validate_leptoquark_model()
-            elif s[0].strip() == "mass" and slen == 2:
+            elif s[0].strip() == "mass" and input_string_length == 2:
                 self.mass = s[1].strip().upper()
                 self.validate_leptoquark_mass()
-            elif s[0].strip() == "couplings" and slen > 1:
+            elif s[0].strip() == "couplings" and input_string_length > 1:
                 self.couplings = s[1].strip().upper()
                 self.validate_couplings()
-            elif s[0].strip() == "ignore_single_pair" and slen == 2:
+            elif s[0].strip() == "ignore_single_pair" and input_string_length == 2:
                 self.ignore_single_pair_processes = s[1].strip().lower()
                 self.validate_ignore_single_pair_processes()
-            elif s[0].strip() == "significance" and slen == 2:
+            elif s[0].strip() == "significance" and input_string_length == 2:
                 self.significance = s[1].strip()
                 self.validate_significance()
-            elif s[0].strip() == "systematic_error" and slen == 2:
+            elif s[0].strip() == "systematic_error" and input_string_length == 2:
                 self.systematic_error = s[1].strip()
                 self.validate_systematic_error()
-            elif s[0].strip() == "extra_width" and slen == 2:
+            elif s[0].strip() == "extra_width" and input_string_length == 2:
                 self.extra_width = s[1].strip()
                 self.validate_extra_width() 
             elif s[0].strip() == "status":
@@ -337,14 +334,10 @@ class LeptoquarkParametersStringInput:
                 print(f" Significance = {self.significance}")
                 print(f" Systematic error = {self.systematic_error}")
             elif s[0].strip() == "help":
-                self.print_interactive_help()
+                LeptoquarkParametersStringInput.print_interactive_help()
             elif s[0].strip() == "initiate":
                 self.start_calculation = True
                 return
-                # leptoquark_parameters.couplings_values = [
-                #     " ".join(["0"] * len(leptoquark_parameters.couplings))]
-                leptoquark_parameters.sort_couplings_and_values()
-                calculate(leptoquark_parameters, InputMode.INTERACTIVE)
             elif s[0].strip().lower() in ["exit", "q", "quit", "exit()", ".exit"]:
                 return
             elif s[0].strip() == "":
@@ -358,7 +351,6 @@ class LeptoquarkParametersStringInput:
     # this function assumes data validation has been performed
     def convert_data_to_leptoquark_model(self) -> LeptoquarkParameters:
         leptoquark_parameters = LeptoquarkParameters()
-
         leptoquark_parameters.model = self.model
         leptoquark_parameters.mass = float(self.mass)
         # convert couplings from string to list of strings
@@ -367,7 +359,7 @@ class LeptoquarkParametersStringInput:
         if self.ignore_single_pair_processes.lower() in code_infra_config.get("leptoquark_parameters").get("ignore_single_pair_processes_yes_values"):
             leptoquark_parameters.ignore_single_pair_processes = True
         elif self.ignore_single_pair_processes.lower() in code_infra_config.get("leptoquark_parameters").get("ignore_single_pair_processes_no_values"):
-            leptoquark_parameters = False
+            leptoquark_parameters.ignore_single_pair_processes = False
         #convert significance
         leptoquark_parameters.significance = int(self.significance)
         # convert Systematic error
@@ -379,4 +371,4 @@ class LeptoquarkParametersStringInput:
         except:
             raise ValueError(
                 "[Extra width error]: Extra Width should be a valid number")
-    
+        return leptoquark_parameters
