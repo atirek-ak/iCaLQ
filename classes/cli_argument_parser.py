@@ -87,7 +87,6 @@ class CliArgumentParser:
                 InputMode.NONINTERACTIVE,
                 non_interactive_input_parameters,
             )
-            calculator.initiate()
             calculator.calculate()
         else:
             leptoquark_parameters_string_input = LeptoquarkParametersStringInput()
@@ -101,7 +100,6 @@ class CliArgumentParser:
                     leptoquark_parameters,
                     InputMode.INTERACTIVE,
                 )
-                calculator.initiate()
                 calculator.calculate()
 
 

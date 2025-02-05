@@ -37,7 +37,7 @@ class BranchingFraction:
     def __init__(
             self,
             mass_dictionary: LeptoquarkMassDictionary = LeptoquarkMassDictionary(),
-            branching_fraction: sym.Symbol = None,
+            branching_fraction: sym.Symbol = sym.Float(0),
     ):
         self.mass_dictionary = mass_dictionary
         self.branching_fraction = branching_fraction

@@ -16,7 +16,9 @@ from classes.custom_datatypes import InputMode, Generation, Tag, KFactor, DecayP
 from classes.cross_section import CrossSections
 from classes.efficiency import Efficiencies
 from classes.branching_fraction import BranchingFraction
+from classes.cache import PersistentDiskCache
 from helper.validate import  validate_interactive_input_coupling_values
+from helper.strings import convert_coupling_to_symbolic_coupling_format
 
 
 class Calculator:
@@ -28,13 +30,14 @@ class Calculator:
             cross_sections: CrossSections = None,
             efficiencies: Efficiencies = None,
             symbolic_sorted_couplings: List[sym.Symbol] = None,
-            branching_fraction: BranchingFraction = None,
+            branching_fraction: BranchingFraction = BranchingFraction(),
             chi_square: sym.Symbol = None,
             numpy_chi_square = None,
             chi_square_without_leptoquark: sym.Symbol = None,
             numpy_chi_square_without_leptoquark = None,
             minima: float = sys.float_info.max,
             minima_couplings: List[float] = None,
+            cache: PersistentDiskCache = PersistentDiskCache(),
         ):
         self.leptoquark_parameters = leptoquark_parameters
         self.input_mode = input_mode
@@ -50,25 +53,7 @@ class Calculator:
         self.numpy_chi_square_without_leptoquark = numpy_chi_square_without_leptoquark
         self.minima = minima
         self.minima_couplings = minima_couplings
-
-    def initiate(self):
-        # fill cross-sections
-        self.cross_sections = CrossSections()
-        self.cross_sections.fill_all_couplings_to_cross_section_map(self.leptoquark_parameters)
-
-        # fill efficiencies
-        self.efficiencies = Efficiencies()
-        self.efficiencies.fill_all_couplings_to_efficiency_map(self.leptoquark_parameters, self.cross_sections)
-
-        # create symbolic couplings
-        self.symbolic_sorted_couplings = [
-            sym.Symbol(coupling) for coupling in self.leptoquark_parameters.sorted_couplings
-        ]
-
-        # fill branching fraction
-        self.branching_fraction = BranchingFraction()
-        self.branching_fraction.make_mass_dictionary(self.leptoquark_parameters.sorted_couplings)
-        self.branching_fraction.get_branching_fraction_symbolic(self.leptoquark_parameters, self.symbolic_sorted_couplings)
+        self.cache = cache
 
     @staticmethod
     def get_standard_model_and_nd_dataframe(tag_value: str):
@@ -289,13 +274,21 @@ class Calculator:
             flatten(self.symbolic_sorted_couplings), chi_square, modules="numpy"
         )
 
-    def set_branching_fraction_to_zero(self):
+    def set_branching_fraction_to_zero_and_return_original_value(self) -> sym.Symbol:
+        original_branching_fraction = self.branching_fraction.branching_fraction
         self.branching_fraction.branching_fraction = sym.Float(0.0)
+        return original_branching_fraction
+
+    def unset_branching_fraction_from_zero(self, original_branching_fraction: sym.Symbol):
+        self.branching_fraction.branching_fraction = original_branching_fraction
+
 
     def set_chi_square_without_leptoquark(self):
         if len(self.leptoquark_parameters.sorted_couplings) > 1:
-            self.set_branching_fraction_to_zero()
+            original_branching_fraction = self.set_branching_fraction_to_zero_and_return_original_value()
             self.chi_square_without_leptoquark = self.calculate_chi_square(False)
+            self.unset_branching_fraction_from_zero(original_branching_fraction)
+            self.set_chi_square_without_leptoquark_in_cache()
             self.numpy_chi_square_without_leptoquark = self.convert_chi_square_to_numpy(self.chi_square_without_leptoquark)
 
     def compare_minima_without_leptoquark(self):
@@ -328,6 +321,8 @@ class Calculator:
                 self.minima_couplings = minima_point.x
 
         self.compare_minima_without_leptoquark()
+        self.set_chi_square_minima_in_cache()
+        self.set_chi_square_minima_coupling_values_in_cache()
         print(f"Chi-square minima: {self.minima}")
         print("Minimum chi-square at values:", end="")
         print(
@@ -450,29 +445,96 @@ class Calculator:
                 self.non_interactive_input_parameters.output_common_path, "w", encoding="utf8"
         ) as common_file:
             for coupling in self.leptoquark_parameters.sorted_couplings:
-                print(coupling, end="\t")
                 print(f'"{coupling}"', end=",", file=common_file)
-            print("Delta chi-square")
             print("Delta chi-square", file=common_file)
             for within_limits_element in outside_limits_list:
-                print('\t'.join(map(str, within_limits_element[0])), end="\t")
                 print(','.join(map(str, within_limits_element[0])), end=",", file=common_file)
-                print(within_limits_element[1])
                 print(within_limits_element[1], file=common_file)
             for outside_limits_element in outside_limits_list:
-                print('\t'.join(map(str, outside_limits_element[0])), end="\t")
                 print(','.join(map(str, outside_limits_element[0])), end=",", file=common_file)
-                print(outside_limits_element[1])
                 print(outside_limits_element[1], file=common_file)
 
+    def check_and_assign_cache(self) -> bool:
+        chi_square_key = PersistentDiskCache.construct_chi_square_expression_cache_key(self.leptoquark_parameters)
+        chi_square_value = self.cache.get_symbolic_expression(chi_square_key)
+        if not chi_square_value:
+            return False
+        self.chi_square = chi_square_value
+        self.numpy_chi_square = self.convert_chi_square_to_numpy(self.chi_square)
 
+        chi_square_without_leptoquark_key = PersistentDiskCache.construct_chi_square_without_leptoquark_expression_cache_key(self.leptoquark_parameters)
+        chi_square_without_leptoquark_value = self.cache.get_symbolic_expression(chi_square_without_leptoquark_key)
+        if not chi_square_without_leptoquark_value:
+            return False
+        self.chi_square_without_leptoquark = chi_square_without_leptoquark_value
+        self.numpy_chi_square_without_leptoquark = self.convert_chi_square_to_numpy(self.chi_square_without_leptoquark)
 
+        minima_key = PersistentDiskCache.construct_chi_square_minima_cache_key(self.leptoquark_parameters)
+        minima_value = self.cache.get_float_value(minima_key)
+        if not minima_value:
+            return False
+        self.minima = minima_value
+
+        minima_couplings_key = PersistentDiskCache.construct_chi_square_minima_couplings_cache_key(self.leptoquark_parameters)
+        minima_couplings_value = self.cache.get_list_of_floats_value(minima_couplings_key)
+        if not minima_couplings_value:
+            return False
+        self.minima_couplings = minima_couplings_value
+
+        return True
+
+    def set_chi_square_in_cache(self):
+        chi_square_key = PersistentDiskCache.construct_chi_square_expression_cache_key(self.leptoquark_parameters)
+        self.cache.set(chi_square_key, str(self.chi_square))
+
+    def set_chi_square_without_leptoquark_in_cache(self):
+        chi_square_without_leptoquark_key = PersistentDiskCache.construct_chi_square_without_leptoquark_expression_cache_key(self.leptoquark_parameters)
+        self.cache.set(chi_square_without_leptoquark_key, str(self.chi_square))
+
+    def set_chi_square_minima_in_cache(self):
+        minima_key = PersistentDiskCache.construct_chi_square_minima_cache_key(self.leptoquark_parameters)
+        self.cache.set(minima_key, str(self.minima))
+
+    def set_chi_square_minima_coupling_values_in_cache(self):
+        minima_couplings_key = PersistentDiskCache.construct_chi_square_minima_couplings_cache_key(self.leptoquark_parameters)
+        self.cache.set(minima_couplings_key, ' '.join([str(element) for element in self.minima_couplings]))
 
     def calculate(self):
+        # create symbolic couplings
+        self.symbolic_sorted_couplings = [
+            sym.Symbol(convert_coupling_to_symbolic_coupling_format(coupling)) for coupling in self.leptoquark_parameters.sorted_couplings
+        ]
+
+        # if values are present in cache, then we skip calculations & assign class values there
+        if self.check_and_assign_cache():
+            print("Chi-square values fetched from cache!!")
+            self.post_chi_square_calculation()
+            return
+
+        # fill cross-sections
+        self.cross_sections = CrossSections()
+        self.cross_sections.fill_all_couplings_to_cross_section_map(self.leptoquark_parameters)
+
+        # fill efficiencies
+        self.efficiencies = Efficiencies()
+        self.efficiencies.fill_all_couplings_to_efficiency_map(self.leptoquark_parameters, self.cross_sections)
+
+        # fill branching fraction
+        self.branching_fraction = BranchingFraction()
+        self.branching_fraction.make_mass_dictionary(self.leptoquark_parameters.sorted_couplings)
+        self.branching_fraction.get_branching_fraction_symbolic(self.leptoquark_parameters, self.symbolic_sorted_couplings)
+
+        # start chi-square calculation
         self.chi_square = self.calculate_chi_square(True)
+        self.set_chi_square_in_cache()
         self.numpy_chi_square = self.convert_chi_square_to_numpy(self.chi_square)
         self.set_chi_square_without_leptoquark()
         self.find_minima()
+
+        self.post_chi_square_calculation()
+
+
+    def post_chi_square_calculation(self):
         self.interactive_input_coupling_values()
         self.non_interactive_output_validity_lists()
 

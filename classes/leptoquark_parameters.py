@@ -81,5 +81,3 @@ class LeptoquarkParameters:
             self.sorted_couplings_values.append(
                 list(sorted_combined_couplings_and_values[1])
             )
-
-
