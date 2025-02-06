@@ -5,7 +5,7 @@ import sys
 from classes.config import physics_config, code_infra_config
 from classes.leptoquark_parameters import LeptoquarkParameters
 from helper.strings import strip_comments_and_spaces
-from helper.output import pr_blue, pr_blue_no_new_line, pr_red, raise_error_or_print_warning
+from helper.output import pr_blue, pr_red, raise_error_or_print_warning
 
 
 class LeptoquarkParametersStringInput:
@@ -297,8 +297,8 @@ class LeptoquarkParametersStringInput:
     # returns whether to start calculation on input
     def interactive_input(self):
         while True:
-            pr_blue_no_new_line("calq > ")
-            input_string = input()
+            prompt = "\033[94mcalq > \033[00m"  # Blue colored prompt
+            input_string = input(prompt)
             s = input_string.split("=")
             if ":" in input_string:
                 s = input_string.split(":")
