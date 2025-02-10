@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import readline
 
 from classes.config import physics_config, code_infra_config
 from classes.leptoquark_parameters import LeptoquarkParameters
