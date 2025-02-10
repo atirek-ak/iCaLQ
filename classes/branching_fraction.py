@@ -124,4 +124,7 @@ class BranchingFraction:
                         leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][2],
                     )
 
-        self.branching_fraction = numerator / denominator
+        if denominator == sym.Float(0):
+            self.branching_fraction = sym.Float(0)
+        else:
+            self.branching_fraction = numerator / denominator

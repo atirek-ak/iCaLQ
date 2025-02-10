@@ -87,4 +87,16 @@ Options:
 
 ## Caveats
 
-The calculator is in its version 1.0.0 and will undergo extensive testing. Currently only U1 & S1 leptoquark models are used, more leptoquark models will be added later. Any comments regarding the calculator can be emailed to [us](mailto:atirek.kumar@research.iiit.ac.in).
+The calculator is in its version 1.0.0 and currently only U1 & S1 leptoquark models are used. You can refer to section [Adding a new leptoquark Model](#Adding-a-new-Leptoquark-Model) for adding your own leptoquark model. Any comments regarding the calculator can be emailed to [us](mailto:atirek.kumar@research.iiit.ac.in).
+
+## Adding a new Leptoquark Model
+Currently, we have added the models S1 & U1 to the leptoquark calculator. To add your own models to the calculator, you must have the cross-section & efficiency data generated for various mass points & decay processes. To add a model, called **X1**, follow these steps:
+1. Add the data in  directory. Follow the naming conventions used in the other models. 
+   * `data/model/X1` should have 2 directories: `cross_section` & `efficiency`
+   * The `cross-section` directory should have _csv_ files with the same decay process names as used in the other models.
+   * The `efficiency` directory should have sub-directories with the same decay process names as used in the other models. Each decay process subdirectory in `efficiencies` should be followed by a coupling name(format: {quark index}{lepton index}{chirality}). Inside these directories there should be either _csv_ files named as _{mass value}.csv_ or in case of tau, subdirectories with integer mass value, with _csv_ files inside corresponding to the decay process tags.
+2. In `classes/branching_fraction.py` add the formula to compute the branching fraction for couplings in model **X1**, else the branching fraction will be taken as 0 by default.
+3. In `classes/custom_datatypes.py` , in class _KFactor_, add the K-factor value for **X1**, corresponding to all decay processes. If you are not sure about what value to use here, input it as 1.0.
+4. In `config/physics.json`, append **X1** to either _scalar_leptoquark_models_ or _vector_leptoquark_models_. 
+  
+That's it! You should be good to go.
