@@ -69,10 +69,10 @@ class CliArgumentParser:
                 output_no_path=args.output_no,
                 output_common_path=args.output_common,
             )
-            non_interactive_input_parameters.validate()
-            non_interactive_input_parameters.create_output_files_if_not_present()
             non_interactive_input_parameters.card_data.read_data_from_input_file(non_interactive_input_parameters.input_card_path)
             non_interactive_input_parameters.card_data.validate()
+            non_interactive_input_parameters.validate()
+            non_interactive_input_parameters.create_output_files_if_not_present()
 
             # parse leptoquark parameters from input card
             leptoquark_parameters = non_interactive_input_parameters.card_data.convert_data_to_leptoquark_model()
