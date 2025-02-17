@@ -1,6 +1,6 @@
-U1              # leptoquark model
+S1              # leptoquark model
 2250			# mass
-X10RR[2,3] X10LL[3,3]    # couplings
+Y10RR[2,3] Y10LL[1,3]    # couplings
 no				# ignore single and pair
 2				# significance
 0.1				# systematic error

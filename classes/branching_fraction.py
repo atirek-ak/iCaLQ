@@ -83,10 +83,12 @@ class BranchingFraction:
 
     @staticmethod
     def u1_decay_width_mass_factor( mass: float, mass_dictionary_coupling_element :list[float]):
+        quark_mass = mass_dictionary_coupling_element[0]
+        lepton_mass = mass_dictionary_coupling_element[1]
         return (
-                BranchingFraction.momentum(mass, mass_dictionary_coupling_element[0], mass_dictionary_coupling_element[1])
+                BranchingFraction.momentum(mass, quark_mass, lepton_mass)
                 * BranchingFraction.absolute_efficiency_coupling_mass_factor(
-            mass, mass_dictionary_coupling_element[0], mass_dictionary_coupling_element[1]
+            mass, quark_mass, lepton_mass
         )
                 / (8 * math.pow(math.pi, 2) * math.pow(mass, 2))
         )
@@ -121,7 +123,7 @@ class BranchingFraction:
                 )
                 if coupling[code_infra_config.get('coupling').get('chirality_index')] == "L":
                     denominator += symbolic_coupling**2 * BranchingFraction.s1_decay_width_mass_factor(
-                        leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][2],
+                        leptoquark_parameters.mass, self.mass_dictionary.dictionary[coupling][1],
                     )
 
         if denominator == sym.Float(0):
